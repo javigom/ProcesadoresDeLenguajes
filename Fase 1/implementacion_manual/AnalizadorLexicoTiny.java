@@ -259,6 +259,10 @@ public class AnalizadorLexicoTiny {
 	private boolean hayLetra() {
 		return sigCar >= 'a' && sigCar <= 'z' || sigCar >= 'A' && sigCar <= 'Z';
 	}
+	
+	private boolean hayE() {
+		return sigCar == 'e' || sigCar == 'E';
+	}
 
 	private boolean hayDigitoPos() {
 		return sigCar >= '1' && sigCar <= '9';
@@ -288,6 +292,26 @@ public class AnalizadorLexicoTiny {
 		return sigCar == '/';
 	}
 
+	private boolean hayAmpersand() {
+		return sigCar == '&';
+	}
+
+	private boolean hayPuntoComa() {
+		return sigCar == ';';
+	}
+
+	private boolean hayMenor() {
+		return sigCar == '<';
+	}
+
+	private boolean hayMayor() {
+		return sigCar == '>';
+	}
+
+	private boolean hayExclamacion() {
+		return sigCar == '!';
+	}
+
 	private boolean hayPAp() {
 		return sigCar == '(';
 	}
@@ -298,10 +322,6 @@ public class AnalizadorLexicoTiny {
 
 	private boolean hayIgual() {
 		return sigCar == '=';
-	}
-
-	private boolean hayComa() {
-		return sigCar == ',';
 	}
 
 	private boolean hayPunto() {
@@ -373,8 +393,12 @@ public class AnalizadorLexicoTiny {
 		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.IGUAL);
 	}
 
-	private UnidadLexica unidadComa() {
-		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.COMA);
+	private UnidadLexica unidadSeparador() {
+		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.SEP);
+	}
+
+	private UnidadLexica unidadPuntoComa() {
+		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.SEP_PC);
 	}
 
 	private UnidadLexica unidadEof() {
