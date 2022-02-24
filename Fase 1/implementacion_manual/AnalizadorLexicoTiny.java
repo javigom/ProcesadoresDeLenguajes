@@ -16,7 +16,7 @@ public class AnalizadorLexicoTiny {
 	private static String NL = System.getProperty("line.separator");
 
 	private static enum Estado {
-		INICIO, SEP, SEP_PC, ASIG, MAS, MENOS, POR, DIV, MENOR, MAYOR, MENOR_IGUAL, MAYOR_IGUAL, IGUAL, PDEC_0, PEXP_0,
+		INICIO, SEP, SEP_PC, ASIG, MAS, MENOS, POR, DIV, MENOR, MAYOR, MENOR_IGUAL, MAYOR_IGUAL, IGUAL, PDEC_0, PEXP_0, REC_EOF,
 		DIF, PAP, PCIERRE, PUNTO, VAR, NUM_ENT, NUM_ENT_0, NUM_REAL, PDEC, PEXP, PEXP_E, SUB_SEP, NUM_PUNTO, PEXP_ADD, DIF_0,PEXP_00
 	}
 
@@ -87,31 +87,42 @@ public class AnalizadorLexicoTiny {
 				if (hayIgual())
 					transita(Estado.DIF);
 				else
-					return unidadId();
+					error();
 				break;
+				
+			case DIF:
+				return unidadDif();
+				
 			case ASIG:
 				if (hayIgual())
 					transita(Estado.IGUAL);
 				else
-					return unidadId();
+					return unidadAsig();
 				break;
 			case MENOR:
 				if (hayIgual())
 					transita(Estado.MENOR_IGUAL);
 				else
-					return unidadId();
+					return unidadMenor();
 				break;
 			case MAYOR:
 				if (hayIgual())
 					transita(Estado.MAYOR_IGUAL);
 				else
-					return unidadId();
+					return unidadMayor();
 				break;
+				
+			case MENOR_IGUAL:
+				return unidadMenorIgual();
+				
+			case MAYOR_IGUAL:
+				return unidadMayorIgual();
+				
 			case SUB_SEP:
 				if (hayAmpersand())
 					transita(Estado.SEP);
 				else
-					return unidadId();
+					error();
 				break;
 			case NUM_ENT:
 				if (hayDigito())
@@ -159,6 +170,8 @@ public class AnalizadorLexicoTiny {
 				return unidadPuntoComa();
 			case SEP:
 				return unidadSeparador();
+			case PUNTO:
+				return unidadPunto();
 			case REC_EOF:
 				return unidadEof();
 			case NUM_PUNTO:
@@ -203,7 +216,6 @@ public class AnalizadorLexicoTiny {
 				break;
 			case PEXP_0:
 				return unidadReal();
-				break;
 			case PEXP:
 				if (hayDigitoPos())
 					transita(Estado.PEXP);
@@ -389,8 +401,28 @@ public class AnalizadorLexicoTiny {
 		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.PCIERRE);
 	}
 
+	private UnidadLexica unidadAsig() {
+		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.ASIG);
+	}
+	
 	private UnidadLexica unidadIgual() {
 		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.IGUAL);
+	}
+	
+	private UnidadLexica unidadMenor() {
+		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.MENOR);
+	}
+	
+	private UnidadLexica unidadMayor() {
+		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.MAYOR);
+	}
+	
+	private UnidadLexica unidadMenorIgual() {
+		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.MENOR_IGUAL);
+	}
+	
+	private UnidadLexica unidadMayorIgual() {
+		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.MAYOR_IGUAL);
 	}
 
 	private UnidadLexica unidadSeparador() {
@@ -403,6 +435,14 @@ public class AnalizadorLexicoTiny {
 
 	private UnidadLexica unidadEof() {
 		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.EOF);
+	}
+
+	private UnidadLexica unidadDif() {
+		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.DIF);
+	}
+
+	private UnidadLexica unidadPunto() {
+		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.PUNTO);
 	}
 
 	private void error() {
