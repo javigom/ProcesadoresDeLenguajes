@@ -25,6 +25,7 @@ package alex;
 letra  = ([A-Z]|[a-z])
 digitoPositivo = [1-9]
 digito = ({digitoPositivo}|0)
+caracter = ^[\"\r\b\n ]
 signo = [\+,\-]
 parteEntera = {digitoPositivo}{digito}*
 parteDecimal = \.{digito}* {digitoPositivo}
@@ -35,7 +36,8 @@ or = or
 not = not
 false = false
 true = true
-variable = {letra}({letra}|{digito}|{\_})*
+identificador = {letra}({letra}|{digito}|{\_})*
+cadena = {\"} ({caracter})* {\"}
 numeroEntero = {signo}?{parteEntera}
 numeroReal = {signo}?{parteEntera} ({parteDecimal} | {parteExponencial} | {parteDecimal} {parteExponencial})
 operadorSuma = \+
@@ -63,7 +65,8 @@ sepPc = \;
 {and}                     {return ops.unidadAnd();}
 {or}                      {return ops.unidadOr();}
 {not}                     {return ops.unidadNot();}
-{variable}           	  {return ops.unidadVar();} 
+{identificador}           {return ops.unidadId();} 
+{cadena}	           	  {return ops.unidadLitCad();}
 {numeroEntero}            {return ops.unidadEnt();}
 {numeroReal}              {return ops.unidadReal();}
 {operadorSuma}            {return ops.unidadSuma();}
@@ -81,5 +84,6 @@ sepPc = \;
 {diferente}               {return ops.unidadDif();}
 {separador}				  {return ops.unidadSep();}
 {sepPc}				      {return ops.unidadSep_Pc();}
+
 
 [^]                       {ops.error();}  
