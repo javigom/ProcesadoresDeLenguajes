@@ -1,4 +1,4 @@
-package implementacion_JFLex;
+package implementacion_jflex;
 
 public class ALexOperations {
 	private AnalizadorLexicoTiny alex;
@@ -32,11 +32,11 @@ public class ALexOperations {
 	}
 
 	public UnidadLexica unidadEnt() {
-		return new UnidadLexicaMultivaluada(alex.fila(), alex.columna(), ClaseLexica.NUM_ENT, alex.lexema());
+		return new UnidadLexicaMultivaluada(alex.fila(), alex.columna(), ClaseLexica.LIT_ENT, alex.lexema());
 	}
 
 	public UnidadLexica unidadReal() {
-		return new UnidadLexicaMultivaluada(alex.fila(), alex.columna(), ClaseLexica.NUM_REAL, alex.lexema());
+		return new UnidadLexicaMultivaluada(alex.fila(), alex.columna(), ClaseLexica.LIT_REAL, alex.lexema());
 	}
 
 	public UnidadLexica unidadSuma() {
@@ -68,11 +68,11 @@ public class ALexOperations {
 	}
 
 	public UnidadLexica unidadSep_Pc() {
-		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.SEP_PC);
+		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.PCOMA);
 	}
 
 	public UnidadLexica unidadSep() {
-		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.SEP);
+		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.DAMP);
 	}
 	
 	public UnidadLexica unidadDif() {

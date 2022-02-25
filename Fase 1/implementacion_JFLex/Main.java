@@ -1,4 +1,4 @@
-package implementacion_JFLex;
+package implementacion_jflex;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
