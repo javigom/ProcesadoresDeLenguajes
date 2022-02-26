@@ -1,4 +1,4 @@
-package alex;
+package implementacion_jflex;
 
 %%
 %line
@@ -25,7 +25,7 @@ package alex;
 letra  = ([A-Z]|[a-z])
 digitoPositivo = [1-9]
 digito = ({digitoPositivo}|0)
-caracter = ^[\"\r\b\n ]
+caracter = [^[\"\r\b\n ]]
 signo = [\+,\-]
 parteEntera = {digitoPositivo}{digito}*
 parteDecimal = \.{digito}* {digitoPositivo}
@@ -37,8 +37,8 @@ or = or
 not = not
 false = false
 true = true
-identificador = {letra}({letra}|{digito}|{\_})*
-cadena = {\"} ({caracter})* {\"}
+identificador = {letra}({letra}|{digito}|\_)*
+cadena = \" ({caracter})* \"
 numeroEntero = {signo}?{parteEntera}
 numeroReal = {signo}?{parteEntera} ({parteDecimal} | {parteExponencial} | {parteDecimal} {parteExponencial})
 operadorSuma = \+
@@ -47,6 +47,8 @@ operadorMultiplicacion = \*
 operadorDivision = \/
 parentesisApertura = \(
 parentesisCierre = \)
+corchetesApertura = \{
+corchetesCierre = \}
 igual = \=
 coma  = \,
 menor = \<
@@ -55,8 +57,8 @@ menorIgual = {menor} {igual}
 mayorIgual = {mayor} {igual}
 exclamacion = \!
 diferente = {exclamacion} {igual}
-sep = \&
-separador = {sep} {sep}
+ampersand = \&
+dobleAmpersand = {ampersand} {ampersand}
 sepPc = \;
 
 %%
@@ -84,8 +86,9 @@ sepPc = \;
 {mayorIgual}              {return ops.unidadMayorIgual();}
 {menorIgual}              {return ops.unidadMenorIgual();}
 {diferente}               {return ops.unidadDif();}
-{separador}				  {return ops.unidadSep();}
-{sepPc}				      {return ops.unidadSep_Pc();}
+{ampersand}				  {return ops.unidadAmp();}
+{dobleAmpersand}		  {return ops.unidadDAmp();}
+{sepPc}				      {return ops.unidadSepPc();}
 
 
 [^]                       {ops.error();}  

@@ -7,7 +7,7 @@ public class ALexOperations {
 		this.alex = alex;
 	}
 
-	public UnidadLexica unidadVar() {
+	public UnidadLexica unidadId() {
 		return new UnidadLexicaMultivaluada(alex.fila(), alex.columna(), ClaseLexica.ID, alex.lexema());
 	}
 
@@ -68,18 +68,18 @@ public class ALexOperations {
 	}
 
 	public UnidadLexica unidadIgual() {
-		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.IGUAL);
+		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.DIGUAL);
 	}
 
 	public UnidadLexica unidadAsig() {
-		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.ASIG);
+		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.IGUAL);
 	}
 
-	public UnidadLexica unidadSep_Pc() {
+	public UnidadLexica unidadSepPc() {
 		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.PCOMA);
 	}
 
-	public UnidadLexica unidadSep() {
+	public UnidadLexica unidadDAmp() {
 		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.DAMP);
 	}
 	
@@ -140,6 +140,9 @@ public class ALexOperations {
 		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.PORCENT);
 	}
 	
+	public UnidadLexica unidadEof() {
+		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.EOF);
+	}
 	
 
 	public void error() {
