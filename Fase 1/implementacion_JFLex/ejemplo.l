@@ -38,7 +38,8 @@ not = not
 false = false
 true = true
 identificador = {letra}({letra}|{digito}|\_)*
-cadena = \" ({caracter})* \"
+comillas = \"
+cadena = {comillas}({caracter})*{comillas}
 numeroEntero = {signo}?{parteEntera}
 numeroReal = {signo}?{parteEntera} ({parteDecimal} | {parteExponencial} | {parteDecimal} {parteExponencial})
 operadorSuma = \+
@@ -47,8 +48,10 @@ operadorMultiplicacion = \*
 operadorDivision = \/
 parentesisApertura = \(
 parentesisCierre = \)
-corchetesApertura = \{
-corchetesCierre = \}
+corchetesApertura = \[
+corchetesCierre = \]
+llavesApertura = \{
+llavesCierre = \}
 igual = \=
 coma  = \,
 menor = \<
@@ -60,35 +63,89 @@ diferente = {exclamacion} {igual}
 ampersand = \&
 dobleAmpersand = {ampersand} {ampersand}
 sepPc = \;
+int = int
+real = real
+string = string
+bool = bool
+null = null
+proc = proc
+if = if
+then = then
+else = else
+endif = endif
+while = while
+do = do
+endwhile = endwhile
+call = call
+record = record
+array = array
+of = of
+pointer = pointer
+new = new
+delete = delete
+read = read
+write = write
+nl = nl
+var = var
+type = type
+
 
 %%
-{separador}               {}
-{comentario}              {}
-{false}                   {return ops.unidadFalse();}
-{true}                    {return ops.unidadTrue();}
-{and}                     {return ops.unidadAnd();}
-{or}                      {return ops.unidadOr();}
-{not}                     {return ops.unidadNot();}
-{identificador}           {return ops.unidadId();} 
-{cadena}	           	  {return ops.unidadLitCad();}
-{numeroEntero}            {return ops.unidadEnt();}
-{numeroReal}              {return ops.unidadReal();}
-{operadorSuma}            {return ops.unidadSuma();}
-{operadorResta}           {return ops.unidadResta();}
-{operadorMultiplicacion}  {return ops.unidadMul();}
-{operadorDivision}        {return ops.unidadDiv();}
-{parentesisApertura}      {return ops.unidadPAp();}
-{parentesisCierre}        {return ops.unidadPCierre();} 
-{igual}                   {return ops.unidadIgual();} 
-{coma}                    {return ops.unidadComa();}
-{menor}                   {return ops.unidadMenor();}
-{mayor}                   {return ops.unidadMayor();}
-{mayorIgual}              {return ops.unidadMayorIgual();}
-{menorIgual}              {return ops.unidadMenorIgual();}
-{diferente}               {return ops.unidadDif();}
-{ampersand}				  {return ops.unidadAmp();}
-{dobleAmpersand}		  {return ops.unidadDAmp();}
-{sepPc}				      {return ops.unidadSepPc();}
-
+{separador}					{}
+{comentario}            	{}
+{false}                 	{return ops.unidadFalse();}
+{true}                  	{return ops.unidadTrue();}
+{and}                   	{return ops.unidadAnd();}
+{or}                      	{return ops.unidadOr();}
+{not}                     	{return ops.unidadNot();}
+{int}                     	{return ops.unidadInt();}
+{real}                     	{return ops.unidadReal();}
+{string}                    {return ops.unidadString();}
+{bool}						{return ops.unidadBool();}
+{null}						{return ops.unidadNull();}
+{proc}						{return ops.unidadProc();}
+{if}						{return ops.unidadIf();}
+{then}						{return ops.unidadThen();}
+{else}						{return ops.unidadElse();}
+{endif}						{return ops.unidadEndif();}
+{while}						{return ops.unidadWhile();}
+{do}						{return ops.unidadDo();}
+{endwhile}					{return ops.unidadEndwhile();}
+{call}						{return ops.unidadBool();}
+{record}					{return ops.unidadRecord();}
+{array}						{return ops.unidadArray();}
+{of}						{return ops.unidadOf();}
+{pointer}					{return ops.unidadPointer();}
+{new}						{return ops.unidadNew();}
+{delete}					{return ops.unidadDelete();}
+{read}						{return ops.unidadRead();}
+{write}						{return ops.unidadWrite();}
+{nl}						{return ops.unidadNl();}
+{var}						{return ops.unidadVar();}
+{type}						{return ops.unidadType();}
+{cadena}	           	  	{return ops.unidadLitCad();}
+{identificador}           	{return ops.unidadId();} 
+{numeroEntero}            	{return ops.unidadLitEnt();}
+{numeroReal}              	{return ops.unidadLitReal();}
+{operadorSuma}            	{return ops.unidadSuma();}
+{operadorResta}           	{return ops.unidadResta();}
+{operadorMultiplicacion}  	{return ops.unidadMul();}
+{operadorDivision}        	{return ops.unidadDiv();}
+{parentesisApertura}      	{return ops.unidadPAp();}
+{parentesisCierre}        	{return ops.unidadPCierre();} 
+{corchetesApertura}			{return ops.unidadCap();}
+{corchetesCierre}			{return ops.unidadCcierre();}
+{llavesApertura}			{return ops.unidadLlap();}
+{llavesCierre}				{return ops.unidadLlcierre();}
+{igual}                   	{return ops.unidadIgual();} 
+{coma}                    	{return ops.unidadComa();}
+{menor}                   	{return ops.unidadMenor();}
+{mayor}                   	{return ops.unidadMayor();}
+{mayorIgual}              	{return ops.unidadMayorIgual();}
+{menorIgual}              	{return ops.unidadMenorIgual();}
+{diferente}               	{return ops.unidadDif();}
+{ampersand}				  	{return ops.unidadAmp();}
+{dobleAmpersand}		  	{return ops.unidadDAmp();}
+{sepPc}				      	{return ops.unidadSepPc();}
 
 [^]                       {ops.error();}  
