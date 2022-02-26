@@ -31,6 +31,7 @@ parteEntera = {digitoPositivo}{digito}*
 parteDecimal = \.{digito}* {digitoPositivo}
 parteExponencial = [e, E] {signo}? {numeroEntero}
 separador = [ \t\r\b\n]
+comentario = #[^\n]* 
 and = and
 or = or
 not = not
@@ -60,6 +61,7 @@ sepPc = \;
 
 %%
 {separador}               {}
+{comentario}              {}
 {false}                   {return ops.unidadFalse();}
 {true}                    {return ops.unidadTrue();}
 {and}                     {return ops.unidadAnd();}
