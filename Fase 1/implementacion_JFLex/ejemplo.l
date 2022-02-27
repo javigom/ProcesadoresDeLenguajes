@@ -78,6 +78,7 @@ corchetesCierre = \]
 llavesApertura = \{
 llavesCierre = \}
 igual = \=
+porcent = \%
 coma  = \,
 punto = \.
 menor = \<
@@ -140,6 +141,7 @@ puntoComa = \;
 {llavesCierre}				{return ops.unidadLlcierre();}
 {igual}                   	{return ops.unidadIgual();} 
 {coma}                    	{return ops.unidadComa();}
+{porcent}                   {return ops.unidadPorcent();}
 {punto}						{return ops.unidadPunto();}
 {puntoComa}				    {return ops.unidadPuntoComa();}
 {menor}                   	{return ops.unidadMenor();}
