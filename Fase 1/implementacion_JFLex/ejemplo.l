@@ -54,16 +54,17 @@ var = var
 type = type
 letra  = ([A-Z]|[a-z])
 digitoPositivo = [1-9]
-digito = {digitoPositivo}
+digito = [0-9]
 signo = [\+,\-]
-parteEntera = ({digitoPositivo}{digito}*) | 0
-parteDecimal = \.{digito}* {digitoPositivo}
+parteEntera = ({digitoPositivo} {digito}* | 0)
+parteDecimal = \.({digito}* {digitoPositivo} | 0)
 litEnt = {signo}?{parteEntera}
-parteExponencial = [e, E] {signo}? {litEnt}
+parteExponencial = [e, E] {litEnt}
 separador = [ \t\r\b\n]
 comentario = #[^\n]* 
-litReal = {signo}?{parteEntera} ({parteDecimal} | {parteExponencial} | {parteDecimal} {parteExponencial})
+litReal = {litEnt} ({parteDecimal} | {parteExponencial} | {parteDecimal} {parteExponencial})
 identificador = {letra}({letra}|{digito}|\_)*
+flecha = \-\>
 comillas = \"
 litCad = {comillas}([^\"\r\b\n])*{comillas}
 operadorSuma = \+
@@ -123,6 +124,7 @@ puntoComa = \;
 {var}						{return ops.unidadVar();}
 {type}						{return ops.unidadType();}
 {identificador}           	{return ops.unidadId();} 
+{flecha}   		        	{return ops.unidadFlecha();} 
 {litEnt}        	    	{return ops.unidadLitEnt();}
 {litReal}     	         	{return ops.unidadLitReal();}
 {litCad}	           	  	{return ops.unidadLitCad();}
