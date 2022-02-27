@@ -341,11 +341,7 @@ public class AnalizadorLexicoTiny {
 	}
 
 	private boolean haySep() {
-		return sigCar == ' ' || sigCar == '\t' || sigCar == '\n';
-	}
-
-	private boolean hayNL() {
-		return sigCar == '\r' || sigCar == '\b' || sigCar == '\n';
+		return sigCar == ' ' || sigCar == '\t' || sigCar == '\n' ||  sigCar ==  '\r' || sigCar == '\b';
 	}
 
 	private boolean hayEOF() {
