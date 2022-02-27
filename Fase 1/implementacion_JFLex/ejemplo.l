@@ -25,11 +25,11 @@ package implementacion_jflex;
 letra  = ([A-Z]|[a-z])
 digitoPositivo = [1-9]
 digito = ({digitoPositivo}|0)
-caracter = [^[\"\r\b\n ]]
+caracter = [^[\"] | [\b]]
 signo = [\+,\-]
-parteEntera = {digitoPositivo}{digito}*
+parteEntera = ({digitoPositivo}{digito}*|0)
 parteDecimal = \.{digito}* {digitoPositivo}
-parteExponencial = [e, E] {signo}? {numeroEntero}
+parteExponencial = [e, E] {numeroEntero}
 separador = [ \t\r\b\n]
 comentario = #[^\n]* 
 and = and
@@ -41,7 +41,7 @@ identificador = {letra}({letra}|{digito}|\_)*
 comillas = \"
 cadena = {comillas}({caracter})*{comillas}
 numeroEntero = {signo}?{parteEntera}
-numeroReal = {signo}?{parteEntera} ({parteDecimal} | {parteExponencial} | {parteDecimal} {parteExponencial})
+numeroReal = {numeroEntero} ({parteDecimal} | {parteExponencial} | {parteDecimal} {parteExponencial})
 operadorSuma = \+
 operadorResta = \-
 operadorMultiplicacion = \*
@@ -54,6 +54,7 @@ llavesApertura = \{
 llavesCierre = \}
 igual = \=
 coma  = \,
+punto  = \.
 menor = \<
 mayor = \>
 menorIgual = {menor} {igual}
@@ -91,8 +92,7 @@ type = type
 
 
 %%
-{separador}					{}
-{comentario}            	{}
+{cadena}	           	  	{return ops.unidadLitCad();}
 {false}                 	{return ops.unidadFalse();}
 {true}                  	{return ops.unidadTrue();}
 {and}                   	{return ops.unidadAnd();}
@@ -123,7 +123,6 @@ type = type
 {nl}						{return ops.unidadNl();}
 {var}						{return ops.unidadVar();}
 {type}						{return ops.unidadType();}
-{cadena}	           	  	{return ops.unidadLitCad();}
 {identificador}           	{return ops.unidadId();} 
 {numeroEntero}            	{return ops.unidadLitEnt();}
 {numeroReal}              	{return ops.unidadLitReal();}
@@ -139,6 +138,7 @@ type = type
 {llavesCierre}				{return ops.unidadLlcierre();}
 {igual}                   	{return ops.unidadIgual();} 
 {coma}                    	{return ops.unidadComa();}
+{punto}                    	{return ops.unidadPunto();}
 {menor}                   	{return ops.unidadMenor();}
 {mayor}                   	{return ops.unidadMayor();}
 {mayorIgual}              	{return ops.unidadMayorIgual();}
@@ -147,5 +147,7 @@ type = type
 {ampersand}				  	{return ops.unidadAmp();}
 {dobleAmpersand}		  	{return ops.unidadDAmp();}
 {sepPc}				      	{return ops.unidadSepPc();}
+{separador}					{}
+{comentario}            	{}
 
 [^]                       {ops.error();}  
