@@ -9,5 +9,4 @@ type record {
 	int cont
 } tListaNombres;
 
-
-write "Introduce el numero de nombres a ordenar (max 50):;
+i= 50e+
