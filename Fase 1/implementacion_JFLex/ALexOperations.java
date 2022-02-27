@@ -75,7 +75,7 @@ public class ALexOperations {
 		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.IGUAL);
 	}
 
-	public UnidadLexica unidadSepPc() {
+	public UnidadLexica unidadPuntoComa() {
 		return new UnidadLexicaUnivaluada(alex.fila(), alex.columna(), ClaseLexica.PCOMA);
 	}
 

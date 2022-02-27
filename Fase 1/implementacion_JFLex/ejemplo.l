@@ -22,48 +22,11 @@ package implementacion_jflex;
   ops = new ALexOperations(this);
 %init}
 
-letra  = ([A-Z]|[a-z])
-digitoPositivo = [1-9]
-digito = ({digitoPositivo}|0)
-caracter = [^[\"] | [\b]]
-signo = [\+,\-]
-parteEntera = ({digitoPositivo}{digito}*|0)
-parteDecimal = \.{digito}* {digitoPositivo}
-parteExponencial = [e, E] {numeroEntero}
-separador = [ \t\r\b\n]
-comentario = #[^\n]* 
 and = and
 or = or
 not = not
 false = false
 true = true
-identificador = {letra}({letra}|{digito}|\_)*
-comillas = \"
-cadena = {comillas}({caracter})*{comillas}
-numeroEntero = {signo}?{parteEntera}
-numeroReal = {numeroEntero} ({parteDecimal} | {parteExponencial} | {parteDecimal} {parteExponencial})
-operadorSuma = \+
-operadorResta = \-
-operadorMultiplicacion = \*
-operadorDivision = \/
-parentesisApertura = \(
-parentesisCierre = \)
-corchetesApertura = \[
-corchetesCierre = \]
-llavesApertura = \{
-llavesCierre = \}
-igual = \=
-coma  = \,
-punto  = \.
-menor = \<
-mayor = \>
-menorIgual = {menor} {igual}
-mayorIgual = {mayor} {igual}
-exclamacion = \!
-diferente = {exclamacion} {igual}
-ampersand = \&
-dobleAmpersand = {ampersand} {ampersand}
-sepPc = \;
 int = int
 real = real
 string = string
@@ -89,10 +52,46 @@ write = write
 nl = nl
 var = var
 type = type
-
+letra  = ([A-Z]|[a-z])
+digitoPositivo = [1-9]
+digito = {digitoPositivo}
+signo = [\+,\-]
+parteEntera = ({digitoPositivo}{digito}*) | 0
+parteDecimal = \.{digito}* {digitoPositivo}
+litEnt = {signo}?{parteEntera}
+parteExponencial = [e, E] {signo}? {litEnt}
+separador = [ \t\r\b\n]
+comentario = #[^\n]* 
+litReal = {signo}?{parteEntera} ({parteDecimal} | {parteExponencial} | {parteDecimal} {parteExponencial})
+identificador = {letra}({letra}|{digito}|\_)*
+comillas = \"
+litCad = {comillas}([^\"\r\b\n])*{comillas}
+operadorSuma = \+
+operadorResta = \-
+operadorMultiplicacion = \*
+operadorDivision = \/
+parentesisApertura = \(
+parentesisCierre = \)
+corchetesApertura = \[
+corchetesCierre = \]
+llavesApertura = \{
+llavesCierre = \}
+igual = \=
+coma  = \,
+punto = \.
+menor = \<
+mayor = \>
+menorIgual = {menor} {igual}
+mayorIgual = {mayor} {igual}
+exclamacion = \!
+diferente = {exclamacion} {igual}
+ampersand = \&
+dobleAmpersand = {ampersand} {ampersand}
+puntoComa = \;
 
 %%
-{cadena}	           	  	{return ops.unidadLitCad();}
+{separador}					{}
+{comentario}            	{}
 {false}                 	{return ops.unidadFalse();}
 {true}                  	{return ops.unidadTrue();}
 {and}                   	{return ops.unidadAnd();}
@@ -124,8 +123,9 @@ type = type
 {var}						{return ops.unidadVar();}
 {type}						{return ops.unidadType();}
 {identificador}           	{return ops.unidadId();} 
-{numeroEntero}            	{return ops.unidadLitEnt();}
-{numeroReal}              	{return ops.unidadLitReal();}
+{litEnt}        	    	{return ops.unidadLitEnt();}
+{litReal}     	         	{return ops.unidadLitReal();}
+{litCad}	           	  	{return ops.unidadLitCad();}
 {operadorSuma}            	{return ops.unidadSuma();}
 {operadorResta}           	{return ops.unidadResta();}
 {operadorMultiplicacion}  	{return ops.unidadMul();}
@@ -138,7 +138,8 @@ type = type
 {llavesCierre}				{return ops.unidadLlcierre();}
 {igual}                   	{return ops.unidadIgual();} 
 {coma}                    	{return ops.unidadComa();}
-{punto}                    	{return ops.unidadPunto();}
+{punto}						{return ops.unidadPunto();}
+{puntoComa}				    {return ops.unidadPuntoComa();}
 {menor}                   	{return ops.unidadMenor();}
 {mayor}                   	{return ops.unidadMayor();}
 {mayorIgual}              	{return ops.unidadMayorIgual();}
@@ -146,8 +147,4 @@ type = type
 {diferente}               	{return ops.unidadDif();}
 {ampersand}				  	{return ops.unidadAmp();}
 {dobleAmpersand}		  	{return ops.unidadDAmp();}
-{sepPc}				      	{return ops.unidadSepPc();}
-{separador}					{}
-{comentario}            	{}
-
-[^]                       {ops.error();}  
+[^]                         {ops.error();}  
