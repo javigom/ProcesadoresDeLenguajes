@@ -16,8 +16,8 @@ public class AnalizadorLexicoTiny {
 	private static String NL = System.getProperty("line.separator");
 
 	private static enum Estado {
-		INICIO, SEP, SEP_PC, ASIG, MAS, MENOS, POR, DIV, MENOR, MAYOR, MENOR_IGUAL, MAYOR_IGUAL, IGUAL, PDEC_0, PEXP_0, REC_EOF,
-		DIF, PAP, PCIERRE, PUNTO, VAR, NUM_ENT, NUM_ENT_0, NUM_REAL, PDEC, PEXP, PEXP_E, SUB_SEP, NUM_PUNTO, PEXP_ADD, DIF_0,PEXP_00
+		INIT, AMP, DAMP, PCOMA, PCIERRE, PAP, PUNTO, MAYOR, MAYOR_IGUAL, MENOR, MENOR_IGUAL, DIV, POR, IGUAL, DIGUAL, DIF_0, DIF,
+		ID, MAS, MENOS, LIT_ENT, NUM_ENT_0, NUM_PUNTO, PDEC, PDEC_0, PEXP_E, PEXP_ADD, PEXP_0, PEXP, PEXP_00, REC_EOF
 	}
 
 	private Estado estado;
@@ -31,17 +31,17 @@ public class AnalizadorLexicoTiny {
 	}
 
 	public UnidadLexica sigToken() throws IOException {
-		estado = Estado.INICIO;
+		estado = Estado.INIT;
 		filaInicio = filaActual;
 		columnaInicio = columnaActual;
 		lex.delete(0, lex.length());
 		while (true) {
 			switch (estado) {
-			case INICIO:
+			case INIT:
 				if (hayLetra())
-					transita(Estado.VAR);
+					transita(Estado.ID);
 				else if (hayDigitoPos())
-					transita(Estado.NUM_ENT);
+					transita(Estado.LIT_ENT);
 				else if (hayCero())
 					transita(Estado.NUM_ENT_0);
 				else if (haySuma())
@@ -57,7 +57,7 @@ public class AnalizadorLexicoTiny {
 				else if (hayPCierre())
 					transita(Estado.PCIERRE);
 				else if (hayIgual())
-					transita(Estado.ASIG);
+					transita(Estado.IGUAL);
 				else if (hayExclamacion())
 					transita(Estado.DIF_0);
 				else if (hayMayor())
@@ -67,19 +67,19 @@ public class AnalizadorLexicoTiny {
 				else if (hayPunto())
 					transita(Estado.PUNTO);
 				else if (hayPuntoComa())
-					transita(Estado.SEP_PC);
+					transita(Estado.PCOMA);
 				else if (hayAmpersand())
-					transita(Estado.SUB_SEP);
+					transita(Estado.AMP);
 				else if (haySep())
-					transitaIgnorando(Estado.INICIO);
+					transitaIgnorando(Estado.INIT);
 				else if (hayEOF())
 					transita(Estado.REC_EOF);
 				else
 					error();
 				break;
-			case VAR:
+			case ID:
 				if (hayLetra() || hayDigito())
-					transita(Estado.VAR);
+					transita(Estado.ID);
 				else
 					return unidadId();
 				break;
@@ -93,11 +93,11 @@ public class AnalizadorLexicoTiny {
 			case DIF:
 				return unidadDif();
 				
-			case ASIG:
+			case IGUAL:
 				if (hayIgual())
-					transita(Estado.IGUAL);
+					transita(Estado.DIGUAL);
 				else
-					return unidadAsig();
+					return unidadIgual();
 				break;
 			case MENOR:
 				if (hayIgual())
@@ -118,15 +118,15 @@ public class AnalizadorLexicoTiny {
 			case MAYOR_IGUAL:
 				return unidadMayorIgual();
 				
-			case SUB_SEP:
+			case AMP:
 				if (hayAmpersand())
-					transita(Estado.SEP);
+					transita(Estado.DAMP);
 				else
 					error();
 				break;
-			case NUM_ENT:
+			case LIT_ENT:
 				if (hayDigito())
-					transita(Estado.NUM_ENT);
+					transita(Estado.LIT_ENT);
 				else if (hayPunto())
 					transita(Estado.NUM_PUNTO);
 				else if (hayE())
@@ -142,7 +142,7 @@ public class AnalizadorLexicoTiny {
 				break;
 			case MAS:
 				if (hayDigitoPos())
-					transita(Estado.NUM_ENT);
+					transita(Estado.LIT_ENT);
 				else if (hayCero())
 					transita(Estado.NUM_ENT_0);
 				else
@@ -150,7 +150,7 @@ public class AnalizadorLexicoTiny {
 				break;
 			case MENOS:
 				if (hayDigitoPos())
-					transita(Estado.NUM_ENT);
+					transita(Estado.LIT_ENT);
 				else if (hayCero())
 					transita(Estado.NUM_ENT_0);
 				else
@@ -164,12 +164,12 @@ public class AnalizadorLexicoTiny {
 				return unidadPAp();
 			case PCIERRE:
 				return unidadPCierre();
-			case IGUAL:
-				return unidadIgual();
-			case SEP_PC:
+			case DIGUAL:
+				return unidadDigual();
+			case PCOMA:
 				return unidadPuntoComa();
-			case SEP:
-				return unidadSeparador();
+			case DAMP:
+				return unidadDamp();
 			case PUNTO:
 				return unidadPunto();
 			case REC_EOF:
@@ -361,16 +361,16 @@ public class AnalizadorLexicoTiny {
 		case "not":
 			return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.NOT);
 		default:
-			return new UnidadLexicaMultivaluada(filaInicio, columnaInicio, ClaseLexica.VAR, lex.toString());
+			return new UnidadLexicaMultivaluada(filaInicio, columnaInicio, ClaseLexica.ID, lex.toString());
 		}
 	}
 
 	private UnidadLexica unidadEnt() {
-		return new UnidadLexicaMultivaluada(filaInicio, columnaInicio, ClaseLexica.NUM_ENT, lex.toString());
+		return new UnidadLexicaMultivaluada(filaInicio, columnaInicio, ClaseLexica.LIT_ENT, lex.toString());
 	}
 
 	private UnidadLexica unidadReal() {
-		return new UnidadLexicaMultivaluada(filaInicio, columnaInicio, ClaseLexica.NUM_REAL, lex.toString());
+		return new UnidadLexicaMultivaluada(filaInicio, columnaInicio, ClaseLexica.LIT_REAL, lex.toString());
 	}
 
 	private UnidadLexica unidadMas() {
@@ -397,12 +397,12 @@ public class AnalizadorLexicoTiny {
 		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.PCIERRE);
 	}
 
-	private UnidadLexica unidadAsig() {
-		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.ASIG);
-	}
-	
 	private UnidadLexica unidadIgual() {
 		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.IGUAL);
+	}
+	
+	private UnidadLexica unidadDigual() {
+		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.DIGUAL);
 	}
 	
 	private UnidadLexica unidadMenor() {
@@ -421,12 +421,12 @@ public class AnalizadorLexicoTiny {
 		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.MAYOR_IGUAL);
 	}
 
-	private UnidadLexica unidadSeparador() {
-		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.SEP);
+	private UnidadLexica unidadDamp() {
+		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.DAMP);
 	}
 
 	private UnidadLexica unidadPuntoComa() {
-		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.SEP_PC);
+		return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.PCOMA);
 	}
 
 	private UnidadLexica unidadEof() {
@@ -442,7 +442,7 @@ public class AnalizadorLexicoTiny {
 	}
 
 	private void error() {
-		System.err.println("(" + filaActual + ',' + columnaActual + "):Caracter inexperado");
+		System.err.println("(" + filaActual + ',' + columnaActual + "): Caracter inesperado");
 		System.exit(1);
 	}
 
