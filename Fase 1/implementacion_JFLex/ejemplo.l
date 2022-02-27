@@ -78,6 +78,7 @@ corchetesCierre = \]
 llavesApertura = \{
 llavesCierre = \}
 igual = \=
+digual = {igual} {igual}
 porcent = \%
 coma  = \,
 punto = \.
@@ -112,7 +113,7 @@ puntoComa = \;
 {while}						{return ops.unidadWhile();}
 {do}						{return ops.unidadDo();}
 {endwhile}					{return ops.unidadEndwhile();}
-{call}						{return ops.unidadBool();}
+{call}						{return ops.unidadCall();}
 {record}					{return ops.unidadRecord();}
 {array}						{return ops.unidadArray();}
 {of}						{return ops.unidadOf();}
@@ -139,7 +140,8 @@ puntoComa = \;
 {corchetesCierre}			{return ops.unidadCcierre();}
 {llavesApertura}			{return ops.unidadLlap();}
 {llavesCierre}				{return ops.unidadLlcierre();}
-{igual}                   	{return ops.unidadIgual();} 
+{igual}                   	{return ops.unidadIgual();}
+{digual}					{return ops.unidadDigual();}
 {coma}                    	{return ops.unidadComa();}
 {porcent}                   {return ops.unidadPorcent();}
 {punto}						{return ops.unidadPunto();}
