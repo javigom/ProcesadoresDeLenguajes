@@ -419,12 +419,16 @@ public class AnalizadorSintacticoTiny {
 		switch (anticipo.clase()) {
 		case TRUE:
 			empareja(ClaseLexica.TRUE);
+			break;
 		case FALSE:
 			empareja(ClaseLexica.FALSE);
+			break;
 		case LIT_REAL:
 			empareja(ClaseLexica.LIT_REAL);
+			break;
 		case LIT_ENT:
 			empareja(ClaseLexica.LIT_ENT);
+			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.LIT_ENT,
 					ClaseLexica.LIT_REAL, ClaseLexica.TRUE, ClaseLexica.FALSE);
