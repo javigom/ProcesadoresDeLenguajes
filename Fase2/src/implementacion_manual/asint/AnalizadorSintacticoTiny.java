@@ -60,7 +60,7 @@ public class AnalizadorSintacticoTiny {
 	      case INT:  
 	      case REAL:    
 	          empareja(ClaseLexica.TIPO);
-	          ID();
+	          empareja(ClaseLexica.ID);
 	          break;
 	      case EOF: break;    
 	      default:  errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
@@ -72,7 +72,7 @@ public class AnalizadorSintacticoTiny {
 	   switch(anticipo.clase()) {
 	      case ID:    
 	          empareja(ClaseLexica.ID);
-	          IGUAL();
+	          empareja(ClaseLexica.IGUAL);
 	          E0();
 	          break;
 	      case EOF: break;    
@@ -198,6 +198,13 @@ public class AnalizadorSintacticoTiny {
 		         case TRUE: case FALSE:
 		             EXPRESION();
 		             break;
+
+		         case PAP:
+			         empareja(ClaseLexica.PAP);
+		             E0();
+			         empareja(ClaseLexica.PCIERRE);
+		             break;    
+		         
 		         default:  errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
 		                                           ClaseLexica.NUM_ENT, ClaseLexica.NUM_REAL, 
 		                                           ClaseLexica.TRUE, ClaseLexica.FALSE, ClaseLexica.PAP);                                    
