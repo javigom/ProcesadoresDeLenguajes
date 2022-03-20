@@ -10,7 +10,7 @@ public class Main {
    public static void main(String[] args) throws FileNotFoundException, IOException {
      Reader input = new InputStreamReader(new FileInputStream(args[0]));
      AnalizadorSintacticoTiny asint = new AnalizadorSintacticoTiny(input);
-     asint.Sp();
+     asint.PROGRAMAp();
  }
 }   
    
