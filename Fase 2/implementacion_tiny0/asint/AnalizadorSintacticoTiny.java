@@ -2,16 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package asint;
+package implementacionManual.asint;
 
-import alex.UnidadLexica;
-import alex.AnalizadorLexicoTiny;
-import alex.ClaseLexica;
-import errors.GestionErroresTiny;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import implementacionManual.alex.AnalizadorLexicoTiny;
+import implementacionManual.alex.ClaseLexica;
+import implementacionManual.alex.UnidadLexica;
+import implementacionManual.errors.GestionErroresTiny;
 
 public class AnalizadorSintacticoTiny {
 	private UnidadLexica anticipo;
@@ -63,9 +62,7 @@ public class AnalizadorSintacticoTiny {
 		switch (anticipo.clase()) {
 		case DAMP:
 			break;
-		case BOOL:
-		case INT:
-		case REAL:
+		case PCOMA:
 			empareja(ClaseLexica.PCOMA);
 			DECLARACION();
 			RDEC();
@@ -120,7 +117,7 @@ public class AnalizadorSintacticoTiny {
 	
 	private void RINS() {
 		switch (anticipo.clase()) {
-		case ID:
+		case PCOMA:
 			empareja(ClaseLexica.PCOMA);
 			INSTRUCCION();
 			RINS();
@@ -182,7 +179,7 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.MAS,
-					ClaseLexica.MENOS, ClaseLexica.ID, ClaseLexica.PCIERRE, ClaseLexica.EOF);
+					ClaseLexica.MENOS, ClaseLexica.ID/*, ClaseLexica.PCIERRE, ClaseLexica.EOF*/);
 		}
 	}
 
@@ -220,7 +217,7 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.AND,
-					ClaseLexica.OR, ClaseLexica.MAS, ClaseLexica.MENOS, ClaseLexica.PCIERRE, ClaseLexica.EOF);
+					ClaseLexica.OR, ClaseLexica.MAS, ClaseLexica.MENOS/*, ClaseLexica.PCIERRE, ClaseLexica.EOF*/);
 		}
 	}
 	
@@ -280,8 +277,8 @@ public class AnalizadorSintacticoTiny {
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.DIF,
 					ClaseLexica.DIGUAL, ClaseLexica.MAYOR_IGUAL, ClaseLexica.MAYOR, ClaseLexica.MENOR_IGUAL, ClaseLexica.MENOR,
-					ClaseLexica.AND, ClaseLexica.ID, ClaseLexica.MAS, ClaseLexica.MENOS, ClaseLexica.OR, ClaseLexica.PCIERRE,
-					ClaseLexica.EOF);
+					ClaseLexica.AND, ClaseLexica.ID, ClaseLexica.MAS, ClaseLexica.MENOS, ClaseLexica.OR/*, ClaseLexica.PCIERRE,
+					ClaseLexica.EOF*/);
 		}
 	}
 	
@@ -353,8 +350,8 @@ public class AnalizadorSintacticoTiny {
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.DIV,
 					ClaseLexica.POR, ClaseLexica.AND, ClaseLexica.DIF, ClaseLexica.DIGUAL, ClaseLexica.ID,
-					ClaseLexica.MAS, ClaseLexica.MENOS, ClaseLexica.MAYOR_IGUAL, ClaseLexica.MENOR_IGUAL, ClaseLexica.OR, 
-					ClaseLexica.PCIERRE, ClaseLexica.EOF);
+					ClaseLexica.MAS, ClaseLexica.MENOS, ClaseLexica.MAYOR_IGUAL, ClaseLexica.MENOR_IGUAL, ClaseLexica.OR/*, 
+					ClaseLexica.PCIERRE, ClaseLexica.EOF*/);
 		}
 	}
 	

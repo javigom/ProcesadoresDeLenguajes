@@ -1,11 +1,10 @@
-package alex;
+package implementacionManual.alex;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-
-import errors.GestionErroresTiny;
+import implementacionManual.errors.GestionErroresTiny;
 
 public class AnalizadorLexicoTiny {
 	private Reader input;
@@ -367,6 +366,12 @@ public class AnalizadorLexicoTiny {
 			return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.OR);
 		case "not":
 			return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.NOT);
+		case "bool":
+			return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.BOOL);
+		case "int":
+			return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.INT);
+		case "real":
+			return new UnidadLexicaUnivaluada(filaInicio, columnaInicio, ClaseLexica.REAL);
 		default:
 			return new UnidadLexicaMultivaluada(filaInicio, columnaInicio, ClaseLexica.ID, lex.toString());
 		}

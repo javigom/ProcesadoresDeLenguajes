@@ -1,4 +1,4 @@
-package alex;
+package implementacionManual.alex;
 
 public abstract class UnidadLexica {
 	
