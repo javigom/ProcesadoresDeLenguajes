@@ -1,0 +1,117 @@
+type pointer tNodo tArbol;
+type record {
+	string nombre;
+	tArbol izq;
+	tArbol der
+} tNodo;
+type record {
+	array [50] of string nombres;
+	int cont
+} tListaNombres;
+
+var tListaNombres nombres; # Aqui se guardaran los nombres leidos (max. 50)
+var tArbol arbol; # Aqui se construira un arbol de busqueda que contendra
+# los nombres leidos, sin duplicados
+# Lee los nombres a ordenar (max. 50 nombres)
+proc lee_nombres(tListaNombres & nombres) {
+var int i
+&&
+write "Introduce el numero de nombres a ordenar (max 50): "; nl;
+read nombres.cont;
+while (nombres.cont < 0) or (nombres.cont > 50) do
+write "Introduce el numero de nombres a ordenar (max 50): "; nl;
+read nombres.cont
+endwhile;
+i=0;
+write "Introduce un nombre en cada linea: "; nl;
+while i < nombres.cont do
+read nombres.nombres[i];
+i = i + 1
+endwhile
+}; # Fin del procedimiento lee_nombres
+# Construye un arbol de busqueda sin duplicados con los nombres leidos
+# Hace un uso global de las variables 'nombres' y 'arbol' declaradas en
+# el programa principal
+proc construye_arbol() {
+var int i; # para iterar sobre la lista de nombres
+# Inserta el nombre actual en el arbol de busqueda que recibe como parametro.
+# Hace un uso global de la variable 'nombres' declarado en el programa principal,
+# y en del contador 'i' declarado en el subprograma contenedor 'construye_arbol'
+proc inserta_nombre(tArbol& arbol) {
+if arbol == null then
+new arbol;
+arbol->nombre = nombres.nombres[i];
+arbol->izq = null;
+arbol->der = null
+else {
+var tArbol padre; # apuntara al nodo padre del nuevo nodo a insertar
+var tArbol act; # para recorrer la rama al final de la cual debe realizarse
+# la inserción.
+var bool fin # para controlar el final del recorrido de la rama
+&&
+fin = false;
+padre = null;
+act = arbol;
+while not fin do
+padre = act;
+if act->nombre < nombres.nombres[i] then #insertar en el hijo derecho
+
+act = act->der
+else
+if act->nombre > nombres.nombres[i] then #insertar en el hijo izquierdo
+act = act->izq
+endif
+endif;
+if act == null then # se ha alcanzado el punto de insercion
+fin = true
+else
+if act->nombre == nombres.nombres[i] then # el nombre esta duplicado
+fin = true
+endif
+endif
+endwhile;
+if act == null then # se ha alcanzado un punto de insercion
+# hay que insertar un nuevo nodo
+if padre->nombre < nombres.nombres[i] then # insertar como hijo izquierdo
+new padre->der;
+padre->der->nombre = nombres.nombres[i];
+padre->der->izq= null;
+padre->der->der = null
+else # insertar como hijo derecho
+new padre->izq;
+
+padre->izq->nombre = nombres.nombres[i];
+
+padre->izq->izq= null;
+padre->izq->der = null
+endif
+endif
+}
+endif
+} # Fin del procedimiento anidado inserta_nombre
+&&
+arbol = null;
+i=0.0;
+while i < nombres.cont do
+call inserta_nombre(arbol);
+i = i + 1
+endwhile
+}; # Fin del procedimiento construye_arbol
+# Escribe los nombres almacenados en el arbol de busqueda, recorriendo
+# dicho arbol en inorden.
+# Por tanto, los nombres se listan ordenados alfabeticamente,
+# y sin duplicados
+proc escribe_nombres(tArbol arbol) {
+if arbol != null then
+call escribe_nombres(arbol->izq);
+write arbol->nombre; nl;
+call escribe_nombres(arbol->der)
+endif
+} # Fin de procedimiento escribe_nombres
+&&
+# Programa principal
+call lee_nombres(nombres);
+call construye_arbol();
+write "Listado de nombres ordenado"; nl;
+write "---------------------------"; nl;
+call escribe_nombres(arbol)

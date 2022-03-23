@@ -81,7 +81,7 @@ PARSER_END(AnalizadorSintacticoTiny)
   void RINST()    : {} {";" INSTRUCCION() RINST() | {}}
   
   
-  void INSTRUCCION()    : {} {<identificador> "=" EXPRESION() | <IF> EXPRESION() <THEN> LISTA_INST_OP() <ENDIF> RIFTHEN() |
+  void INSTRUCCION()    : {} {<identificador> "=" EXPRESION() | <IF> EXPRESION() <THEN> LISTA_INST_OP() RIFTHEN() <ENDIF> |
   							  <WHILE> EXPRESION() <DO> LISTA_INST_OP()  <ENDWHILE> | <READ> EXPRESION() | <WRITE> EXPRESION() | <NL> | <NEW> EXPRESION() |
   							  <DELETE> EXPRESION() | <CALL> <identificador> "(" LISTA_EXPR_OP() ")" | BLOQUE()}
   
@@ -122,5 +122,5 @@ PARSER_END(AnalizadorSintacticoTiny)
   void OPBN2()  : {} {"<" | ">" | "<="| ">=" | "==" | "!="}
   void OPBN3()  : {} {"*" | "/" | "%"}
   void OPUN5()  : {} {"[" EXPRESION() "]"| OP_ACCESO()}
-  void OP_ACCESO()  : {} {"." <identificador> | <identificador>}
+  void OP_ACCESO()  : {} {"." <identificador> | "->" <identificador>}
   

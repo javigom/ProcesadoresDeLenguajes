@@ -1,0 +1,86 @@
+package asint;
+
+import java_cup.runtime.*;
+import alex.AnalizadorLexicoTiny;
+import alex.UnidadLexica;
+import errors.GestionErroresTiny;
+
+scan with {: return getScanner().next_token(); :};
+parser code {: 
+   private GestionErroresTiny errores;
+   public void syntax_error(Symbol unidadLexica) {
+     errores.errorSintactico((UnidadLexica)unidadLexica);
+   }
+:};
+init with {: 
+   errores = new GestionErroresTiny();
+   AnalizadorLexicoTiny alex = (AnalizadorLexicoTiny)getScanner();
+   alex.fijaGestionErrores(errores);
+:};
+
+
+terminal 	 mas, menos, div, por, percent, and, not, or, menor, 
+			 mayor, menig, mayig, igual, distinto, pap, pcie, cap, 
+			 ccierre, punto, flecha, damp, pcoma, var, id, type, 
+			 proc, coma, amp, true, false, lit_ent, lit_real, lit_cad, null;
+
+non terminal E0, E1, E2, E3, E4, E5, E6, E7, RE0, RE1, RE2, RE3,
+			 OPBN1, OPBN2, OPBN3, OPUN5 , exp_basica, expresion, 
+			 op_acceso, id, programa, instrucciones, declaraciones,  
+			 declaracion, lista_dec, decvar, dectipo, decproc, 
+			 tipo, pformales, bloque, lista_pformales, lista_expr,
+			 pformal, pformal_cont, tipo_basico, expresion_basica, expresion;
+
+
+programa ::= declaraciones damp instrucciones;
+declaraciones ::= lista_dec | ;
+lista_dec ::= declaracion pcoma lista_dec | declaracion ;
+
+declaracion ::= decvar | dectipo | decproc;
+
+decvar ::= var tipo id;
+dectipo ::=  type tipo id;
+decproc::=  proc id pformales bloque;
+pformales ::=  pap lista_pformales  pcierre;
+lista_pformales  ::=  pformal lista_pformales | pformal;
+
+pformal ::=  tipo amp id | tipo id;
+
+tipo ::=  tipo_basico | id | array cap lit_ent ccierre of tipo | record llap lista_campos llcierre | pointer tipo;
+tipo_basico ::= int | real | bool | string;
+lista_campos ::= campo pcoma lista_campos | campo;
+campo ::= tipo id;
+
+instrucciones ::= instruccion pcoma instrucciones | instruccion;
+
+instruccion ::= id igual expresion | if expresion then lista_inst_op else lista_inst endif | if expresion then lista_inst_op endif | while expresion do lista_inst_op endwhile | read expresion | write expresion | new expresion | delete expresion | nl | call id pap lista_expr_op pcierre | bloque;
+
+lista_inst_op ::= lista_inst | ;
+
+lista_inst ::= instruccion pcoma lista_inst | instruccion ;
+
+lista_expr_op ::= lista_expr | ;
+
+lista_expr ::= expresion coma lista_expr | expresion ;
+
+bloque ::= llap programa llcierre  | llap llcierre ;
+
+expresion ::= expresion_basica | E0 ;
+
+expresion_basica ::= true | false | lit_ent | lit_real | lit_cad | id | null;
+
+E0 ::= E1 mas E0 | E1 menos E1 | E1;
+E1 ::= E1 OPBN1 E2 | E2;
+OPBN1 ::= and | or;
+E2 ::= E2 OPBN2 E3 | E3;
+OPBN2 ::= menor | mayor | menig | mayig | igual | distinto;
+E3 ::= E4 OPBN3 E4 | E4;
+OPBN3 ::= div | por | percent;
+E4 ::= not E4 | menos E5 | E5;
+E5 ::= E5 OPUN5 | E6;
+OPUN5 ::= cap expresion ccierre | op_acceso;
+op_acceso ::= punto id | flecha id;
+E6 ::= por E6 | E7;
+E7 ::= exp_basica | pap E0 pcie;
+
+
