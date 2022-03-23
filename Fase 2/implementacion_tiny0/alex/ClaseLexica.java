@@ -1,8 +1,0 @@
-package implementacionManual.alex;
-
-public enum ClaseLexica {
-	
-	DAMP, PCOMA, IGUAL, FALSE, TRUE, MAS, MENOS, POR, DIV, AND, OR, NOT, MENOR, MAYOR, MENOR_IGUAL, MAYOR_IGUAL, DIGUAL,
-	DIF, PAP, PCIERRE, PUNTO, ID, LIT_ENT, LIT_REAL, PDEC, PEXP, EOF, BOOL, INT, REAL
-
-}
