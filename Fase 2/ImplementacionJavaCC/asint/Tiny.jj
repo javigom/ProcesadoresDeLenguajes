@@ -1,0 +1,35 @@
+options  {
+  STATIC=false;
+}  
+PARSER_BEGIN(AnalizadorSintacticoTiny)
+package asint;
+
+public class AnalizadorSintacticoTiny {}
+PARSER_END(AnalizadorSintacticoTiny)
+  TOKEN:{<#letra:["a"-"z","A"-"Z"]>}
+  TOKEN:{<#digitoPositivo:["1"-"9"]>}
+  TOKEN:{<#digito:<digitoPositivo>|"0">} 
+  TOKEN:{<#parteEntera:<digitoPositivo> (<digito>)* |"0">} 
+  TOKEN:{<#parteDecimal: (<digito>)* <digitoPositivo>>}
+  SKIP:{<["\t"," ","\r","\b","\n"]>}  
+  SKIP:{<"#"(~["\n"])*>}  
+  TOKEN: {<donde:"donde">}
+  TOKEN: {<evalua:"evalua">}
+  TOKEN:{<identificador:<letra>(<letra>|<digito>)*>}
+  TOKEN:{<numeroEntero: (["+","-"])? <parteEntera> >}
+  TOKEN:{<numeroReal: (["+","-"])? <parteEntera> "." <parteDecimal> >  }
+  
+  void Sp()   : {} {S() <EOF>}
+  void S()    : {} {<evalua> E0() Ds()}
+  void Ds()   : {} {<donde> LDs() | {} }  
+  void LDs()  : {} {D() RLDs()}
+  void RLDs() : {} {"," D() RLDs() | {} }
+  void D()    : {} {<identificador> "=" E0()}
+  void E0()   : {} {E1() RE0()}
+  void RE0()  : {} {OP0() E1() RE0() | {} }
+  void E1()   : {} {E2() RE1() }
+  void RE1()  : {} {OP1() E2() RE1() | {} }
+  void E2()   : {} {<numeroEntero> | <numeroReal> | <identificador> | "(" E0() ")"} 
+  void OP0()  : {} {"+" | "-"}
+  void OP1()  : {} {"*" | "/"}
+  
