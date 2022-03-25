@@ -1,10 +1,10 @@
-package implementacionManual.alex;
+package alex;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import implementacionManual.errors.GestionErroresTiny;
+import errors.GestionErroresTiny;
 
 public class AnalizadorLexicoTiny {
 	private Reader input;

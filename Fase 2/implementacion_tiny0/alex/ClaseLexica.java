@@ -1,4 +1,4 @@
-package implementacionManual.alex;
+package alex;
 
 public enum ClaseLexica {
 	

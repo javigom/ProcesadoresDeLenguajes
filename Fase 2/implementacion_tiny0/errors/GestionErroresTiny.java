@@ -1,6 +1,6 @@
-package implementacionManual.errors;
+package errors;
 
-import implementacionManual.alex.ClaseLexica;
+import alex.ClaseLexica;
 
 public class GestionErroresTiny {
 	public void errorLexico(int fila, int col, String lexema) {

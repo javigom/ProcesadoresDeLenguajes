@@ -2,15 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package implementacionManual.asint;
+package asint;
 
 import java.io.IOException;
 import java.io.Reader;
 
-import implementacionManual.alex.AnalizadorLexicoTiny;
-import implementacionManual.alex.ClaseLexica;
-import implementacionManual.alex.UnidadLexica;
-import implementacionManual.errors.GestionErroresTiny;
+import alex.AnalizadorLexicoTiny;
+import alex.ClaseLexica;
+import alex.UnidadLexica;
+import errors.GestionErroresTiny;
 
 public class AnalizadorSintacticoTiny {
 	private UnidadLexica anticipo;
@@ -68,8 +68,7 @@ public class AnalizadorSintacticoTiny {
 			RDEC();
 			break;
 		default:
-			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.DAMP,
-					ClaseLexica.BOOL, ClaseLexica.INT, ClaseLexica.REAL);
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase());
 		}
 	}
 	
@@ -83,7 +82,7 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.BOOL, 
-					ClaseLexica.INT, ClaseLexica.REAL, ClaseLexica.EOF);
+					ClaseLexica.INT, ClaseLexica.REAL);
 		}
 	}
 	
@@ -125,8 +124,7 @@ public class AnalizadorSintacticoTiny {
 		case EOF:
 			break;
 		default:
-			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.ID,
-					ClaseLexica.EOF);
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase());
 		}
 	}
 
@@ -145,6 +143,7 @@ public class AnalizadorSintacticoTiny {
 	private void E0() {
 		switch (anticipo.clase()) {
 		case FALSE:
+		case ID:
 		case LIT_ENT:
 		case LIT_REAL:
 		case MENOS:
@@ -156,8 +155,8 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.FALSE,
-					ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT, ClaseLexica.PAP,
-					ClaseLexica.TRUE);
+					ClaseLexica.ID, ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT,
+					ClaseLexica.PAP, ClaseLexica.TRUE);
 		}
 	}
 	
@@ -178,13 +177,14 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.MAS,
-					ClaseLexica.MENOS, ClaseLexica.ID/*, ClaseLexica.PCIERRE, ClaseLexica.EOF*/);
+					ClaseLexica.MENOS, ClaseLexica.ID);
 		}
 	}
 
 	private void E1() {
 		switch (anticipo.clase()) {
 		case FALSE:
+		case ID:
 		case LIT_ENT:
 		case LIT_REAL:
 		case MENOS:
@@ -196,8 +196,8 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.FALSE,
-					ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT, ClaseLexica.PAP,
-					ClaseLexica.TRUE);
+					ClaseLexica.ID, ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT,
+					ClaseLexica.PAP, ClaseLexica.TRUE);
 		}
 	}
 	
@@ -217,7 +217,7 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.AND,
-					ClaseLexica.OR, ClaseLexica.MAS, ClaseLexica.MENOS/*, ClaseLexica.PCIERRE, ClaseLexica.EOF*/);
+					ClaseLexica.OR, ClaseLexica.MAS, ClaseLexica.MENOS);
 		}
 	}
 	
@@ -238,6 +238,7 @@ public class AnalizadorSintacticoTiny {
 	private void E2() {
 		switch (anticipo.clase()) {
 		case FALSE:
+		case ID:
 		case LIT_ENT:
 		case LIT_REAL:
 		case MENOS:
@@ -249,8 +250,8 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.FALSE,
-					ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT, ClaseLexica.PAP,
-					ClaseLexica.TRUE);
+					ClaseLexica.ID, ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT,
+					ClaseLexica.PAP, ClaseLexica.TRUE);
 		}
 	}
 	
@@ -277,8 +278,7 @@ public class AnalizadorSintacticoTiny {
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.DIF,
 					ClaseLexica.DIGUAL, ClaseLexica.MAYOR_IGUAL, ClaseLexica.MAYOR, ClaseLexica.MENOR_IGUAL, ClaseLexica.MENOR,
-					ClaseLexica.AND, ClaseLexica.ID, ClaseLexica.MAS, ClaseLexica.MENOS, ClaseLexica.OR/*, ClaseLexica.PCIERRE,
-					ClaseLexica.EOF*/);
+					ClaseLexica.AND, ClaseLexica.MAS, ClaseLexica.MENOS, ClaseLexica.OR);
 		}
 	}
 	
@@ -312,6 +312,7 @@ public class AnalizadorSintacticoTiny {
 	private void E3() {
 		switch (anticipo.clase()) {
 		case FALSE:
+		case ID:
 		case LIT_ENT:
 		case LIT_REAL:
 		case MENOS:
@@ -323,8 +324,8 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.FALSE,
-					ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT, ClaseLexica.PAP,
-					ClaseLexica.TRUE);
+					ClaseLexica.ID, ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT,
+					ClaseLexica.PAP, ClaseLexica.TRUE);
 		}
 	}
 	
@@ -342,6 +343,8 @@ public class AnalizadorSintacticoTiny {
 		case MENOS:
 		case MAYOR_IGUAL:
 		case MENOR_IGUAL:
+		case MAYOR:
+		case MENOR:
 		case OR:
 		case PCIERRE:
 		case PCOMA:
@@ -349,9 +352,8 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.DIV,
-					ClaseLexica.POR, ClaseLexica.AND, ClaseLexica.DIF, ClaseLexica.DIGUAL, ClaseLexica.ID,
-					ClaseLexica.MAS, ClaseLexica.MENOS, ClaseLexica.MAYOR_IGUAL, ClaseLexica.MENOR_IGUAL, ClaseLexica.OR/*, 
-					ClaseLexica.PCIERRE, ClaseLexica.EOF*/);
+					ClaseLexica.POR, ClaseLexica.AND, ClaseLexica.DIF, ClaseLexica.DIGUAL, ClaseLexica.MAS, 
+					ClaseLexica.MENOS, ClaseLexica.MAYOR_IGUAL, ClaseLexica.MENOR_IGUAL, ClaseLexica.OR);
 		}
 	}
 	
@@ -380,6 +382,7 @@ public class AnalizadorSintacticoTiny {
 			E5();
 			break;
 		case FALSE:
+		case ID:
 		case LIT_ENT:
 		case LIT_REAL:
 		case PAP:
@@ -387,15 +390,16 @@ public class AnalizadorSintacticoTiny {
 			E5();
 			break;
 		default:
-			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.NOT,
-					ClaseLexica.MENOS, ClaseLexica.FALSE, ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.PAP,
-					ClaseLexica.TRUE);
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.FALSE,
+					ClaseLexica.ID, ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT,
+					ClaseLexica.PAP, ClaseLexica.TRUE);
 		}
 	}
 
 	private void E5() {
 		switch (anticipo.clase()) {
 		case FALSE:
+		case ID:
 		case LIT_ENT:
 		case LIT_REAL:
 		case TRUE:
@@ -408,7 +412,7 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.LIT_ENT,
-					ClaseLexica.LIT_REAL, ClaseLexica.TRUE, ClaseLexica.FALSE, ClaseLexica.PAP);
+					ClaseLexica.ID, ClaseLexica.LIT_REAL, ClaseLexica.TRUE, ClaseLexica.FALSE, ClaseLexica.PAP);
 		}
 	}
 	
@@ -425,6 +429,9 @@ public class AnalizadorSintacticoTiny {
 			break;
 		case LIT_ENT:
 			empareja(ClaseLexica.LIT_ENT);
+			break;
+		case ID:
+			empareja(ClaseLexica.ID);
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.LIT_ENT,
