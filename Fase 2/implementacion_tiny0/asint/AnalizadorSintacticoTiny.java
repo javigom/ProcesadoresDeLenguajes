@@ -172,10 +172,9 @@ public class AnalizadorSintacticoTiny {
 			empareja(ClaseLexica.MENOS);
 			E1();
 			break;
-		case ID:
 		case PCIERRE:
+		case PCOMA:
 		case EOF:
-			empareja(ClaseLexica.EOF);
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.MAS,
@@ -213,6 +212,7 @@ public class AnalizadorSintacticoTiny {
 		case MAS:
 		case MENOS:
 		case PCIERRE:
+		case PCOMA:
 		case EOF:
 			break;
 		default:
@@ -256,8 +256,8 @@ public class AnalizadorSintacticoTiny {
 	
 	private void RE2() {
 		switch (anticipo.clase()) {
-		case DIF:
 		case DIGUAL:
+		case DIF:
 		case MAYOR_IGUAL:
 		case MAYOR:
 		case MENOR_IGUAL:
@@ -267,11 +267,11 @@ public class AnalizadorSintacticoTiny {
 			RE2();
 			break;
 		case AND:
-		case ID:
 		case MAS:
 		case MENOS:
 		case OR:
 		case PCIERRE:
+		case PCOMA:
 		case EOF:
 			break;
 		default:
@@ -336,15 +336,15 @@ public class AnalizadorSintacticoTiny {
 			E4();
 			break;
 		case AND:
-		case DIF:
 		case DIGUAL:
-		case ID:
+		case DIF:
 		case MAS:
 		case MENOS:
 		case MAYOR_IGUAL:
 		case MENOR_IGUAL:
 		case OR:
 		case PCIERRE:
+		case PCOMA:
 		case EOF:
 			break;
 		default:
