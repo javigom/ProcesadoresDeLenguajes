@@ -43,18 +43,18 @@ PARSER_END(AnalizadorSintacticoTiny)
   TOKEN: {<READ:"read">} 
   TOKEN: {<WRITE:"write">}
   TOKEN: {<NL:"nl">} 
-  TOKEN: {<VAL:"var">}
+  TOKEN: {<VAR:"var">}
   TOKEN: {<TYPE:"type">}
-  TOKEN: {<comillas:" " ">}                                  ??????????????????
-  TOKEN:{<litCad:<comillas>(^[" " ","\r","\b","\n])*<comillas>>}
+  TOKEN: {<comillas:"\"">}
+  TOKEN:{<litCad: <comillas> (~[ "\"", "\r","\b","\n"] )* <comillas> >}
   TOKEN:{<identificador:<letra>(<letra>|<digito>|"_")*>}
   TOKEN:{<litEnt: (<signo>)? <parteEntera> >}
   TOKEN:{<litReal: <litEnt> (<parteDecimal> | <parteExponencial> | <parteDecimal> <parteExponencial>)>  }
   
   void SPROGRAMA()   : {} {PROGRAMA() <EOF>}
-  void PROGRAMA()   : {} {DECLARACIONES() "&&" INSTRUCCIONES()}
+  void PROGRAMA()   : {} {DECLARACIONES() INSTRUCCIONES()}
   
-  void DECLARACIONES()    : {} {LISTA_DEC() | {} }
+  void DECLARACIONES()    : {} {LISTA_DEC() "&&" | {} }
   void LISTA_DEC()    : {} {DECLARACION() RLISTA_DEC()}
   void RLISTA_DEC()    : {} {";" DECLARACION() RLISTA_DEC() | {} }
   void DECLARACION()    : {} {DECVAR() | DECTIPO() | DECPROC() }
@@ -63,10 +63,12 @@ PARSER_END(AnalizadorSintacticoTiny)
   void DECTIPO()    : {} {<TYPE> TIPO() <identificador> }
   void DECPROC()    : {} {<PROC> <identificador> PFORMALES() BLOQUE()}
   
-  void PFORMALES()    : {} {"(" LISTA_PFORMALES() ")"}
+  void PFORMALES()    : {} {"(" RPFORMALES()}
+  void RPFORMALES()    : {} {LISTA_PFORMALES() ")" | ")"}
   void LISTA_PFORMALES()    : {} {PFORMAL() RLISTA_PFORMALES()}
   void RLISTA_PFORMALES()    : {} {"," PFORMAL() RLISTA_PFORMALES() | {} }
-  void PFORMAL()    : {} {TIPO() "&" <identificador> | TIPO() <identificador> }
+  void PFORMAL()    : {} {TIPO() RPFORMAL() }
+  void RPFORMAL()   : {} {"&" <identificador> | <identificador> }
   
   
   void TIPO()    : {} {TIPO_BASICO() | <identificador> | <ARRAY> "[" <litEnt> "]" <OF> TIPO() | <RECORD> "{" LISTA_CAMPOS() "}" | <POINTER> TIPO()}
@@ -81,7 +83,7 @@ PARSER_END(AnalizadorSintacticoTiny)
   void RINST()    : {} {";" INSTRUCCION() RINST() | {}}
   
   
-  void INSTRUCCION()    : {} {<identificador> "=" EXPRESION() | <IF> EXPRESION() <THEN> LISTA_INST_OP() RIFTHEN() <ENDIF> |
+  void INSTRUCCION()    : {} {EXPRESION() "=" EXPRESION() | <IF> EXPRESION() <THEN> LISTA_INST_OP() RIFTHEN() <ENDIF> |
   							  <WHILE> EXPRESION() <DO> LISTA_INST_OP()  <ENDWHILE> | <READ> EXPRESION() | <WRITE> EXPRESION() | <NL> | <NEW> EXPRESION() |
   							  <DELETE> EXPRESION() | <CALL> <identificador> "(" LISTA_EXPR_OP() ")" | BLOQUE()}
   
@@ -89,15 +91,16 @@ PARSER_END(AnalizadorSintacticoTiny)
   void LISTA_INST()    : {} {INSTRUCCION() RLISTA_INST()}
   
   void RLISTA_INST()    : {} {";" INSTRUCCION() RLISTA_INST() | {}}  
-  void RIFTHEN()    : {} {LISTA_INST() <ENDIF> | {}}
+  void RIFTHEN()    : {} {<ELSE> LISTA_INST() | {}}
   
   void LISTA_EXPR_OP()    : {} {LISTA_EXPR()| {}}  
   void LISTA_EXPR()    : {} {EXPRESION() RLISTA_EXPR()}
   void RLISTA_EXPR()    : {} {"," LISTA_EXPR() RLISTA_EXPR() | {}}
   
-  void BLOQUE()    : {} {"{" PROGRAMA() "}" | "{" "}" }
+  void BLOQUE()    : {} {"{" RBLOQUE() }
+  void RBLOQUE()    : {} {PROGRAMA() "}" | "}" }
   
-  void EXPRESION()    : {} {EXPRESION_BASICA() | E0() }
+  void EXPRESION()    : {} {E0()}
   void EXPRESION_BASICA()    : {} {<TRUE> | <FALSE> | <identificador> | <NULL> | <litEnt> | <litReal> | <litCad> }
   
   void E0()   : {} {E1() RE0()}
@@ -114,13 +117,14 @@ PARSER_END(AnalizadorSintacticoTiny)
   void RE3()  : {} {OPBN3() E4() | {} }
   
   void E4()   : {} {<NOT> E4() | "-" E5() | E5() }
-  void E5()   : {} {E5() OPUN5() | E6()}
+  void E5()   : {} {E6() RE5()}
+  void RE5()  : {} {OPUN5() RE5() | {} }
   void E6()   : {} {"*" E6() | E7()}
   void E7()   : {} {EXPRESION_BASICA() | "(" E0() ")"} 
   
   void OPBN1()  : {} {<AND> | <OR>}
-  void OPBN2()  : {} {"<" | ">" | "<="| ">=" | "==" | "!="}
+  void OPBN2()  : {} {"<" | ">" | "<=" | ">=" | "==" | "!="}
   void OPBN3()  : {} {"*" | "/" | "%"}
-  void OPUN5()  : {} {"[" EXPRESION() "]"| OP_ACCESO()}
-  void OP_ACCESO()  : {} {"." <identificador> | "->" <identificador>}
+  void OPUN5()  : {} {"[" EXPRESION() "]" | OP_ACCESO()}
+  void OP_ACCESO()  : {} {"."<identificador> | "->"<identificador>}
   
