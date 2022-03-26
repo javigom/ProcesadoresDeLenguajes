@@ -52,7 +52,7 @@ PARSER_END(AnalizadorSintacticoTiny)
   TOKEN: {<litReal: <litEnt> (<parteDecimal> | <parteExponencial> | <parteDecimal> <parteExponencial>)>  }
   
   void PROGRAMAp()   : {} {PROGRAMA() <EOF>}
-  void PROGRAMA()   : {} {DECLARACIONES() "&&" INSTRUCCIONES()}
+  void PROGRAMA()   : {} {DECLARACIONES() "&&" INSTRUCCIONES() | INSTRUCCIONES() }
   
   void DECLARACIONES()    : {} {LISTA_DEC() | {} }
   void LISTA_DEC()    : {} {DECLARACION() RLISTA_DEC()}
