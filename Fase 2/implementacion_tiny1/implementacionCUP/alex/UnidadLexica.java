@@ -1,4 +1,4 @@
-package alex;
+package implementacionCUP.alex;
 
 import java_cup.runtime.Symbol;
 

@@ -1,10 +1,10 @@
-package asint;
+package implementacionCUP.asint;
 
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import alex.AnalizadorLexicoTiny;
+import implementacionCUP.alex.AnalizadorLexicoTiny;
 
 public class Main {
    public static void main(String[] args) throws Exception {

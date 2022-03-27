@@ -4,7 +4,7 @@
 // Sun Mar 27 16:02:56 CEST 2022
 //----------------------------------------------------
 
-package asint;
+package implementacionCUP.asint;
 
 /** CUP generated class containing symbol constants. */
 public class ClaseLexica {

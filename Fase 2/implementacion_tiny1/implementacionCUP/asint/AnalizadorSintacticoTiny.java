@@ -4,12 +4,12 @@
 // Sun Mar 27 16:02:56 CEST 2022
 //----------------------------------------------------
 
-package asint;
+package implementacionCUP.asint;
 
 import java_cup.runtime.*;
-import alex.AnalizadorLexicoTiny;
-import alex.UnidadLexica;
-import errors.GestionErroresTiny;
+import implementacionCUP.alex.AnalizadorLexicoTiny;
+import implementacionCUP.alex.UnidadLexica;
+import implementacionCUP.errors.GestionErroresTiny;
 
 /** CUP v0.11b beta 20140220 generated parser.
   * @version Sun Mar 27 16:02:56 CEST 2022

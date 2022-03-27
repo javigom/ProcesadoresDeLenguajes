@@ -1,11 +1,11 @@
 options  {
   STATIC=false;
 }  
-PARSER_BEGIN(AnalizadorSintacticoTiny)
+PARSER_BEGIN(AnalizadorSintacticoTinyCC)
 package asint;
 
-public class AnalizadorSintacticoTiny {}
-PARSER_END(AnalizadorSintacticoTiny)
+public class AnalizadorSintacticoTinyCC {}
+PARSER_END(AnalizadorSintacticoTinyCC)
   TOKEN:{<#letra:["a"-"z","A"-"Z"]>}
   TOKEN:{<#digitoPositivo:["1"-"9"]>}
   TOKEN:{<#digito:<digitoPositivo>|"0">} 
