@@ -54,9 +54,8 @@ PARSER_END(AnalizadorSintacticoTiny)
   void PROGRAMAp()   : {} {PROGRAMA() <EOF>}
   void PROGRAMA()   : {} {DECLARACIONES() "&&" INSTRUCCIONES() | INSTRUCCIONES() }
   
-  void DECLARACIONES()    : {} {LISTA_DEC() | {} }
-  void LISTA_DEC()    : {} {DECLARACION() RLISTA_DEC()}
-  void RLISTA_DEC()    : {} {";" DECLARACION() RLISTA_DEC() | {} }
+  void DECLARACIONES()    : {} {DECLARACION() RDECLARACIONES()}
+  void RDECLARACIONES()    : {} {";" DECLARACION() RDECLARACIONES() | {} }
   void DECLARACION()    : {} {DECVAR() | DECTIPO() | DECPROC() }
  
   void DECVAR()    : {} {<VAR> TIPO() <identificador> }
