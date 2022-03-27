@@ -9,7 +9,7 @@ scan with {: return getScanner().next_token(); :};
 parser code {: 
    private GestionErroresTiny errores;
    public void syntax_error(Symbol unidadLexica) {
-     errores.errorsintactico((UnidadLexica)unidadLexica);
+     errores.errorSintactico((UnidadLexica)unidadLexica);
    }
 :};
 init with {: 
@@ -20,7 +20,7 @@ init with {:
 
 
 terminal 	 MAS, MENOS, DIV, POR, PERCENT, AND, NOT, OR, MENOR, 
-			 MAYOR, MENIG, MAYIG, IGUAL, DISTINTO, PAP, PCIERRE, CAP, 
+			 MAYOR, MENOR_IGUAL, MAYOR_IGUAL, IGUAL, DIF, PAP, PCIERRE, CAP, 
 			 CCIERRE, PUNTO, FLECHA, DAMP, PCOMA, VAR, ID, TYPE, 
 			 PROC, COMA, AMP, TRUE, FALSE, LIT_ENT, LIT_REAL, LIT_CAD,
 			 NULL, ARRAY, OF, RECORD, LLAP, LLCIERRE, POINTER,
@@ -75,7 +75,7 @@ E1 ::= E1 OPBN1 E2 | E2;
 OPBN1 ::= AND | OR;
 
 E2 ::= E2 OPBN2 E3 | E3;
-OPBN2 ::= MENOR | MAYOR | MENIG | MAYIG | DIGUAL | DISTINTO;
+OPBN2 ::= MENOR | MAYOR | MENOR_IGUAL | MAYOR_IGUAL | DIGUAL | DIF;
 
 E3 ::= E4 OPBN3 E4 | E4;
 OPBN3 ::= DIV | POR | PERCENT;
