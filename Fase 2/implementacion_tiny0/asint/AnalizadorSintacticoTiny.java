@@ -68,7 +68,8 @@ public class AnalizadorSintacticoTiny {
 			RDEC();
 			break;
 		default:
-			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase());
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.DAMP;
+					ClaseLexica.PCOMA);
 		}
 	}
 	
@@ -124,7 +125,8 @@ public class AnalizadorSintacticoTiny {
 		case EOF:
 			break;
 		default:
-			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase());
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.PCOMA,
+					ClaseLexica.EOF);
 		}
 	}
 
