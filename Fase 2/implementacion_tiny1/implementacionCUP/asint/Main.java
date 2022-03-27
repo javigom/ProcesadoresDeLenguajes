@@ -12,7 +12,7 @@ public class Main {
 	 AnalizadorLexicoTiny alex = new AnalizadorLexicoTiny(input);
 	 AnalizadorSintacticoTiny asint = new AnalizadorSintacticoTiny(alex);
 	 //asint.setScanner(alex);
-	 asint.parse();
+	 asint.debug_parse();
  }
 }   
    
