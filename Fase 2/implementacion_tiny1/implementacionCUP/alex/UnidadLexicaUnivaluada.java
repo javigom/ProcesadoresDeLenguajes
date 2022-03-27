@@ -1,4 +1,4 @@
-package implementacionCUP.alex;
+package alex;
 
 public class UnidadLexicaUnivaluada extends UnidadLexica {
 	

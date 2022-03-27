@@ -1,4 +1,4 @@
-package implementacionCUP.alex;
+package alex;
 
 public class ALexOperations {
 	private AnalizadorLexicoTiny alex;

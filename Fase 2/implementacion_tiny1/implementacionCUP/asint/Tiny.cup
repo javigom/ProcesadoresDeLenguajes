@@ -1,4 +1,4 @@
-package implementacionCUP.asint;
+package asint;
 
 import java_cup.runtime.*;
 import alex.AnalizadorLexicoTiny;
@@ -9,7 +9,7 @@ scan with {: return getScanner().next_token(); :};
 parser code {: 
    private GestionErroresTiny errores;
    public void syntax_error(Symbol unidadLexica) {
-     errores.errorSintactico((UnidadLexica)unidadLexica);
+     errores.errorsintactico((UnidadLexica)unidadLexica);
    }
 :};
 init with {: 
@@ -19,75 +19,75 @@ init with {:
 :};
 
 
-terminal 	 mas, menos, div, por, percent, and, not, or, menor, 
-			 mayor, menig, mayig, igual, distinto, pap, pcie, cap, 
-			 ccierre, punto, flecha, damp, pcoma, var, id, type, 
-			 proc, coma, amp, true, false, lit_ent, lit_real, lit_cad,
-			 null, pcierre, array, of, record, llap, llcierre, pointer,
-			 int, bool, real, string, if, then, else, while, endif, do,
-			 endwhile, read, nl, delete, new, write, call;
+terminal 	 MAS, MENOS, DIV, POR, PERCENT, AND, NOT, OR, MENOR, 
+			 MAYOR, MENIG, MAYIG, IGUAL, DISTINTO, PAP, PCIERRE, CAP, 
+			 CCIERRE, PUNTO, FLECHA, DAMP, PCOMA, VAR, ID, TYPE, 
+			 PROC, COMA, AMP, TRUE, FALSE, LIT_ENT, LIT_REAL, LIT_CAD,
+			 NULL, ARRAY, OF, RECORD, LLAP, LLCIERRE, POINTER,
+			 INT, BOOL, REAL, STRING, IF, THEN, ELSE, WHILE, ENDIF, DO,
+			 ENDWHILE, READ, NL, DELETE, NEW, WRITE, CALL, DIGUAL;
 
 non terminal E0, E1, E2, E3, E4, E5, E6, E7,
-			 OPBN1, OPBN2, OPBN3, OPUN5, expresion_basica, expresion,
-			 op_acceso, programa, instrucciones, declaraciones,  
-			 declaracion, instruccion, decvar, dectipo, decproc, 
-			 tipo, pformales, bloque, lista_pformales, lista_expr,
-			 pformal, tipo_basico, lista_campos, campo,
-			 lista_inst_op, lista_inst, lista_expr_op;
+			 OPBN1, OPBN2, OPBN3, OPUN5, EXPRESION_BASICA, EXPRESION,
+			 OP_ACCESO, PROGRAMA, INSTRUCCIONES, DECLARACIONES,  
+			 DECLARACION, INSTRUCCION, DECVAR, DECTIPO, DECPROC, 
+			 TIPO, PFORMALES, BLOQUE, LISTA_PFORMALES, LISTA_EXPR,
+			 PFORMAL, TIPO_BASICO, LISTA_CAMPOS, CAMPO,
+			 LISTA_INST_OP, LISTA_INST, LISTA_EXPR_OP;
 
 
-programa ::= declaraciones damp instrucciones | instrucciones;
-declaraciones ::=declaracion pcoma declaraciones | declaracion ;
+PROGRAMA ::= DECLARACIONES DAMP INSTRUCCIONES | INSTRUCCIONES;
+DECLARACIONES ::=DECLARACION PCOMA DECLARACIONES | DECLARACION ;
 
-declaracion ::= decvar | dectipo | decproc;
-decvar ::= var tipo id;
-dectipo ::=  type tipo id;
-decproc::=  proc id pformales bloque;
+DECLARACION ::= DECVAR | DECTIPO | DECPROC;
+DECVAR ::= VAR TIPO ID;
+DECTIPO ::=  TYPE TIPO ID;
+DECPROC::=  PROC ID PFORMALES BLOQUE;
 
-pformales ::=  pap lista_pformales  pcierre | pap pcierre ;
-lista_pformales  ::=  pformal lista_pformales | pformal;
+PFORMALES ::=  PAP LISTA_PFORMALES  PCIERRE | PAP PCIERRE;
+LISTA_PFORMALES  ::=  PFORMAL COMA LISTA_PFORMALES | PFORMAL;
 
-pformal ::=  tipo amp id | tipo id;
+PFORMAL ::=  TIPO AMP ID | TIPO ID;
 
-tipo ::=  tipo_basico | id | array cap lit_ent ccierre of tipo | record llap lista_campos llcierre | pointer tipo;
-tipo_basico ::= int | real | bool | string;
+TIPO ::=  TIPO_BASICO | ID | ARRAY CAP LIT_ENT CCIERRE OF TIPO | RECORD LLAP LISTA_CAMPOS LLCIERRE | POINTER TIPO;
+TIPO_BASICO ::= INT | REAL | BOOL | STRING;
 
-lista_campos ::= campo pcoma lista_campos | campo;
-campo ::= tipo id;
+LISTA_CAMPOS ::= CAMPO PCOMA LISTA_CAMPOS | CAMPO;
+CAMPO ::= TIPO ID;
 
-instrucciones ::= instruccion pcoma instrucciones | instruccion;
-instruccion ::= expresion igual expresion | if expresion then lista_inst_op else lista_inst endif | if expresion then lista_inst_op endif | while expresion do lista_inst_op endwhile | read expresion | write expresion | new expresion | delete expresion | nl | call id pap lista_expr_op pcierre | bloque;
+INSTRUCCIONES ::= INSTRUCCION PCOMA INSTRUCCIONES | INSTRUCCION;
+INSTRUCCION ::= EXPRESION IGUAL EXPRESION | IF EXPRESION THEN LISTA_INST_OP ELSE LISTA_INST ENDIF | IF EXPRESION THEN LISTA_INST_OP ENDIF | WHILE EXPRESION DO LISTA_INST_OP ENDWHILE | READ EXPRESION | WRITE EXPRESION | NEW EXPRESION | DELETE EXPRESION | NL | CALL ID PAP LISTA_EXPR_OP PCIERRE | BLOQUE;
 
-lista_inst_op ::= lista_inst | ;
-lista_inst ::= instruccion pcoma lista_inst | instruccion ;
+LISTA_INST_OP ::= LISTA_INST | ;
+LISTA_INST ::= INSTRUCCION PCOMA LISTA_INST | INSTRUCCION ;
 
-lista_expr_op ::= lista_expr | ;
-lista_expr ::= expresion coma lista_expr | expresion ;
+LISTA_EXPR_OP ::= LISTA_EXPR | ;
+LISTA_EXPR ::= EXPRESION COMA LISTA_EXPR | EXPRESION ;
 
-bloque ::= llap programa llcierre  | llap llcierre ;
+BLOQUE ::= LLAP PROGRAMA LLCIERRE  | LLAP LLCIERRE ;
 
-expresion ::= E0 ;
-expresion_basica ::= true | false | lit_ent | lit_real | lit_cad | id | null;
+EXPRESION ::= E0 ;
+EXPRESION_BASICA ::= TRUE | FALSE | LIT_ENT | LIT_REAL | LIT_CAD | ID | NULL;
 
-E0 ::= E1 mas E0 | E1 menos E1 | E1;
+E0 ::= E1 MAS E0 | E1 MENOS E1 | E1;
 
 E1 ::= E1 OPBN1 E2 | E2;
-OPBN1 ::= and | or;
+OPBN1 ::= AND | OR;
 
 E2 ::= E2 OPBN2 E3 | E3;
-OPBN2 ::= menor | mayor | menig | mayig | igual | distinto;
+OPBN2 ::= MENOR | MAYOR | MENIG | MAYIG | DIGUAL | DISTINTO;
 
 E3 ::= E4 OPBN3 E4 | E4;
-OPBN3 ::= div | por | percent;
+OPBN3 ::= DIV | POR | PERCENT;
 
-E4 ::= not E4 | menos E5 | E5;
+E4 ::= NOT E4 | MENOS E5 | E5;
 
 E5 ::= E5 OPUN5 | E6;
-OPUN5 ::= cap expresion ccierre | op_acceso;
-op_acceso ::= punto id | flecha id;
+OPUN5 ::= CAP EXPRESION CCIERRE | OP_ACCESO;
+OP_ACCESO ::= PUNTO ID | FLECHA ID;
 
-E6 ::= por E6 | E7;
+E6 ::= POR E6 | E7;
 
-E7 ::= expresion_basica | pap E0 pcie;
+E7 ::= EXPRESION_BASICA | PAP E0 PCIERRE;
 
 

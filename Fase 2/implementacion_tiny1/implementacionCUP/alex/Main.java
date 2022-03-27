@@ -1,4 +1,4 @@
-package implementacionCUP.alex;
+package alex;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
