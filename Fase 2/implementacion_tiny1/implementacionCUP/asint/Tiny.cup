@@ -30,15 +30,14 @@ terminal 	 mas, menos, div, por, percent, and, not, or, menor,
 non terminal E0, E1, E2, E3, E4, E5, E6, E7,
 			 OPBN1, OPBN2, OPBN3, OPUN5, expresion_basica, expresion,
 			 op_acceso, programa, instrucciones, declaraciones,  
-			 declaracion, instruccion, lista_dec, decvar, dectipo, decproc, 
+			 declaracion, instruccion, decvar, dectipo, decproc, 
 			 tipo, pformales, bloque, lista_pformales, lista_expr,
 			 pformal, tipo_basico, lista_campos, campo,
 			 lista_inst_op, lista_inst, lista_expr_op;
 
 
-programa ::= declaraciones instrucciones;
-declaraciones ::= lista_dec damp | ;
-lista_dec ::= declaracion pcoma lista_dec | declaracion ;
+programa ::= declaraciones damp instrucciones | instrucciones;
+declaraciones ::=declaracion pcoma declaraciones | declaracion ;
 
 declaracion ::= decvar | dectipo | decproc;
 decvar ::= var tipo id;
