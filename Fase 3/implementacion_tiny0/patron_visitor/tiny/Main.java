@@ -1,11 +1,11 @@
 package tiny;
 
-import c_ast_ascendente.AnalizadorLexico;
-import c_ast_ascendente.ConstructorAST;
+import c_ast_descendente_manual.AnalizadorLexicoTiny;
+import c_ast_descendente_manual.ConstructorAST;
 import asint.TinyASint.Prog;
-import c_ast_ascendente.ClaseLexica;
-import c_ast_ascendente.GestionErrores;
-import c_ast_ascendente.UnidadLexica;
+import c_ast_descendente_manual.ClaseLexica;
+import errors.GestionErroresTiny;
+import c_ast_descendente_manual.UnidadLexica;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -19,12 +19,7 @@ public class Main {
      }
      else {
          Prog prog = null;
-         if (args[0].equals("-asc"))
-            prog = ejecuta_ascendente(args[1]);
-         else if (args[0].equals("-desc"))
-            prog = ejecuta_descendente(args[1]);
-         else 
-            prog = ejecuta_descendente_manual(args[1]);
+         prog = ejecuta_descendente_manual(args[1]);
          prog.procesa(new Impresion());
          prog.procesa(new Evaluacion());         
      }
@@ -32,25 +27,15 @@ public class Main {
    
    private static void ejecuta_lexico(String in) throws Exception {
      Reader input = new InputStreamReader(new FileInputStream(in));
-     AnalizadorLexico alex = new AnalizadorLexico(input);
-     GestionErrores errores = new GestionErrores();
-     UnidadLexica t = (UnidadLexica) alex.next_token();
+     AnalizadorLexicoTiny alex = new AnalizadorLexicoTiny(input);
+     GestionErroresTiny errores = new GestionErroresTiny();
+     UnidadLexica t = (UnidadLexica) alex.sigToken();
      while (t.clase() != ClaseLexica.EOF) {
          System.out.println(t);
-         t = (UnidadLexica) alex.next_token();   
+         t = (UnidadLexica) alex.sigToken();   
      }
    }
-   private static Prog ejecuta_ascendente(String in) throws Exception {       
-     Reader input = new InputStreamReader(new FileInputStream(in));
-     AnalizadorLexico alex = new AnalizadorLexico(input);
-     ConstructorAST constructorast = new ConstructorAST(alex);
-     return (Prog)constructorast.parse().value;
-  }
-   private static Prog ejecuta_descendente(String in) throws Exception {
-     Reader input = new InputStreamReader(new FileInputStream(in));
-     c_ast_descendente.ConstructorAST constructorast = new c_ast_descendente.ConstructorAST(input);
-     return constructorast.Init();
-   }
+   
    private static Prog ejecuta_descendente_manual(String in) throws Exception {
      Reader input = new InputStreamReader(new FileInputStream(in));
      c_ast_descendente_manual.ConstructorAST constructorast = new c_ast_descendente_manual.ConstructorAST(input);

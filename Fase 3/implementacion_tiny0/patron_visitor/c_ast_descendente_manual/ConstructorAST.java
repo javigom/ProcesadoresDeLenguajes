@@ -3,6 +3,7 @@ package c_ast_descendente_manual;
 import java.io.IOException;
 import java.io.Reader;
 import asint.TinyASint.Prog;
+import errors.GestionErroresTiny;
 import asint.TinyASint.Decs;
 import asint.TinyASint.Dec;
 import asint.TinyASint.Exp;
@@ -11,13 +12,13 @@ import semops.SemOps;
 
 public class ConstructorAST {
    private UnidadLexica anticipo;
-   private AnalizadorLexico alex;
-   private GestionErrores errores;
+   private AnalizadorLexicoTiny alex;
+   private GestionErroresTiny errores;
    private SemOps sem;
    
    public ConstructorAST (Reader input) throws IOException {
-      errores = new GestionErrores();
-      alex = new AnalizadorLexico(input,errores);
+      errores = new GestionErroresTiny();
+      alex = new AnalizadorLexicoTiny(input,errores);
       sigToken();
       sem = new SemOps();
    }

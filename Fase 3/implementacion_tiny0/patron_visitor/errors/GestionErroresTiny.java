@@ -1,6 +1,6 @@
 package errors;
 
-import alex.ClaseLexica;
+import c_ast_descendente_manual.ClaseLexica;
 
 public class GestionErroresTiny {
 	public void errorLexico(int fila, int col, String lexema) {

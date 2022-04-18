@@ -7,9 +7,9 @@ package asint;
 import java.io.IOException;
 import java.io.Reader;
 
-import alex.AnalizadorLexicoTiny;
-import alex.ClaseLexica;
-import alex.UnidadLexica;
+import c_ast_descendente_manual.AnalizadorLexicoTiny;
+import c_ast_descendente_manual.ClaseLexica;
+import c_ast_descendente_manual.UnidadLexica;
 import errors.GestionErroresTiny;
 
 public class AnalizadorSintacticoTiny {
@@ -68,7 +68,7 @@ public class AnalizadorSintacticoTiny {
 			RDEC();
 			break;
 		default:
-			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.DAMP;
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.DAMP,
 					ClaseLexica.PCOMA);
 		}
 	}
