@@ -1,18 +1,15 @@
 package asint;
 
 
+
 public class TinyASint {
-    public enum TNodo {SUMA,RESTA,MUL,DIV,NUM,ID,DECS_MUCHAS, DECS_UNA, 
-                       DEC,PROG_SIN_DECS, PROG_CON_DECS} ;
     
+
     public static abstract class Exp  {
        public Exp() {
        }   
-       public abstract TNodo tipo();
-       public Exp arg0() {throw new UnsupportedOperationException("arg0");}
-       public Exp arg1() {throw new UnsupportedOperationException("arg1");}
-       public StringLocalizado id() {throw new UnsupportedOperationException("id");}
-       public StringLocalizado num() {throw new UnsupportedOperationException("num");}
+       public abstract int prioridad();
+       public abstract void procesa(Procesamiento procesamiento);
     }
     
     public static class StringLocalizado {
@@ -43,38 +40,65 @@ public class TinyASint {
     private static abstract class ExpBin extends Exp {
         private Exp arg0;
         private Exp arg1;
+        public Exp arg0() {return arg0;}
+        public Exp arg1() {return arg1;}
         public ExpBin(Exp arg0, Exp arg1) {
             super();
             this.arg0 = arg0;
             this.arg1 = arg1;
         }
-        public Exp arg0() {return arg0;}
-        public Exp arg1() {return arg1;}
+    }
+        
+    private static abstract class ExpAditiva extends ExpBin {
+        public ExpAditiva(Exp arg0, Exp arg1) {
+            super(arg0,arg1);
+        }
+        public final int prioridad() {
+            return 0;
+        }
     }
     
-    public static class Suma extends ExpBin {
+    public static class Suma extends ExpAditiva {
         public Suma(Exp arg0, Exp arg1) {
             super(arg0,arg1);
         }
-        public TNodo tipo() {return TNodo.SUMA;}
+        public void procesa(Procesamiento p) {
+           p.procesa(this); 
+        }     
     }
-    public static class Resta extends ExpBin {
+    public static class Resta extends ExpAditiva {
         public Resta(Exp arg0, Exp arg1) {
             super(arg0,arg1);
         }
-        public TNodo tipo() {return TNodo.RESTA;}
+        public void procesa(Procesamiento p) {
+           p.procesa(this); 
+        }     
     }
-    public static class Mul extends ExpBin {
+    
+    private static abstract class ExpMultiplicativa extends ExpBin {
+        public ExpMultiplicativa(Exp arg0, Exp arg1) {
+            super(arg0,arg1);
+        }
+        public final int prioridad() {
+            return 1;
+        }
+    }
+    
+    public static class Mul extends ExpMultiplicativa {
         public Mul(Exp arg0, Exp arg1) {
             super(arg0,arg1);
         }
-        public TNodo tipo() {return TNodo.MUL;}
+        public void procesa(Procesamiento p) {
+           p.procesa(this); 
+        }     
     }
-    public static class Div extends ExpBin {
+    public static class Div extends ExpMultiplicativa {
         public Div(Exp arg0, Exp arg1) {
             super(arg0,arg1);
         }
-        public TNodo tipo() {return TNodo.DIV;}
+        public void procesa(Procesamiento p) {
+           p.procesa(this); 
+        }     
     }
     public static class Num extends Exp {
         private StringLocalizado num;
@@ -82,9 +106,12 @@ public class TinyASint {
             super();
             this.num = num;
         }
-        public TNodo tipo() {return TNodo.NUM;}
-        public StringLocalizado num() {
-            return num;
+        public StringLocalizado num() {return num;}
+        public void procesa(Procesamiento p) {
+           p.procesa(this); 
+        }     
+        public final int prioridad() {
+            return 2;
         }
     }
     public static class Id extends Exp {
@@ -93,9 +120,12 @@ public class TinyASint {
             super();
             this.id = id;
         }
-        public TNodo tipo() {return TNodo.ID;}
-        public StringLocalizado id() {
-            return id;
+        public StringLocalizado id() {return id;}
+        public void procesa(Procesamiento p) {
+           p.procesa(this); 
+        }     
+        public final int prioridad() {
+            return 2;
         }
     }
     public static class Dec  {
@@ -105,16 +135,16 @@ public class TinyASint {
             this.id = id;
             this.val = val;
         }
-        public TNodo tipo() {return TNodo.DEC;}
         public StringLocalizado id() {return id;}
         public StringLocalizado val() {return val;}
+        public void procesa(Procesamiento p) {
+           p.procesa(this); 
+        }     
     }
     public static abstract class Decs {
        public Decs() {
-       }   
-       public abstract TNodo tipo(); 
-       public Decs decs() {throw new UnsupportedOperationException("decs");}
-       public Dec dec() {throw new UnsupportedOperationException("dec");}
+       }
+       public abstract void procesa(Procesamiento p);
     }
     public static class Decs_una extends Decs {
        private Dec dec; 
@@ -122,10 +152,10 @@ public class TinyASint {
           super();
           this.dec = dec;
        }   
-       public TNodo tipo() {return TNodo.DECS_UNA;}; 
-       public Dec dec() {
-           return dec;
-       }
+       public Dec dec() {return dec;}
+       public void procesa(Procesamiento p) {
+           p.procesa(this); 
+        }     
     }
     public static class Decs_muchas extends Decs {
        private Dec dec;
@@ -135,20 +165,16 @@ public class TinyASint {
           this.dec = dec;
           this.decs = decs;
        }
-       public TNodo tipo() {return TNodo.DECS_MUCHAS;}; 
-       public Dec dec() {
-           return dec;
-       }
-       public Decs decs() {
-           return decs;
-       }
+       public Dec dec() {return dec;}
+       public Decs decs() {return decs;}
+       public void procesa(Procesamiento p) {
+           p.procesa(this); 
+        }     
     }
     public static abstract class Prog  {
        public Prog() {
        }   
-       public abstract TNodo tipo();  
-       public  Exp exp() {throw new UnsupportedOperationException("exp");};
-       public Decs decs() {throw new UnsupportedOperationException("decs");};;
+       public abstract void procesa(Procesamiento p); 
     }
     public static class Prog_sin_decs extends Prog {
       private Exp exp;
@@ -156,8 +182,10 @@ public class TinyASint {
           super();
           this.exp = exp;
        }   
-       public TNodo tipo() {return TNodo.PROG_SIN_DECS;}; 
        public Exp exp() {return exp;}
+       public void procesa(Procesamiento p) {
+           p.procesa(this); 
+        }     
     }
     public static class Prog_con_decs extends Prog {
       private Exp exp;
@@ -167,9 +195,11 @@ public class TinyASint {
           this.exp = exp;
           this.decs = decs;
        }   
-       public TNodo tipo() {return TNodo.PROG_CON_DECS;}; 
        public Exp exp() {return exp;}
        public Decs decs() {return decs;}
+       public void procesa(Procesamiento p) {
+           p.procesa(this); 
+        }     
     }
 
      // Constructoras    

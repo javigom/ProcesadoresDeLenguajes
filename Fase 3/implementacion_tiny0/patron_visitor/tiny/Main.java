@@ -7,11 +7,10 @@ import c_ast_ascendente.ClaseLexica;
 import c_ast_ascendente.GestionErrores;
 import c_ast_ascendente.UnidadLexica;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import procesamientos.Impresion;
 import procesamientos.Evaluacion;
+import procesamientos.Impresion;
 
 public class Main {
    public static void main(String[] args) throws Exception {
@@ -22,12 +21,12 @@ public class Main {
          Prog prog = null;
          if (args[0].equals("-asc"))
             prog = ejecuta_ascendente(args[1]);
-         else if(args[0].equals("-desc"))
-            prog = ejecuta_descendente(args[1]);  
+         else if (args[0].equals("-desc"))
+            prog = ejecuta_descendente(args[1]);
          else 
-            prog = ejecuta_descendente_manual(args[1]); 
-            Impresion.imprime(prog);
-            Evaluacion.evalua(prog);
+            prog = ejecuta_descendente_manual(args[1]);
+         prog.procesa(new Impresion());
+         prog.procesa(new Evaluacion());         
      }
    }
    
@@ -57,6 +56,5 @@ public class Main {
      c_ast_descendente_manual.ConstructorAST constructorast = new c_ast_descendente_manual.ConstructorAST(input);
      return constructorast.Init();
    }
-
 }   
    
