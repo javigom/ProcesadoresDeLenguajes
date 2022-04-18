@@ -1,0 +1,72 @@
+package c_ast_ascendente;
+
+import java_cup.runtime.*;
+import semops.SemOps;
+import asint.TinyASint.Prog;
+import asint.TinyASint.Exp;
+import asint.TinyASint.Decs;
+import asint.TinyASint.Dec;
+import asint.TinyASint.StringLocalizado;
+
+
+scan with {: return getScanner().next_token(); :};
+action code {:
+   private SemOps sem = new SemOps();
+:};
+parser code {: 
+   private GestionErrores errores;
+   public void syntax_error(Symbol unidadLexica) {
+     errores.errorSintactico((UnidadLexica)unidadLexica);
+   }
+:};
+init with {: 
+   errores = new GestionErrores();
+   AnalizadorLexico alex = (AnalizadorLexico)getScanner();
+   alex.fijaGestionErrores(errores);
+:};
+
+
+terminal  MAS, MENOS, POR, DIV, PAP, PCIERRE, DONDE, EVALUA, COMA, IGUAL;
+terminal StringLocalizado NUM, ID;
+
+non terminal  Prog Prog;
+non terminal  Decs PDonde, Decs;
+non terminal  Dec Dec;
+non terminal  Exp E0, E1, E2;
+non terminal  Character OP0, OP1;
+
+Prog ::= EVALUA E0: exp PDonde: decs 
+    {: RESULT = sem.prog(exp,decs);:};
+PDonde ::= DONDE Decs: decs 
+    {: RESULT = decs;:};
+PDonde ::= {: RESULT = null; :};
+E0 ::= E0: arg0  OP0: op E1: arg1  
+    {: RESULT = sem.exp(op,arg0,arg1); :};
+E0 ::= E1: aDeE1 
+    {: RESULT = aDeE1; :};
+E1 ::= E1: arg0 OP1: op E2: arg1 
+    {: RESULT = sem.exp(op,arg0,arg1); :};
+E1 ::= E2: aDeE2 
+    {: RESULT = aDeE2; :};
+E2 ::= NUM:  num 
+    {: RESULT = sem.num(num); :};
+E2 ::= ID:id 
+    {: RESULT = sem.id(id); :};
+E2 ::= PAP E0: aDeE0 PCIERRE 
+    {: RESULT = aDeE0; :};
+OP0 ::= MAS 
+    {: RESULT = '+'; :};
+OP0 ::= MENOS 
+    {:RESULT = '-'; :};
+OP1 ::= POR 
+    {: RESULT = '*'; :};
+OP1 ::= DIV 
+    {: RESULT = '/'; :};
+Decs ::= Decs: decs COMA Dec: dec 
+    {: RESULT = sem.decs_muchas(decs,dec);:};
+Decs ::= Dec: dec 
+    {: RESULT = sem.decs_una(dec);:};
+Dec ::= ID: id IGUAL NUM: num 
+    {: RESULT = sem.dec(id,num); :};
+
+
