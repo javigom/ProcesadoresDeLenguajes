@@ -18,65 +18,65 @@ public class ConstructorAST {
    
    public ConstructorAST (Reader input) throws IOException {
       errores = new GestionErroresTiny();
-      alex = new AnalizadorLexicoTiny(input,errores);
+		alex = new AnalizadorLexicoTiny(input);
+		alex.fijaGestionErrores(errores);
       sigToken();
       sem = new SemOps();
    }
 
-   public Prog Init() {
-      Prog prog = Prog();
-      empareja(ClaseLexica.EOF);
-      return prog;
+   public Prog PROGRAMAp() {
+	   Prog prog = PROGRAMA();
+	   empareja(ClaseLexica.EOF);
+	   return prog;
    }
    
-   private Prog Prog() {
-     switch(anticipo.clase()) {
-         case EVALUA:          
-              empareja(ClaseLexica.EVALUA);
-              Exp exp = E0();
-              Decs decs = PDonde();
-              return sem.prog(exp,decs);
-         default: errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
-                                          ClaseLexica.EVALUA);     
-              return null;
-   }
-   }
-   
-   private Decs PDonde() {
-      switch(anticipo.clase()) {
-          case DONDE:
-              empareja(ClaseLexica.DONDE);
-              return Decs();
-          case EOF: return null;
-          default: errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
-                                          ClaseLexica.DONDE,ClaseLexica.EOF);
-                   return null;
-      } 
+   private Prog PROGRAMA() {
+	   switch (anticipo.clase()) {
+		case BOOL:
+		case INT:
+		case REAL:
+			Decs decs = DECLARACIONES();
+			empareja(ClaseLexica.DAMP);
+			Ins ins =INSTRUCCIONES();
+			return sem.prog(decs,ins);
+		default: errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
+        		 						 ClaseLexica.BOOL, ClaseLexica.INT, ClaseLexica.REAL);     
+			return null;
+	   }
    }
    
-   private Decs Decs() {
-      switch(anticipo.clase()) {
-       case IDEN:    
-           Dec dec = Dec();
-           return RDecs(sem.decs_una(dec));
-       default:  errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
-                                         ClaseLexica.IDEN);                                      
-                 return null;
-   }
-   }   
+   private Decs DECLARACIONES() {
+		switch (anticipo.clase()) {
+		case BOOL:
+		case INT:
+		case REAL:
+			Dec dec = DECLARACION();
+	        return RDEC(sem.decs_una(dec));
+		default:
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.BOOL,
+					ClaseLexica.INT, ClaseLexica.REAL);
+			return null;
+		}
+	}
    
-   private Decs RDecs(Decs decsh) {
-      switch(anticipo.clase()) {
-       case COMA:    
-           empareja(ClaseLexica.COMA);
-           Dec dec = Dec();
-           return RDecs(sem.decs_muchas(decsh,dec));
-       case EOF: return decsh;    
-       default:  errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
-                                         ClaseLexica.COMA, ClaseLexica.EOF);                                
-                 return null;        
-      }          
-   }  
+   
+   private Decs RDEC(Decs decsh) {
+		switch (anticipo.clase()) {
+		case DAMP:
+			break;
+		case PCOMA:
+			empareja(ClaseLexica.PCOMA);
+			Dec dec = DECLARACION();
+	        return RDEC(sem.decs_muchas(decsh,dec));
+		default:
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.DAMP,
+					ClaseLexica.PCOMA);
+			return null;
+		}
+	}
+	
+   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   
    
    private Dec Dec() {
      switch(anticipo.clase()) {       
