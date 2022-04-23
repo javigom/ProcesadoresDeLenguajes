@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="implementacion_tiny0"/>
-	<classpathentry kind="src" path="implementacion_tiny1"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
