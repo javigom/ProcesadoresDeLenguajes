@@ -2,4 +2,4 @@
 .gitignore
 .classpath
 .project
-./bin/
+bin/
