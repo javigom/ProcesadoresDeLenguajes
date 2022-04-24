@@ -1,6 +1,7 @@
 package asint;
 
 import asint.TinyASint.Suma;
+import asint.TinyASint.Tipo;
 import asint.TinyASint.True;
 import asint.TinyASint.Resta;
 import asint.TinyASint.Mul;
@@ -28,21 +29,6 @@ import asint.TinyASint.Distinto;
 import asint.TinyASint.Programa;
 
 public interface Procesamiento {
-<<<<<<< Updated upstream
-    void procesa(Suma exp);
-    void procesa(Resta exp);
-    void procesa(Mul exp);
-    void procesa(Div exp);
-    void procesa(Not exp);
-    void procesa(Neg exp);
-    void procesa(Id exp);
-    void procesa(Num exp);
-    void procesa(Dec dec);
-    void procesa(Decs_muchas decs);
-    void procesa(Decs_una decs);
-    void procesa(Prog_sin_decs prog);    
-    void procesa(Prog_con_decs prog);    
-=======
 
 	// Operadores
 
@@ -90,6 +76,9 @@ public interface Procesamiento {
 
 	void procesa(Id exp);
 
+	// Tipo
+    void procesa(Tipo tipo);
+
 	// Declaraciones
 	void procesa(Declaracion declaracion);
 
@@ -106,5 +95,4 @@ public interface Procesamiento {
 
 	// Programa
 	void procesa(Programa programa);
->>>>>>> Stashed changes
 }

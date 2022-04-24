@@ -5,12 +5,11 @@ import asint.TinyASint.Resta;
 import asint.TinyASint.Mul;
 import asint.TinyASint.Div;
 import asint.TinyASint.Id;
-import asint.TinyASint.Num;
-import asint.TinyASint.Dec;
+import asint.TinyASint.LitEnt;
+import asint.TinyASint.Declaracion;
 import asint.TinyASint.Decs_muchas;
 import asint.TinyASint.Decs_una;
-import asint.TinyASint.Prog_sin_decs;
-import asint.TinyASint.Prog_con_decs;
+import asint.TinyASint.Programa;
 import asint.ProcesamientoPorDefecto;
 import asint.TinyASint.Exp;
 
@@ -18,30 +17,25 @@ import asint.TinyASint.Exp;
 public class Impresion extends ProcesamientoPorDefecto {
    public Impresion() {
    }
-   public void procesa(Prog_sin_decs prog) {
+   
+   public void procesa(Programa prog) {
        System.out.println("evalua");
        System.out.print("  ");
-       prog.exp().procesa(this);
-       System.out.println();
-   }    
-   public void procesa(Prog_con_decs prog) {
-       System.out.println("evalua");
-       System.out.print("  ");
-       prog.exp().procesa(this);
+       prog.declaraciones().procesa(this);
        System.out.println();
        System.out.println("donde");
-       prog.decs().procesa(this);
+       prog.instrucciones().procesa(this);
        System.out.println();       
    }    
    public void procesa(Decs_muchas decs) {
-       decs.decs().procesa(this);
+       decs.declaraciones().procesa(this);
        System.out.println(",");
-       decs.dec().procesa(this);
+       decs.declaracion().procesa(this);
    }
    public void procesa(Decs_una decs) {
-       decs.dec().procesa(this);
+       decs.declaracion().procesa(this);
    }
-   public void procesa(Dec dec) {
+   public void procesa(Declaracion dec) {
        System.out.print("  "+dec.id()+"="+dec.val());
    }
    public void procesa(Suma exp) {
@@ -77,7 +71,7 @@ public class Impresion extends ProcesamientoPorDefecto {
    public void procesa(Id exp) {
        System.out.print(exp.id());
    }
-   public void procesa(Num exp) {
+   public void procesa(LitEnt exp) {
        System.out.print(exp.num());
    }
 }   

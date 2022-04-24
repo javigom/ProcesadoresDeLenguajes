@@ -371,13 +371,64 @@ public class TinyASint {
 	}
 	
 	
+
+	// Tipo
+	
+	public static class Tipo {
+		private StringLocalizado tipo;
+
+		public Tipo(StringLocalizado tipo) {
+			this.tipo = tipo;
+		}
+
+		public StringLocalizado tipo() {
+			return tipo;
+		}
+
+		public void procesa(Procesamiento p) {
+			p.procesa(this);
+		}
+	}
+	
+	
+	public static class Bool extends Tipo {
+		public Bool(StringLocalizado tipo) {
+			super(tipo);
+		}
+		
+		public void procesa(Procesamiento p) {
+			p.procesa(this);
+		}
+	}
+	
+	public static class Int extends Tipo {
+		public Int(StringLocalizado tipo) {
+			super(tipo);
+		}
+		
+		public void procesa(Procesamiento p) {
+			p.procesa(this);
+		}
+	}
+	
+	public static class Real extends Tipo {
+		public Real(StringLocalizado tipo) {
+			super(tipo);
+		}
+		
+		public void procesa(Procesamiento p) {
+			p.procesa(this);
+		}
+	}
+	
+	
 	// Declaraciones
 
 	public static class Declaracion {
 		private StringLocalizado id;
-		private StringLocalizado val;
+		private Tipo val;
 
-		public Declaracion(StringLocalizado id, StringLocalizado val) {
+		public Declaracion(StringLocalizado id, Tipo val) {
 			this.id = id;
 			this.val = val;
 		}
@@ -386,7 +437,7 @@ public class TinyASint {
 			return id;
 		}
 
-		public StringLocalizado val() {
+		public Tipo val() {
 			return val;
 		}
 
@@ -617,8 +668,20 @@ public class TinyASint {
 		return new Id(arg0);
 	}
 	
-	public Declaracion declaracion(StringLocalizado id, StringLocalizado val) {
-		return new Declaracion(id, val);
+	public Tipo Bool(StringLocalizado arg0) {
+		return Bool(arg0);
+	}
+	
+	public Tipo Int(StringLocalizado arg0) {
+		return Int(arg0);
+	}
+
+	public Tipo Real(StringLocalizado arg0) {
+		return Real(arg0);
+	}
+	
+	public Declaracion declaracion(Tipo tipo, StringLocalizado id) {
+		return new Declaracion(id, tipo);
 	}
 
 	public Declaraciones decs_una(Declaracion declaracion) {

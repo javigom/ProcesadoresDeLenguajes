@@ -3,10 +3,16 @@ package c_ast_descendente_manual;
 import java.io.IOException;
 import java.io.Reader;
 import asint.TinyASint.Prog;
+import asint.TinyASint.Programa;
+import asint.TinyASint.Tipo;
 import errors.GestionErroresTiny;
 import asint.TinyASint.Decs;
 import asint.TinyASint.Dec;
+import asint.TinyASint.Declaracion;
+import asint.TinyASint.Declaraciones;
 import asint.TinyASint.Exp;
+import asint.TinyASint.Instruccion;
+import asint.TinyASint.Instrucciones;
 import semops.SemOps;
 
 
@@ -24,33 +30,33 @@ public class ConstructorAST {
       sem = new SemOps();
    }
 
-   public Prog PROGRAMAp() {
-	   Prog prog = PROGRAMA();
+   public Programa PROGRAMAp() {
+	   Programa prog = PROGRAMA();
 	   empareja(ClaseLexica.EOF);
 	   return prog;
    }
    
-   private Prog PROGRAMA() {
+   private Programa PROGRAMA() {
 	   switch (anticipo.clase()) {
 		case BOOL:
 		case INT:
 		case REAL:
-			Decs decs = DECLARACIONES();
+			Declaraciones decs = DECLARACIONES();
 			empareja(ClaseLexica.DAMP);
-			Ins ins =INSTRUCCIONES();
-			return sem.prog(decs,ins);
+			Instrucciones ins =INSTRUCCIONES();
+			return sem.Programa(decs,ins);
 		default: errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
         		 						 ClaseLexica.BOOL, ClaseLexica.INT, ClaseLexica.REAL);     
 			return null;
 	   }
    }
    
-   private Decs DECLARACIONES() {
+   private Declaraciones DECLARACIONES() {
 		switch (anticipo.clase()) {
 		case BOOL:
 		case INT:
 		case REAL:
-			Dec dec = DECLARACION();
+			Declaracion dec = DECLARACION();
 	        return RDEC(sem.decs_una(dec));
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.BOOL,
@@ -60,13 +66,13 @@ public class ConstructorAST {
 	}
    
    
-   private Decs RDEC(Decs decsh) {
+   private Declaraciones RDEC(Declaraciones decsh) {
 		switch (anticipo.clase()) {
 		case DAMP:
 			return sem.nodecs(decsh);
 		case PCOMA:
 			empareja(ClaseLexica.PCOMA);
-			Dec dec = DECLARACION();
+			Declaracion dec = DECLARACION();
 	        return RDEC(sem.decs_muchas(decsh,dec));
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.DAMP,
@@ -76,17 +82,15 @@ public class ConstructorAST {
 	}
 	
    
-   private Dec DECLARACION() {
+   private Declaracion DECLARACION() {
 		switch (anticipo.clase()) {
 		case BOOL:
 		case INT:
 		case REAL:
-			Type tipo = TIPO();
+			Tipo tipo = TIPO();
 	        UnidadLexica tkid = anticipo;
 			empareja(ClaseLexica.ID);
-
-	        return sem.dec(sem.str(tipo.lexema(),tipo.fila(),tipo.columna()),
-	                       sem.str(tkid.lexema(),tkid.fila(),tkid.columna()));
+	        return sem.declaracion(tipo, sem.str(tkid.lexema(),tkid.fila(),tkid.columna()));
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.BOOL, 
 					ClaseLexica.INT, ClaseLexica.REAL);
@@ -94,7 +98,7 @@ public class ConstructorAST {
 		}
 	}
 	
-	private Type TIPO() {
+	private Tipo TIPO() {
 		switch (anticipo.clase()) {
 		case BOOL:
 			UnidadLexica tkbool = anticipo;
@@ -102,15 +106,15 @@ public class ConstructorAST {
 			return sem.Bool(sem.str(tkbool.lexema(), tkbool.fila(), 
 					tkbool.columna()));
 		case INT:
-			UnidadLexica tkbool = anticipo;
+			UnidadLexica tkint = anticipo;
 			empareja(ClaseLexica.INT);
-			return sem.Bool(sem.str(tkbool.lexema(), tkbool.fila(), 
-					tkbool.columna()));
+			return sem.Int(sem.str(tkint.lexema(), tkint.fila(), 
+					tkint.columna()));
 		case REAL:
-			UnidadLexica tkbool = anticipo;
+			UnidadLexica tkreal = anticipo;
 			empareja(ClaseLexica.REAL);
-			return sem.Bool(sem.str(tkbool.lexema(), tkbool.fila(), 
-					tkbool.columna()));
+			return sem.Real(sem.str(tkreal.lexema(), tkreal.fila(), 
+					tkreal.columna()));
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.BOOL,
 					ClaseLexica.INT, ClaseLexica.REAL);
@@ -119,23 +123,23 @@ public class ConstructorAST {
 	}
 		   
 
-	private Ins INSTRUCCIONES() {
+	private Instrucciones INSTRUCCIONES() {
 		switch (anticipo.clase()) {
 		case ID:
-			In in = INSTRUCCION();
-	        return RINS(sem.ins_una(in));
+			Instruccion in = INSTRUCCION();
+	        return RINS(sem.insts_una(in));
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.ID);
 			return null;
 		}
 	}
 	
-	private Ins RINS(Ins insh) {
+	private Instrucciones RINS(Instrucciones insh) {
 		switch (anticipo.clase()) {
 		case PCOMA:
 			empareja(ClaseLexica.PCOMA);
-			In in = INSTRUCCION();
-	        return RDINS(sem.ins_muchas(insh,in));
+			Instruccion in = INSTRUCCION();
+	        return RINS(sem.insts_muchas(insh,in));
 		case EOF:
 			return noins(insh);
 		default:
@@ -145,7 +149,7 @@ public class ConstructorAST {
 		}
 	}
 
-	private In INSTRUCCION() {
+	private Instruccion INSTRUCCION() {
 		switch (anticipo.clase()) {
 		case ID:
 	        UnidadLexica tkid = anticipo;
@@ -153,8 +157,8 @@ public class ConstructorAST {
 			empareja(ClaseLexica.IGUAL);
 			Exp exp0 = E0();
 
-	        return sem.ins(sem.str(tkid.lexema(),tkid.fila(),tkid.columna()),
-	                       sem.str(exp0));
+	        return sem.instruccion(sem.str(tkid.lexema(),tkid.fila(),tkid.columna()),
+	                       exp0);
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.ID);
 			return null;
@@ -225,10 +229,13 @@ public class ConstructorAST {
    private Exp RE1(Exp exph) {
 		switch (anticipo.clase()) {
 		case AND:
-		case OR:
-            char op = OPBN1();
             Exp exp2 = E2();
-            return RE1(sem.exp(op, exph, exp2));
+            empareja(ClaseLexica.AND);
+            return RE1(sem.and_cons(exph, exp2));
+		case OR:
+            Exp exp21 = E2();
+            empareja(ClaseLexica.OR);
+            return RE1(sem.or_cons(exph, exp21));
 		case MAS:
 		case MENOS:
 		case PCIERRE:
@@ -265,15 +272,30 @@ public class ConstructorAST {
    
    private Exp RE2(Exp exph) {
 		switch (anticipo.clase()) {
-		case DIGUAL:
-		case DIF:
-		case MAYOR_IGUAL:
-		case MAYOR:
-		case MENOR_IGUAL:
 		case MENOR:
-			char op = OPBN2();
 			Exp exp3 = E3();
-			return RE2(sem.exp(op, exph, exp3));
+			empareja(ClaseLexica.MENOR);
+			return RE2(sem.menor(exph, exp3));
+		case MAYOR:
+			Exp exp31 = E3();
+			empareja(ClaseLexica.MAYOR);
+			return RE2(sem.mayor(exph, exp31));
+		case MENOR_IGUAL:
+			Exp exp32 = E3();
+			empareja(ClaseLexica.MENOR_IGUAL);
+			return RE2(sem.menorIgual(exph, exp32));
+		case MAYOR_IGUAL:
+			Exp exp33 = E3();
+			empareja(ClaseLexica.MENOR_IGUAL);
+			return RE2(sem.mayorIgual(exph, exp33));
+		case DIF:
+			Exp exp34 = E3();
+			empareja(ClaseLexica.DIF);
+			return RE2(sem.distinto(exph, exp34));
+		case DIGUAL:
+			Exp exp35 = E3();
+			empareja(ClaseLexica.DIGUAL);
+			return RE2(sem.igual(exph, exp35));
 		case AND:
 		case MAS:
 		case MENOS:
@@ -318,7 +340,7 @@ public class ConstructorAST {
 		case POR:
 			char op = OPBN3();
 			Exp exp4 = E4();
-			return sem.expN3(op, exph, exp4);
+			return sem.exp(op, exph, exp4);
 		case AND:
 		case DIGUAL:
 		case DIF:
@@ -390,24 +412,20 @@ public class ConstructorAST {
 	private Exp EXPRESION() {
 		switch (anticipo.clase()) {
 		case TRUE:
-			UnidadLexica tktrue = anticipo;
 			empareja(ClaseLexica.TRUE);
-			return sem.True(sem.str(tktrue.lexema(), tktrue.fila(), 
-					tktrue.columna()));
+			return sem.true_cons();
 		case FALSE:
-			UnidadLexica tkfalse = anticipo;
 			empareja(ClaseLexica.FALSE);
-			return sem.False(sem.str(tkfalse.lexema(), tkfalse.fila(), 
-					tkfalse.columna()));
+			return sem.false_cons();
 		case LIT_REAL:
 			UnidadLexica tkreal = anticipo;
 			empareja(ClaseLexica.LIT_REAL);
-			return sem.real(sem.str(tkreal.lexema(), tkreal.fila(), 
+			return sem.litReal(sem.str(tkreal.lexema(), tkreal.fila(), 
 					tkreal.columna()));
 		case LIT_ENT:
 			UnidadLexica tkNum = anticipo;
 			empareja(ClaseLexica.LIT_ENT);
-			return sem.num(sem.str(tkNum.lexema(), tkNum.fila(), 
+			return sem.litEnt(sem.str(tkNum.lexema(), tkNum.fila(), 
 					tkNum.columna()));
 		case ID:
 			UnidadLexica tkid = anticipo;
@@ -427,56 +445,11 @@ public class ConstructorAST {
          case MAS: empareja(ClaseLexica.MAS); return '+';  
          case MENOS: empareja(ClaseLexica.MENOS); return '-';  
          default:    
-              errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
+        	 errores.errorSintactico(anticipo.fila(),anticipo.columna(),anticipo.clase(),
                                       ClaseLexica.MAS,ClaseLexica.MENOS);
-              return '?';
+        	 return '?';
      }  
    }
-   
-   private char OPBN1() {
-	     switch(anticipo.clase()) { 
-	     	case AND:
-				empareja(ClaseLexica.AND);
-				return 'and';
-			case OR:
-				empareja(ClaseLexica.OR);
-				return 'or';
-	         case POR: empareja(ClaseLexica.POR); return '*';  
-	         case DIV: empareja(ClaseLexica.DIV); return '/';  
-	         default:    
-	 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.AND,
-	 					ClaseLexica.OR);
-	 			return '?';
-	     }  
-	   }
-   
-   private char OPBN2() {
-	     switch(anticipo.clase()) {
-	     	case MENOR:
-				empareja(ClaseLexica.MENOR);
-				return '<'; 
-			case MAYOR:
-				empareja(ClaseLexica.MAYOR);
-				return '>'; 
-			case MENOR_IGUAL:
-				empareja(ClaseLexica.MENOR_IGUAL);
-				return '<='; 
-			case MAYOR_IGUAL:
-				empareja(ClaseLexica.MAYOR_IGUAL);
-				return '>='; 
-			case DIF:
-				empareja(ClaseLexica.DIF);
-				return '!='; 
-			case DIGUAL:
-				empareja(ClaseLexica.DIGUAL);
-				return '=='; 
-	         default:    
-	        	 errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.MENOR,
-	 					ClaseLexica.MAYOR, ClaseLexica.MENOR_IGUAL, ClaseLexica.MAYOR_IGUAL, ClaseLexica.DIF,
-	 					ClaseLexica.DIGUAL);
-	              return '?';
-	     }  
-	   }
    
    private char OPBN3() {
      switch(anticipo.clase()) {

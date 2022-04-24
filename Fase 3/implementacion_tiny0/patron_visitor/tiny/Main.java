@@ -2,7 +2,7 @@ package tiny;
 
 import c_ast_descendente_manual.AnalizadorLexicoTiny;
 import c_ast_descendente_manual.ConstructorAST;
-import asint.TinyASint.Prog;
+import asint.TinyASint.Programa;
 import c_ast_descendente_manual.ClaseLexica;
 import errors.GestionErroresTiny;
 import c_ast_descendente_manual.UnidadLexica;
@@ -18,7 +18,7 @@ public class Main {
          ejecuta_lexico(args[1]);
      }
      else {
-         Prog prog = null;
+    	 Programa prog = null;
          prog = ejecuta_descendente_manual(args[1]);
          prog.procesa(new Impresion());
          prog.procesa(new Evaluacion());         
@@ -36,10 +36,10 @@ public class Main {
      }
    }
    
-   private static Prog ejecuta_descendente_manual(String in) throws Exception {
+   private static Programa ejecuta_descendente_manual(String in) throws Exception {
      Reader input = new InputStreamReader(new FileInputStream(in));
      ConstructorAST constructorast = new ConstructorAST(input);
-     return constructorast.Init();
+     return constructorast.PROGRAMAp();
    }
 }   
    

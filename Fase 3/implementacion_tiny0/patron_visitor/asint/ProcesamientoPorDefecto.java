@@ -1,6 +1,7 @@
 package asint;
 
 import asint.TinyASint.Suma;
+import asint.TinyASint.Tipo;
 import asint.TinyASint.True;
 import asint.TinyASint.Resta;
 import asint.TinyASint.Mul;
@@ -28,21 +29,7 @@ import asint.TinyASint.Distinto;
 import asint.TinyASint.Programa;
 
 public class ProcesamientoPorDefecto implements Procesamiento {
-<<<<<<< Updated upstream
-   public void procesa(Suma exp) {}
-   public void procesa(Resta exp) {}
-   public void procesa(Mul exp) {}
-   public void procesa(Div exp) {}
-   public void procesa(Not exp) {}
-   public void procesa(Neg exp) {}
-   public void procesa(Id exp) {}
-   public void procesa(Num exp) {}
-   public void procesa(Dec dec) {}
-   public void procesa(Decs_muchas decs) {}
-   public void procesa(Decs_una decs) {}
-   public void procesa(Prog_sin_decs prog) {}    
-   public void procesa(Prog_con_decs prog) {}    
-=======
+
 	public void procesa(Suma exp) {
 	}
 
@@ -177,5 +164,10 @@ public class ProcesamientoPorDefecto implements Procesamiento {
 		// TODO Auto-generated method stub
 
 	}
->>>>>>> Stashed changes
+
+	@Override
+	public void procesa(Tipo tipo) {
+		// TODO Auto-generated method stub
+		
+	}
 }

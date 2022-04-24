@@ -5,12 +5,11 @@ import asint.TinyASint.Resta;
 import asint.TinyASint.Mul;
 import asint.TinyASint.Div;
 import asint.TinyASint.Id;
-import asint.TinyASint.Num;
-import asint.TinyASint.Dec;
+import asint.TinyASint.LitEnt;
+import asint.TinyASint.Declaracion;
 import asint.TinyASint.Decs_muchas;
 import asint.TinyASint.Decs_una;
-import asint.TinyASint.Prog_sin_decs;
-import asint.TinyASint.Prog_con_decs;
+import asint.TinyASint.Programa;
 import asint.ProcesamientoPorDefecto;
 import java.util.HashMap;
 
@@ -21,24 +20,20 @@ public class Evaluacion extends ProcesamientoPorDefecto {
    private double resul;
    public Evaluacion() {
        valores = new Valores();
-   }
-   public void procesa(Prog_sin_decs prog) {
-       prog.exp().procesa(this);
-       System.out.println(">>>>"+resul);
-   }    
-   public void procesa(Prog_con_decs prog) {
-       prog.decs().procesa(this);
-       prog.exp().procesa(this);
+   }   
+   public void procesa(Programa prog) {
+       prog.declaraciones().procesa(this);
+       prog.instrucciones().procesa(this);
        System.out.println(">>>>"+resul);
    }    
    public void procesa(Decs_muchas decs) {
-       decs.decs().procesa(this);
-       decs.dec().procesa(this);
+       decs.declaraciones().procesa(this);
+       decs.declaracion().procesa(this);
    }
    public void procesa(Decs_una decs) {
-       decs.dec().procesa(this);
+       decs.declaracion().procesa(this);
    }
-   public void procesa(Dec dec) {
+   public void procesa(Declaracion dec) {
        if (valores.containsKey(dec.id().toString())) {
           throw new RuntimeException("Constante ya definida "+dec.id()+
                                         ".Fila: "+dec.id().fila()+", col: "+dec.id().col());
@@ -79,7 +74,7 @@ public class Evaluacion extends ProcesamientoPorDefecto {
        else 
          resul = val; 
    }
-   public void procesa(Num exp) {
+   public void procesa(LitEnt exp) {
        resul = Double.valueOf(exp.num().toString()).doubleValue();
    }
 }   
