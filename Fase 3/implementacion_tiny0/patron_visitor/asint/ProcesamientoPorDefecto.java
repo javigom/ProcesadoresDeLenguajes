@@ -18,6 +18,8 @@ public class ProcesamientoPorDefecto implements Procesamiento {
    public void procesa(Resta exp) {}
    public void procesa(Mul exp) {}
    public void procesa(Div exp) {}
+   public void procesa(Not exp) {}
+   public void procesa(Neg exp) {}
    public void procesa(Id exp) {}
    public void procesa(Num exp) {}
    public void procesa(Dec dec) {}

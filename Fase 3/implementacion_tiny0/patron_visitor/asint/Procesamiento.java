@@ -17,6 +17,8 @@ public interface Procesamiento {
     void procesa(Resta exp);
     void procesa(Mul exp);
     void procesa(Div exp);
+    void procesa(Not exp);
+    void procesa(Neg exp);
     void procesa(Id exp);
     void procesa(Num exp);
     void procesa(Dec dec);
