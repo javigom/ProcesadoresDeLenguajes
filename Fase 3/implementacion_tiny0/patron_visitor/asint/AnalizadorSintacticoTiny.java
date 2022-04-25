@@ -57,7 +57,7 @@ public class AnalizadorSintacticoTiny {
 					ClaseLexica.INT, ClaseLexica.REAL);
 		}
 	}
-	
+
 	private void RDEC() {
 		switch (anticipo.clase()) {
 		case DAMP:
@@ -72,7 +72,7 @@ public class AnalizadorSintacticoTiny {
 					ClaseLexica.PCOMA);
 		}
 	}
-	
+
 	private void DECLARACION() {
 		switch (anticipo.clase()) {
 		case BOOL:
@@ -82,11 +82,11 @@ public class AnalizadorSintacticoTiny {
 			empareja(ClaseLexica.ID);
 			break;
 		default:
-			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.BOOL, 
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.BOOL,
 					ClaseLexica.INT, ClaseLexica.REAL);
 		}
 	}
-	
+
 	private void TIPO() {
 		switch (anticipo.clase()) {
 		case BOOL:
@@ -114,7 +114,7 @@ public class AnalizadorSintacticoTiny {
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.ID);
 		}
 	}
-	
+
 	private void RINS() {
 		switch (anticipo.clase()) {
 		case PCOMA:
@@ -161,7 +161,7 @@ public class AnalizadorSintacticoTiny {
 					ClaseLexica.PAP, ClaseLexica.TRUE);
 		}
 	}
-	
+
 	private void RE0() {
 		switch (anticipo.clase()) {
 		case MAS:
@@ -202,7 +202,7 @@ public class AnalizadorSintacticoTiny {
 					ClaseLexica.PAP, ClaseLexica.TRUE);
 		}
 	}
-	
+
 	private void RE1() {
 		switch (anticipo.clase()) {
 		case AND:
@@ -222,7 +222,7 @@ public class AnalizadorSintacticoTiny {
 					ClaseLexica.OR, ClaseLexica.MAS, ClaseLexica.MENOS);
 		}
 	}
-	
+
 	private void OPBN1() {
 		switch (anticipo.clase()) {
 		case AND:
@@ -256,7 +256,7 @@ public class AnalizadorSintacticoTiny {
 					ClaseLexica.PAP, ClaseLexica.TRUE);
 		}
 	}
-	
+
 	private void RE2() {
 		switch (anticipo.clase()) {
 		case DIGUAL:
@@ -279,11 +279,11 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.DIF,
-					ClaseLexica.DIGUAL, ClaseLexica.MAYOR_IGUAL, ClaseLexica.MAYOR, ClaseLexica.MENOR_IGUAL, ClaseLexica.MENOR,
-					ClaseLexica.AND, ClaseLexica.MAS, ClaseLexica.MENOS, ClaseLexica.OR);
+					ClaseLexica.DIGUAL, ClaseLexica.MAYOR_IGUAL, ClaseLexica.MAYOR, ClaseLexica.MENOR_IGUAL,
+					ClaseLexica.MENOR, ClaseLexica.AND, ClaseLexica.MAS, ClaseLexica.MENOS, ClaseLexica.OR);
 		}
 	}
-	
+
 	private void OPBN2() {
 		switch (anticipo.clase()) {
 		case MENOR:
@@ -303,7 +303,7 @@ public class AnalizadorSintacticoTiny {
 			break;
 		case DIGUAL:
 			empareja(ClaseLexica.DIGUAL);
-			break;	
+			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.MENOR,
 					ClaseLexica.MAYOR, ClaseLexica.MENOR_IGUAL, ClaseLexica.MAYOR_IGUAL, ClaseLexica.DIF,
@@ -330,7 +330,7 @@ public class AnalizadorSintacticoTiny {
 					ClaseLexica.PAP, ClaseLexica.TRUE);
 		}
 	}
-	
+
 	private void RE3() {
 		switch (anticipo.clase()) {
 		case DIV:
@@ -354,11 +354,11 @@ public class AnalizadorSintacticoTiny {
 			break;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.DIV,
-					ClaseLexica.POR, ClaseLexica.AND, ClaseLexica.DIF, ClaseLexica.DIGUAL, ClaseLexica.MAS, 
+					ClaseLexica.POR, ClaseLexica.AND, ClaseLexica.DIF, ClaseLexica.DIGUAL, ClaseLexica.MAS,
 					ClaseLexica.MENOS, ClaseLexica.MAYOR_IGUAL, ClaseLexica.MENOR_IGUAL, ClaseLexica.OR);
 		}
 	}
-	
+
 	private void OPBN3() {
 		switch (anticipo.clase()) {
 		case POR:
@@ -417,7 +417,7 @@ public class AnalizadorSintacticoTiny {
 					ClaseLexica.ID, ClaseLexica.LIT_REAL, ClaseLexica.TRUE, ClaseLexica.FALSE, ClaseLexica.PAP);
 		}
 	}
-	
+
 	private void EXPRESION() {
 		switch (anticipo.clase()) {
 		case TRUE:
@@ -440,7 +440,7 @@ public class AnalizadorSintacticoTiny {
 					ClaseLexica.LIT_REAL, ClaseLexica.TRUE, ClaseLexica.FALSE);
 		}
 	}
- 
+
 	private void empareja(ClaseLexica claseEsperada) {
 		if (anticipo.clase() == claseEsperada)
 			sigToken();

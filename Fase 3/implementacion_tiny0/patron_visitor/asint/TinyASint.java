@@ -412,6 +412,7 @@ public class TinyASint {
 	}
 	
 	public static class Real extends Tipo {
+		
 		public Real(StringLocalizado tipo) {
 			super(tipo);
 		}
@@ -668,16 +669,16 @@ public class TinyASint {
 		return new Id(arg0);
 	}
 	
-	public Tipo Bool(StringLocalizado arg0) {
-		return Bool(arg0);
+	public Tipo bool_cons(StringLocalizado arg0) {
+		return new Bool(arg0);
 	}
 	
-	public Tipo Int(StringLocalizado arg0) {
-		return Int(arg0);
+	public Tipo int_cons(StringLocalizado arg0) {
+		return new Int(arg0);
 	}
 
-	public Tipo Real(StringLocalizado arg0) {
-		return Real(arg0);
+	public Tipo real_cons(StringLocalizado arg0) {
+		return new Real(arg0);
 	}
 	
 	public Declaracion declaracion(Tipo tipo, StringLocalizado id) {

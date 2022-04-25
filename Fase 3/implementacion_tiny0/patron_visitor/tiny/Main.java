@@ -21,7 +21,7 @@ public class Main {
     	 Programa prog = null;
          prog = ejecuta_descendente_manual(args[1]);
          prog.procesa(new Impresion());
-         prog.procesa(new Evaluacion());         
+         //prog.procesa(new Evaluacion());         
      }
    }
    

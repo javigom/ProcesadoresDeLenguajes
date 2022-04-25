@@ -30,177 +30,174 @@ import asint.ProcesamientoPorDefecto;
 import asint.TinyASint.Exp;
 import asint.TinyASint.False;
 
-
 public class Impresion extends ProcesamientoPorDefecto {
-   public Impresion() {
-   }
+	public Impresion() {
+	}
 
-   // Programa
-   
-   public void procesa(Programa prog) {
-       prog.declaraciones().procesa(this);
-       System.out.println();
-       prog.instrucciones().procesa(this);
-       System.out.println();       
-   }   
-   
+	// Programa
+
+	public void procesa(Programa prog) {
+		prog.declaraciones().procesa(this);
+		System.out.println();
+		prog.instrucciones().procesa(this);
+		System.out.println();
+	}
+
 	// Declaraciones
-   
-   public void procesa(Decs_muchas decs) {
-       decs.declaraciones().procesa(this);
-       System.out.println(";");
-       decs.declaracion().procesa(this);
-   }
-   public void procesa(Decs_una decs) {
-       decs.declaracion().procesa(this);
-   }
-   public void procesa(Declaracion dec) {
-       System.out.print(dec.val() + "  " + dec.id());
-   }
-   
-   // Instrucciones
+
+	public void procesa(Decs_muchas decs) {
+		decs.declaraciones().procesa(this);
+		System.out.println(";");
+		decs.declaracion().procesa(this);
+	}
+
+	public void procesa(Decs_una decs) {
+		decs.declaracion().procesa(this);
+	}
+
+	public void procesa(Declaracion dec) {
+		System.out.print(dec.val() + "  " + dec.id());
+	}
+
+	// Instrucciones
 
 	public void procesa(Insts_muchas insts) {
-	   insts.instrucciones().procesa(this);
-       System.out.println(";");
-       insts.instruccion().procesa(this);
+		insts.instrucciones().procesa(this);
+		System.out.println(";");
+		insts.instruccion().procesa(this);
 	}
 
 	public void procesa(Insts_una insts) {
 		insts.instruccion().procesa(this);
 	}
-	
 
 	public void procesa(Instruccion instruccion) {
 		System.out.print(instruccion.id() + " = ");
 		instruccion.exp().procesa(this);
 	}
-   
-   // Operadores
 
-   // Nivel 0
-   public void procesa(Suma exp) {
-      imprime_arg(exp.arg0(),0); 
-      System.out.print("+");
-      imprime_arg(exp.arg1(),1);       
-   }
-   public void procesa(Resta exp) {
-      imprime_arg(exp.arg0(),0); 
-      System.out.print("+");
-      imprime_arg(exp.arg1(),1);       
-   }
-   
-   // Nivel 1
+	// Operadores
+
+	// Nivel 0
+	public void procesa(Suma exp) {
+		imprime_arg(exp.arg0(), 0);
+		System.out.print("+");
+		imprime_arg(exp.arg1(), 1);
+	}
+
+	public void procesa(Resta exp) {
+		imprime_arg(exp.arg0(), 0);
+		System.out.print("+");
+		imprime_arg(exp.arg1(), 1);
+	}
+
+	// Nivel 1
 	public void procesa(And exp) {
-      imprime_arg(exp.arg0(),1); 
-      System.out.print(" and ");
-      imprime_arg(exp.arg1(),2);  
+		imprime_arg(exp.arg0(), 1);
+		System.out.print(" and ");
+		imprime_arg(exp.arg1(), 2);
 	}
 
 	public void procesa(Or exp) {
-      imprime_arg(exp.arg0(),1); 
-      System.out.print(" or ");
-      imprime_arg(exp.arg1(),2);  
+		imprime_arg(exp.arg0(), 1);
+		System.out.print(" or ");
+		imprime_arg(exp.arg1(), 2);
 	}
-	
+
 	// Nivel 2
-   	public void procesa(Menor exp) {
-        imprime_arg(exp.arg0(),2); 
-        System.out.print(" < ");
-        imprime_arg(exp.arg1(),3);  
-   }
-
-   	public void procesa(Mayor exp) {
-	    imprime_arg(exp.arg0(),2); 
-	    System.out.print(" > ");
-	    imprime_arg(exp.arg1(),3);  
+	public void procesa(Menor exp) {
+		imprime_arg(exp.arg0(), 2);
+		System.out.print(" < ");
+		imprime_arg(exp.arg1(), 3);
 	}
 
-   	public void procesa(MenorIgual exp) {
-	    imprime_arg(exp.arg0(),2); 
-	    System.out.print(" <= ");
-	    imprime_arg(exp.arg1(),3);  
+	public void procesa(Mayor exp) {
+		imprime_arg(exp.arg0(), 2);
+		System.out.print(" > ");
+		imprime_arg(exp.arg1(), 3);
 	}
 
-   	public void procesa(MayorIgual exp) {
-	    imprime_arg(exp.arg0(),2); 
-	    System.out.print(" >= ");
-	    imprime_arg(exp.arg1(),3);  
+	public void procesa(MenorIgual exp) {
+		imprime_arg(exp.arg0(), 2);
+		System.out.print(" <= ");
+		imprime_arg(exp.arg1(), 3);
 	}
 
-   	public void procesa(Igual exp) {
-	    imprime_arg(exp.arg0(),2); 
-	    System.out.print(" == ");
-	    imprime_arg(exp.arg1(),3);  
+	public void procesa(MayorIgual exp) {
+		imprime_arg(exp.arg0(), 2);
+		System.out.print(" >= ");
+		imprime_arg(exp.arg1(), 3);
 	}
 
-   	public void procesa(Distinto exp) {
-	    imprime_arg(exp.arg0(),2); 
-	    System.out.print(" != ");
-	    imprime_arg(exp.arg1(),3);  
+	public void procesa(Igual exp) {
+		imprime_arg(exp.arg0(), 2);
+		System.out.print(" == ");
+		imprime_arg(exp.arg1(), 3);
 	}
-   
+
+	public void procesa(Distinto exp) {
+		imprime_arg(exp.arg0(), 2);
+		System.out.print(" != ");
+		imprime_arg(exp.arg1(), 3);
+	}
+
 	// Nivel 3
-   public void procesa(Mul exp) {
-      imprime_arg(exp.arg0(),3); 
-      System.out.print("*");
-      imprime_arg(exp.arg1(),4);       
-   }
-   public void procesa(Div exp) {
-      imprime_arg(exp.arg0(),3); 
-      System.out.print("/");
-      imprime_arg(exp.arg1(),4);       
-   }
-  	
+	public void procesa(Mul exp) {
+		imprime_arg(exp.arg0(), 3);
+		System.out.print("*");
+		imprime_arg(exp.arg1(), 4);
+	}
+
+	public void procesa(Div exp) {
+		imprime_arg(exp.arg0(), 3);
+		System.out.print("/");
+		imprime_arg(exp.arg1(), 4);
+	}
+
 	// Nivel 4
-  	public void procesa(MenosUnario exp) {
-	    System.out.print("-");
-	    imprime_arg(exp.arg0(),5);  
+	public void procesa(MenosUnario exp) {
+		System.out.print("-");
+		imprime_arg(exp.arg0(), 5);
 	}
 
 	public void procesa(Not exp) {
-      System.out.print(" not ");
-      imprime_arg(exp.arg0(),4);  
+		System.out.print(" not ");
+		imprime_arg(exp.arg0(), 4);
 	}
-	
-	
 
-   private void imprime_arg(Exp arg, int p) {
-       if (arg.prioridad() < p) {
-           System.out.print("(");
-           arg.procesa(this);
-           System.out.print(")");
-       }
-       else {
-           arg.procesa(this);
-       }
-   }
-   
-   
-   // Nivel 5
-  	public void procesa(True exp) {
-	    System.out.print("true");
+	private void imprime_arg(Exp arg, int p) {
+		if (arg.prioridad() < p) {
+			System.out.print("(");
+			arg.procesa(this);
+			System.out.print(")");
+		} else {
+			arg.procesa(this);
+		}
+	}
+
+	// Nivel 5
+	public void procesa(True exp) {
+		System.out.print("true");
 	}
 
 	public void procesa(False exp) {
-	    System.out.print("false");
+		System.out.print("false");
 	}
 
-  	public void procesa(LitReal exp) {
-        System.out.print(exp.num());
-  	}
-   
-   public void procesa(Id exp) {
-       System.out.print(exp.id());
-   }
-   public void procesa(LitEnt exp) {
-       System.out.print(exp.num());
-   }
-   
-   // Tipo
-   public void procesa(Tipo tipo) {
-	    System.out.print(tipo.tipo());
-   }
-}   
+	public void procesa(LitReal exp) {
+		System.out.print(exp.num());
+	}
 
-            
+	public void procesa(Id exp) {
+		System.out.print(exp.id());
+	}
+
+	public void procesa(LitEnt exp) {
+		System.out.print(exp.num());
+	}
+
+	// Tipo
+	public void procesa(Tipo tipo) {
+		System.out.print(tipo.tipo());
+	}
+}
