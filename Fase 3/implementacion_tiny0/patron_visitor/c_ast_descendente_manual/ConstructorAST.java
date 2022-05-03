@@ -147,7 +147,6 @@ public class ConstructorAST {
 			empareja(ClaseLexica.ID);
 			empareja(ClaseLexica.IGUAL);
 			Exp exp0 = E0();
-
 			return sem.instruccion(sem.str(tkid.lexema(), tkid.fila(), tkid.columna()), exp0);
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.ID);
@@ -165,8 +164,8 @@ public class ConstructorAST {
 		case NOT:
 		case PAP:
 		case TRUE:
-			Exp exp1 = E1();
-			return RE0(exp1);
+			Exp exp = E1();
+			return RE0(exp);
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.FALSE,
 					ClaseLexica.ID, ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT,
@@ -178,10 +177,13 @@ public class ConstructorAST {
 	private Exp RE0(Exp exph) {
 		switch (anticipo.clase()) {
 		case MAS:
+			char op0 = Op0();
+			Exp exp0 = E0();
+			return RE0(sem.exp(op0, exph, exp0));
 		case MENOS:
-			char op = Op0();
+			char op1 = Op0();
 			Exp exp1 = E1();
-			return RE0(sem.exp(op, exph, exp1));
+			return RE0(sem.exp(op1, exph, exp1));
 		case PCIERRE:
 		case PCOMA:
 		case EOF:
@@ -203,8 +205,8 @@ public class ConstructorAST {
 		case NOT:
 		case PAP:
 		case TRUE:
-			Exp exp2 = E2();
-			return RE1(exp2);
+			Exp exp = E2();
+			return RE1(exp);
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.FALSE,
 					ClaseLexica.ID, ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT,
@@ -216,13 +218,10 @@ public class ConstructorAST {
 	private Exp RE1(Exp exph) {
 		switch (anticipo.clase()) {
 		case AND:
-			Exp exp2 = E2();
-			empareja(ClaseLexica.AND);
-			return RE1(sem.and_cons(exph, exp2));
 		case OR:
-			Exp exp21 = E2();
-			empareja(ClaseLexica.OR);
-			return RE1(sem.or_cons(exph, exp21));
+			String op = Op1();
+			Exp exp = E2();
+			return RE1(sem.exp(op, exph, exp));
 		case MAS:
 		case MENOS:
 		case PCIERRE:
@@ -246,8 +245,8 @@ public class ConstructorAST {
 		case NOT:
 		case PAP:
 		case TRUE:
-			Exp exp3 = E3();
-			return RE2(exp3);
+			Exp exp = E3();
+			return RE2(exp);
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.FALSE,
 					ClaseLexica.ID, ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT,
@@ -259,29 +258,17 @@ public class ConstructorAST {
 	private Exp RE2(Exp exph) {
 		switch (anticipo.clase()) {
 		case MENOR:
-			Exp exp3 = E3();
-			empareja(ClaseLexica.MENOR);
-			return RE2(sem.menor(exph, exp3));
 		case MAYOR:
-			Exp exp31 = E3();
-			empareja(ClaseLexica.MAYOR);
-			return RE2(sem.mayor(exph, exp31));
+			char op0 = Op2_0();
+			Exp exp0 = E3();
+			return RE2(sem.exp(op0, exph, exp0));
 		case MENOR_IGUAL:
-			Exp exp32 = E3();
-			empareja(ClaseLexica.MENOR_IGUAL);
-			return RE2(sem.menorIgual(exph, exp32));
 		case MAYOR_IGUAL:
-			Exp exp33 = E3();
-			empareja(ClaseLexica.MENOR_IGUAL);
-			return RE2(sem.mayorIgual(exph, exp33));
 		case DIF:
-			Exp exp34 = E3();
-			empareja(ClaseLexica.DIF);
-			return RE2(sem.distinto(exph, exp34));
 		case DIGUAL:
-			Exp exp35 = E3();
-			empareja(ClaseLexica.DIGUAL);
-			return RE2(sem.igual(exph, exp35));
+			String op1 = Op2_1();
+			Exp exp1 = E3();
+			return RE2(sem.exp(op1, exph, exp1));
 		case AND:
 		case MAS:
 		case MENOS:
@@ -308,8 +295,8 @@ public class ConstructorAST {
 		case NOT:
 		case PAP:
 		case TRUE:
-			Exp exp4 = E4();
-			return RE3(exp4);
+			Exp exp = E4();
+			return RE3(exp);
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.FALSE,
 					ClaseLexica.ID, ClaseLexica.LIT_ENT, ClaseLexica.LIT_REAL, ClaseLexica.MENOS, ClaseLexica.NOT,
@@ -322,9 +309,9 @@ public class ConstructorAST {
 		switch (anticipo.clase()) {
 		case DIV:
 		case POR:
-			char op = OPBN3();
-			Exp exp4 = E4();
-			return sem.exp(op, exph, exp4);
+			char op = Op3();
+			Exp exp = E4();
+			return sem.exp(op, exph, exp);
 		case AND:
 		case DIGUAL:
 		case DIF:
@@ -350,13 +337,13 @@ public class ConstructorAST {
 	private Exp E4() {
 		switch (anticipo.clase()) {
 		case NOT:
-			empareja(ClaseLexica.NOT);
-			Exp exp4 = E4();
-			return sem.not(exp4);
+			String op0 = Op4();
+			Exp exp0 = E4();
+			return sem.exp(op0, exp0);
 		case MENOS:
-			empareja(ClaseLexica.MENOS);
-			Exp exp5 = E5();
-			return sem.neg(exp5);
+			String op1 = Op4();
+			Exp exp1 = E5();
+			return sem.exp(op1, exp1);
 		case FALSE:
 		case ID:
 		case LIT_ENT:
@@ -382,9 +369,9 @@ public class ConstructorAST {
 			return EXPRESION();
 		case PAP:
 			empareja(ClaseLexica.PAP);
-			Exp exp0 = E0();
+			Exp exp = E0();
 			empareja(ClaseLexica.PCIERRE);
-			return exp0;
+			return exp;
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.LIT_ENT,
 					ClaseLexica.ID, ClaseLexica.LIT_REAL, ClaseLexica.TRUE, ClaseLexica.FALSE, ClaseLexica.PAP);
@@ -433,8 +420,59 @@ public class ConstructorAST {
 			return '?';
 		}
 	}
+	
+	private String Op1() {
+		switch (anticipo.clase()) {
+		case AND:
+			empareja(ClaseLexica.AND);
+			return "and";
+		case OR:
+			empareja(ClaseLexica.OR);
+			return "or";
+		default:
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.MAS,
+					ClaseLexica.MENOS);
+			return "?";
+		}
+	}
+	
+	private char Op2_0() {
+		switch (anticipo.clase()) {
+		case MENOR:
+			empareja(ClaseLexica.MENOR);
+			return '<';
+		case MAYOR:
+			empareja(ClaseLexica.MAYOR);
+			return '>';
+		default:
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.MAS,
+					ClaseLexica.MENOS);
+			return '?';
+		}
+	}
+	
+	private String Op2_1() {
+		switch (anticipo.clase()) {
+		case MENOR_IGUAL:
+			empareja(ClaseLexica.MENOR_IGUAL);
+			return "<=";
+		case MAYOR_IGUAL:
+			empareja(ClaseLexica.MENOR_IGUAL);
+			return ">=";
+		case DIF:
+			empareja(ClaseLexica.DIF);
+			return "!=";
+		case DIGUAL:
+			empareja(ClaseLexica.DIGUAL);
+			return "==";
+		default:
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.MAS,
+					ClaseLexica.MENOS);
+			return "?";
+		}
+	}
 
-	private char OPBN3() {
+	private char Op3() {
 		switch (anticipo.clase()) {
 		case POR:
 			empareja(ClaseLexica.POR);
@@ -446,6 +484,21 @@ public class ConstructorAST {
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.POR,
 					ClaseLexica.DIV);
 			return '?';
+		}
+	}
+	
+	private String Op4() {
+		switch (anticipo.clase()) {
+		case NOT:
+			empareja(ClaseLexica.NOT);
+			return "not";
+		case MENOS:
+			empareja(ClaseLexica.MENOS);
+			return "-";
+		default:
+			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.MAS,
+					ClaseLexica.MENOS);
+			return "?";
 		}
 	}
 

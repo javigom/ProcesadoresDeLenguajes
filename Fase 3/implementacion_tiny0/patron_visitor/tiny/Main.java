@@ -9,7 +9,6 @@ import c_ast_descendente_manual.UnidadLexica;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import procesamientos.Evaluacion;
 import procesamientos.Impresion;
 
 public class Main {
@@ -19,7 +18,7 @@ public class Main {
      }
      else {
     	 Programa prog = null;
-         prog = ejecuta_descendente_manual(args[1]);
+         prog = ejecuta_descendente_manual(args[0]);
          prog.procesa(new Impresion());
          //prog.procesa(new Evaluacion());         
      }

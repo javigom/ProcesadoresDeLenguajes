@@ -648,6 +648,10 @@ public class TinyASint {
 	public Exp menosUnario(Exp arg0) {
 		return new MenosUnario(arg0);
 	}
+	
+	public Exp not(Exp arg0) {
+		return new Not(arg0);
+	}
 
 	public Exp true_cons() {
 		return new True();
