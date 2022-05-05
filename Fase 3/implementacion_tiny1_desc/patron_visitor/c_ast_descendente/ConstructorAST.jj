@@ -1,0 +1,184 @@
+options  {
+  STATIC=false;
+}  
+PARSER_BEGIN(ConstructorAST)
+package c_ast_descendente;
+
+///////////// mas import /////////////////////////////////////////////////////
+
+import asint.TinyASint.Exp;
+import asint.TinyASint.Dec;
+import asint.TinyASint.Decs;
+import asint.TinyASint.Prog;
+import semops.SemOps;
+
+
+public class ConstructorAST {
+   private SemOps sem = new SemOps();
+}
+PARSER_END(ConstructorAST)
+  TOKEN:{<#letra:["a"-"z","A"-"Z"]>}
+  TOKEN:{<#digitoPositivo:["1"-"9"]>}
+  TOKEN:{<#digito:<digitoPositivo>|"0">} 
+  TOKEN:{<#parteEntera:<digitoPositivo> (<digito>)* |"0">} 
+  TOKEN:{<#parteDecimal: ["."] ((<digito>)* <digitoPositivo> | "0")>}
+  TOKEN:{<#parteExponencial: ["e", "E"] <litEnt>>}
+  TOKEN:{<#signo: ["+","-"]>}
+  SKIP:{<["\t"," ","\r","\b","\n"]>}  
+  SKIP:{<"#"(~["\n"])*>}  
+  TOKEN: {<AND:"and">}
+  TOKEN: {<OR:"or">} 
+  TOKEN: {<NOT:"not">}
+  TOKEN: {<FALSE:"false">} 
+  TOKEN: {<TRUE:"true">}
+  TOKEN: {<INT:"int">} 
+  TOKEN: {<REAL:"real">}
+  TOKEN: {<STRING:"string">} 
+  TOKEN: {<BOOL:"bool">}
+  TOKEN: {<NULL:"null">} 
+  TOKEN: {<PROC:"proc">}
+  TOKEN: {<IF:"if">} 
+  TOKEN: {<THEN:"then">}
+  TOKEN: {<ELSE:"else">} 
+  TOKEN: {<ENDIF:"endif">}
+  TOKEN: {<WHILE:"while">} 
+  TOKEN: {<DO:"do">}
+  TOKEN: {<ENDWHILE:"endwhile">} 
+  TOKEN: {<CALL:"call">}
+  TOKEN: {<RECORD:"record">} 
+  TOKEN: {<ARRAY:"array">}
+  TOKEN: {<OF:"of">} 
+  TOKEN: {<POINTER:"pointer">}
+  TOKEN: {<NEW:"new">} 
+  TOKEN: {<DELETE:"delete">}
+  TOKEN: {<READ:"read">} 
+  TOKEN: {<WRITE:"write">}
+  TOKEN: {<NL:"nl">} 
+  TOKEN: {<VAR:"var">}
+  TOKEN: {<TYPE:"type">}
+  TOKEN: {<comillas:"\"">}
+  TOKEN: {<litCad:<comillas>(~["\"","\r","\b","\n"])*<comillas>>}
+  TOKEN: {<identificador:<letra>(<letra>|<digito>|"_")*>}
+  TOKEN: {<litEnt: (<signo>)? <parteEntera> >}
+  TOKEN: {<litReal: <litEnt> (<parteDecimal> | <parteExponencial> | <parteDecimal> <parteExponencial>)>  }
+  
+  Decs PDonde()  : {Decs decs;} 
+                       {<donde> decs=Decs() {return decs;} | 
+                       {return null;}}
+  Exp E0()       : {Exp exp1, resul;} {exp1=E1() resul=RE0(exp1) {return resul;}}
+  Exp RE0(Exp exph) : {char op; Exp exp1; Exp exp;} 
+                       {op=OP0() exp1=E2() exp=RE0(sem.exp(op,exph,exp1)) {return exp;} |
+                       {return exph;}}
+  Exp E1()       : {Exp exp2, resul;} {exp2=E2() resul=RE1(exp2) {return resul;}}
+  Exp RE1(Exp exph) : {char op; Exp exp2; Exp exp;} 
+                       {op=OP1() exp2=E2() exp=RE1(sem.exp(op,exph,exp2)) {return exp;} |
+                       {return exph;}}
+  Exp E2()         : {Exp exp; Token t;}  
+                        {t=<num> {return sem.num(sem.str(t.image,t.beginLine,t.beginColumn));} |
+                         t=<id>  {return sem.id(sem.str(t.image,t.beginLine,t.beginColumn));} |
+						"(" exp=E0() ")" {return exp;}}
+  char OP0() : {} {"+" {return '+';} |
+                   "-" {return '-';}}						
+  char OP1() : {} {"*" {return '*';} |
+                   "/" {return '/';}}
+  Decs Decs() : {Dec dec; Decs decs;} {dec=Dec() decs=RDecs(sem.decs_una(dec)) {return decs;}}
+  Decs RDecs(Decs decsh) : {Dec dec; Decs decs;} 
+                             {"," dec=Dec() decs=RDecs(sem.decs_muchas(decsh,dec)) {return decs;} |
+                             {return decsh;}}
+  Dec Dec() : {Token iden,numb;} {iden=<id> "=" numb=<num> 
+                                    {return sem.dec(sem.str(iden.image,iden.beginLine,iden.beginColumn),
+                                                    sem.str(numb.image,numb.endLine,numb.endColumn));}}					 
+
+
+//////////////Version antigua de tiny 1 para pasar /////////////////////////////////////////////////////
+
+  Prog PROGRAMAp()    : {Prog prog;} {prog=PROGRAMA() <EOF> {return prog;}}
+  Prog PROGRAMA()    : {Exp exp; Decs decs;}
+  						{decs=DECLARACIONES() "&&" ins=INSTRUCCIONES() {return sem.P_decs(exp,decs,ins);} | ins=INSTRUCCIONES() {return sem.P_nodecs(exp,ins);}}
+  
+  Decs DECLARACIONES()  : {Decs decs;} 
+                       {dec=DECLARACION() decs = RDECLARACIONES(dec) {return decs;}}
+ 
+  void RDECLARACIONES(Dec dec_h)    : {Decs decs;} {";" dec = DECLARACION() decs = RDECLARACIONES(sem.decsmuchas(dec,dec_h)) {return decs;} | {return null;} }
+  void DECLARACION()    : {Decs dec;} {dec = DECVAR() {return dec;}| dec = DECTIPO() {return dec;} | dec = DECPROC() {return dec;} }
+
+ 
+  void DECVAR()    : {Dec dec} {v=<VAR> tipo = TIPO() iden=<identificador> {return sem.tipo(sem.str(iden.image,iden.beginLine,iden.beginColumn), 
+  																						    tipo, sem.str(v.image,v.beginLine,v.beginColumn));}}
+  void DECTIPO()    : {Dec dec} {t=<TYPE> tipo = TIPO() iden=<identificador> {return sem.tipo(sem.str(iden.image,iden.beginLine,iden.beginColumn), 
+  																						    tipo, sem.str(t.image,t.beginLine,t.beginColumn));}}
+  void DECPROC()    : {Dec dec} {p=<PROC> iden=<identificador> pforms = PFORMALES() bl = BLOQUE(){return sem.proc(sem.str(p.image,p.beginLine,p.beginColumn),
+  																												sem.str(iden.image,iden.beginLine,iden.beginColumn), 
+  																						    					pforms, bl);}}
+ 
+  void PFORMALES()    : {Pforms pforms} { "(" pforms = RPFORMALES() {return pforms;}}
+  void RPFORMALES() : {Pforms pforms} { pforms = LISTA_PFORMALES() ")" {return pforms;} | ")" {return null;} }
+  void LISTA_PFORMALES()    : {Pforms pforms} {pform = PFORMAL() pforms = RLISTA_PFORMALES(sem.pformal_uno(pform)) {return pforms;}}
+  void RLISTA_PFORMALES(Pforms pforms)    : {Pforms pforms} {"," pform = PFORMAL() pformsr = RLISTA_PFORMALES(sem.pformal_muchas(pform, pforms)) {return pformsr;} | {return null;} }
+  void PFORMAL()    : {} {t=TIPO() rpf =RPFORMAL() {return sem.tipo_formal(t,rpf);}}
+  void RPFORMAL() : {} {"&" id=<identificador> {return sem.str(id.image,id.beginLine,id.beginColumn);} | id=<identificador> {return sem.str(id.image,id.beginLine,id.beginColumn);}}
+
+
+
+
+
+
+//////////////////////////// continue //////////////////////////////////
+
+
+
+    
+  void TIPO()    : {} {TIPO_BASICO() | <identificador> | <ARRAY> "[" <litEnt> "]" <OF> TIPO() | <RECORD> "{" LISTA_CAMPOS() "}" | <POINTER> TIPO()}
+  void TIPO_BASICO()    : {} {<INT> | <REAL> | <BOOL> | <STRING> }
+  void LISTA_CAMPOS()    : {} {CAMPO() RLISTA_CAMPOS() }
+  void RLISTA_CAMPOS()    : {} {";" CAMPO() RLISTA_CAMPOS() | {} }
+  void CAMPO()    : {} {TIPO() <identificador> }
+
+  void INSTRUCCIONES()    : {} {INSTRUCCION() RINST() }
+  void RINST()    : {} {";" INSTRUCCION() RINST() | {}}
+  
+  void INSTRUCCION()    : {} { EXPRESION() "=" EXPRESION() | <IF> EXPRESION() <THEN> LISTA_INST_OP() RIFTHEN() <ENDIF> |
+  							  <WHILE> EXPRESION() <DO> LISTA_INST_OP()  <ENDWHILE> | <READ> EXPRESION() | <WRITE> EXPRESION() | <NL> | <NEW> EXPRESION() |
+  							  <DELETE> EXPRESION() | <CALL> <identificador> "(" LISTA_EXPR_OP() ")" | BLOQUE()}
+  
+  void LISTA_INST_OP()    : {} {LISTA_INST() | {} }
+  void LISTA_INST()    : {} {INSTRUCCION() RLISTA_INST()}
+  void RLISTA_INST()    : {} {";" INSTRUCCION() RLISTA_INST() | {}}  
+  void RIFTHEN()    : {} {<ELSE> LISTA_INST() | {}}
+  
+  void LISTA_EXPR_OP()    : {} {LISTA_EXPR() | {}}  
+  void LISTA_EXPR()    : {} {EXPRESION() RLISTA_EXPR()}
+  void RLISTA_EXPR()    : {} {"," LISTA_EXPR() RLISTA_EXPR() | {}}
+  
+  void BLOQUE()    : {} { "{" RBLOQUE() }
+  void RBLOQUE() : {} { PROGRAMA() "}" | "}" } 
+  
+  void EXPRESION()    : {} { E0() }
+  void EXPRESION_BASICA()    : {} {<TRUE> | <FALSE> | <identificador> | <NULL> | <litEnt> | <litReal> | <litCad> }
+  
+  void E0()   : {} {E1() RE0()}
+  void RE0()  : {} {"+" E0() | "-" E1() | {} }
+  
+  
+  void E1()   : {} {E2() RE1() }
+  void RE1()  : {} {OPBN1() E2() RE1() | {} }
+  
+  void E2()   : {} {E3() RE2() }
+  void RE2()  : {} {OPBN2() E3() RE2() | {} }
+  
+  void E3()   : {} {E4() RE3() }
+  void RE3()  : {} {OPBN3() E4() | {} }
+  
+  void E4()   : {} {<NOT> E4() | "-" E5() | E5() }
+  
+  void E5()	  : {} {E6() RE5()}
+  void RE5()  : {} {OPUN5() RE5() | {} }
+
+  void E6()   : {} {"*" E6() | E7()}
+  void E7()   : {} {EXPRESION_BASICA() | "(" E0() ")"} 
+  
+  void OPBN1()  : {} {<AND> | <OR>}
+  void OPBN2()  : {} {"<" | ">" | "<="| ">=" | "==" | "!="}
+  void OPBN3()  : {} {"*" | "/" | "%"}
+  void OPUN5()  : {} {"[" EXPRESION() "]" | OP_ACCESO()}
+  void OP_ACCESO()  : {} {"." <identificador> | "->" <identificador>}

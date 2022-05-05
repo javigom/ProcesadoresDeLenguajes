@@ -1,0 +1,126 @@
+options  {
+  STATIC=false;
+}  
+PARSER_BEGIN(AnalizadorSintacticoTinyCC)
+package asint;
+
+public class AnalizadorSintacticoTinyCC {}
+PARSER_END(AnalizadorSintacticoTinyCC)
+  TOKEN:{<#letra:["a"-"z","A"-"Z"]>}
+  TOKEN:{<#digitoPositivo:["1"-"9"]>}
+  TOKEN:{<#digito:<digitoPositivo>|"0">} 
+  TOKEN:{<#parteEntera:<digitoPositivo> (<digito>)* |"0">} 
+  TOKEN:{<#parteDecimal: ["."] ((<digito>)* <digitoPositivo> | "0")>}
+  TOKEN:{<#parteExponencial: ["e", "E"] <litEnt>>}
+  TOKEN:{<#signo: ["+","-"]>}
+  SKIP:{<["\t"," ","\r","\b","\n"]>}  
+  SKIP:{<"#"(~["\n"])*>}  
+  TOKEN: {<AND:"and">}
+  TOKEN: {<OR:"or">} 
+  TOKEN: {<NOT:"not">}
+  TOKEN: {<FALSE:"false">} 
+  TOKEN: {<TRUE:"true">}
+  TOKEN: {<INT:"int">} 
+  TOKEN: {<REAL:"real">}
+  TOKEN: {<STRING:"string">} 
+  TOKEN: {<BOOL:"bool">}
+  TOKEN: {<NULL:"null">} 
+  TOKEN: {<PROC:"proc">}
+  TOKEN: {<IF:"if">} 
+  TOKEN: {<THEN:"then">}
+  TOKEN: {<ELSE:"else">} 
+  TOKEN: {<ENDIF:"endif">}
+  TOKEN: {<WHILE:"while">} 
+  TOKEN: {<DO:"do">}
+  TOKEN: {<ENDWHILE:"endwhile">} 
+  TOKEN: {<CALL:"call">}
+  TOKEN: {<RECORD:"record">} 
+  TOKEN: {<ARRAY:"array">}
+  TOKEN: {<OF:"of">} 
+  TOKEN: {<POINTER:"pointer">}
+  TOKEN: {<NEW:"new">} 
+  TOKEN: {<DELETE:"delete">}
+  TOKEN: {<READ:"read">} 
+  TOKEN: {<WRITE:"write">}
+  TOKEN: {<NL:"nl">} 
+  TOKEN: {<VAR:"var">}
+  TOKEN: {<TYPE:"type">}
+  TOKEN: {<comillas:"\"">}
+  TOKEN: {<litCad:<comillas>(~["\"","\r","\b","\n"])*<comillas>>}
+  TOKEN: {<identificador:<letra>(<letra>|<digito>|"_")*>}
+  TOKEN: {<litEnt: (<signo>)? <parteEntera> >}
+  TOKEN: {<litReal: <litEnt> (<parteDecimal> | <parteExponencial> | <parteDecimal> <parteExponencial>)>  }
+  
+  void PROGRAMAp()   : {} {PROGRAMA() <EOF>}
+  void PROGRAMA()   : {} {DECLARACIONES() "&&" INSTRUCCIONES() | INSTRUCCIONES() }
+  
+  void DECLARACIONES()    : {} {DECLARACION() RDECLARACIONES()}
+  void RDECLARACIONES()    : {} {";" DECLARACION() RDECLARACIONES() | {} }
+  void DECLARACION()    : {} {DECVAR() | DECTIPO() | DECPROC() }
+ 
+  void DECVAR()    : {} {<VAR> TIPO() <identificador> }
+  void DECTIPO()    : {} {<TYPE> TIPO() <identificador> }
+  void DECPROC()    : {} {<PROC> <identificador> PFORMALES() BLOQUE()}
+  
+  void PFORMALES()    : {} { "(" RPFORMALES() }
+  void RPFORMALES() : {} { LISTA_PFORMALES() ")" | ")" }
+  void LISTA_PFORMALES()    : {} {PFORMAL() RLISTA_PFORMALES()}
+  void RLISTA_PFORMALES()    : {} {"," PFORMAL() RLISTA_PFORMALES() | {} }
+  void PFORMAL()    : {} {TIPO() RPFORMAL() }
+  void RPFORMAL() : {} {"&" <identificador> | <identificador> }
+    
+  void TIPO()    : {} {TIPO_BASICO() | <identificador> | <ARRAY> "[" <litEnt> "]" <OF> TIPO() | <RECORD> "{" LISTA_CAMPOS() "}" | <POINTER> TIPO()}
+  void TIPO_BASICO()    : {} {<INT> | <REAL> | <BOOL> | <STRING> }
+  void LISTA_CAMPOS()    : {} {CAMPO() RLISTA_CAMPOS() }
+  void RLISTA_CAMPOS()    : {} {";" CAMPO() RLISTA_CAMPOS() | {} }
+  void CAMPO()    : {} {TIPO() <identificador> }
+
+  void INSTRUCCIONES()    : {} {INSTRUCCION() RINST() }
+  void RINST()    : {} {";" INSTRUCCION() RINST() | {}}
+  
+  void INSTRUCCION()    : {} { EXPRESION() "=" EXPRESION() | <IF> EXPRESION() <THEN> LISTA_INST_OP() RIFTHEN() <ENDIF> |
+  							  <WHILE> EXPRESION() <DO> LISTA_INST_OP()  <ENDWHILE> | <READ> EXPRESION() | <WRITE> EXPRESION() | <NL> | <NEW> EXPRESION() |
+  							  <DELETE> EXPRESION() | <CALL> <identificador> "(" LISTA_EXPR_OP() ")" | BLOQUE()}
+  
+  void LISTA_INST_OP()    : {} {LISTA_INST() | {} }
+  void LISTA_INST()    : {} {INSTRUCCION() RLISTA_INST()}
+  void RLISTA_INST()    : {} {";" INSTRUCCION() RLISTA_INST() | {}}  
+  void RIFTHEN()    : {} {<ELSE> LISTA_INST() | {}}
+  
+  void LISTA_EXPR_OP()    : {} {LISTA_EXPR() | {}}  
+  void LISTA_EXPR()    : {} {EXPRESION() RLISTA_EXPR()}
+  void RLISTA_EXPR()    : {} {"," LISTA_EXPR() RLISTA_EXPR() | {}}
+  
+  void BLOQUE()    : {} { "{" RBLOQUE() }
+  void RBLOQUE() : {} { PROGRAMA() "}" | "}" } 
+  
+  void EXPRESION()    : {} { E0() }
+  void EXPRESION_BASICA()    : {} {<TRUE> | <FALSE> | <identificador> | <NULL> | <litEnt> | <litReal> | <litCad> }
+  
+  void E0()   : {} {E1() RE0()}
+  void RE0()  : {} {"+" E0() | "-" E1() | {} }
+  
+  
+  void E1()   : {} {E2() RE1() }
+  void RE1()  : {} {OPBN1() E2() RE1() | {} }
+  
+  void E2()   : {} {E3() RE2() }
+  void RE2()  : {} {OPBN2() E3() RE2() | {} }
+  
+  void E3()   : {} {E4() RE3() }
+  void RE3()  : {} {OPBN3() E4() | {} }
+  
+  void E4()   : {} {<NOT> E4() | "-" E5() | E5() }
+  
+  void E5()	  : {} {E6() RE5()}
+  void RE5()  : {} {OPUN5() RE5() | {} }
+
+  void E6()   : {} {"*" E6() | E7()}
+  void E7()   : {} {EXPRESION_BASICA() | "(" E0() ")"} 
+  
+  void OPBN1()  : {} {<AND> | <OR>}
+  void OPBN2()  : {} {"<" | ">" | "<="| ">=" | "==" | "!="}
+  void OPBN3()  : {} {"*" | "/" | "%"}
+  void OPUN5()  : {} {"[" EXPRESION() "]" | OP_ACCESO()}
+  void OP_ACCESO()  : {} {"." <identificador> | "->" <identificador>}
+  
