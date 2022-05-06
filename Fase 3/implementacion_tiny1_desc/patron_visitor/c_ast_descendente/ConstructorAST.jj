@@ -222,7 +222,7 @@ PARSER_END(ConstructorAST)
 
 
   EX EXPRESION()    : {EX ex;}
-					  { ex=E0() {return ex;} }
+					  {ex=E0() {return ex;} }
 					
   EX EXPRESION_BASICA()    : {Token t;}
 							{t=<TRUE> {return sem.ex(sem.str(t.image,t.beginLine,t.beginColumn));}|
@@ -237,28 +237,28 @@ PARSER_END(ConstructorAST)
 
   EX E0()       : {EX exp, resul;} {exp=E1() resul=RE0(exp) {return resul;}}
   EX RE0(EX exph) : {EX exp;} 
-                       {"+" exp=E0() {return sem.suma(exp,exph);} |
-                       {"-" exp=E1() {return sem.resta(exp,exph);} |
+                       {"+" exp=E0() {return sem.exp("+",exp,exph);} |
+                       {"-" exp=E1() {return sem.exp("-",exp,exph);} |
                        {return exph;}}
                    
   
   
   EX E1()   : {EX exp, resul;} {exp=E2() resul=RE1(exp) {return resul;}}
-  EX RE1(EX exph)  : {char op; EX exp, resul;}
+  EX RE1(EX exph)  : {string op; EX exp, resul;}
 						{op=OPBN1() exp=E2() resul=RE1(sem.exp(op,exph,exp)) {return resul}|
 						{return exph;} }
 
 
   
   EX E2()   : {EX exp, resul;} {exp=E3() resul=RE2(exp) {return resul;}}
-  EX RE2(EX exph)  : {char op; EX exp, resul;}
+  EX RE2(EX exph)  : {string op; EX exp, resul;}
 						{op=OPBN2() exp=E3() RE2(sem.exp(op,exph,exp)) {return resul}|
 						{return exph;} }
 
 						
   
   EX E3()   : {EX exp, resul;} {exp=E4() resul=RE3(exp) {return resul;}}
-  EX RE3(EX exph)  : {char op; EX exp, resul;}
+  EX RE3(EX exph)  : {string op; EX exp, resul;}
   						{op=OPBN3() exp=E4() {return sem.exp(op,exph,exp);} |
   						{return exph;} }
   						
@@ -276,9 +276,9 @@ PARSER_END(ConstructorAST)
   EX E6()   : {EX exp;} {"*" exp=E6() {return sem.star(exp);} | exp=E7() {return exp;}}
   EX E7()   : {EX exp;} {exp=EXPRESION_BASICA() {return exp;} | "(" exp=E0() ")" {return exp;}} 
   
-  char OPBN1()  : {} {<AND> {return 'a';} | <OR> {return 'o';}}
-  char OPBN2()  : {} {"<" {return '<';} | ">" {return ' >';} | "<=" {return '<=';}| ">=" {return ' >=';} | "==" {return '==';}| "!=" {return '!=';}}
-  char OPBN3()  : {} {"*" {return '*';} | "/" {return '/';}| "%" {return '%';}}
+  string OPBN1()  : {} {<AND> {return "and";} | <OR> {return "or";}}
+  string OPBN2()  : {} {"<" {return "<";} | ">" {return ">";} | "<=" {return '<=';}| ">=" {return ">=";} | "==" {return "==";}| "!=" {return "!=";}}
+  string OPBN3()  : {} {"*" {return "*";} | "/" {return "/";}| "%" {return "%";}}
   EX OPUN5()  : {EX exp;} {"[" exp=EXPRESION() "]" {return exp;} | exp=OP_ACCESO() {return exp;}}
   
   EX OP_ACCESO()  : {Token iden;} {"." iden=<identificador> {return sem.flecha(sem.str(iden.image,iden.beginLine,iden.beginColumn))}| "->" iden=<identificador> {return sem.flecha(sem.str(iden.image,iden.beginLine,iden.beginColumn))}}
