@@ -38,7 +38,7 @@ public class Impresion extends ProcesamientoPorDefecto {
 
 	public void procesa(Programa prog) {
 		prog.declaraciones().procesa(this);
-		System.out.println();
+		System.out.println("\n&&");
 		prog.instrucciones().procesa(this);
 		System.out.println();
 	}
@@ -68,8 +68,8 @@ public class Impresion extends ProcesamientoPorDefecto {
 		insts.instruccion().procesa(this);
 	}
 
-	public void procesa(Insts_una insts) {
-		insts.instruccion().procesa(this);
+	public void procesa(Insts_una inst) {
+		inst.instruccion().procesa(this);
 	}
 
 	public void procesa(Instruccion instruccion) {
@@ -82,13 +82,13 @@ public class Impresion extends ProcesamientoPorDefecto {
 	// Nivel 0
 	public void procesa(Suma exp) {
 		imprime_arg(exp.arg0(), 1);
-		System.out.print("+");
+		System.out.print(" + ");
 		imprime_arg(exp.arg1(), 0);
 	}
 
 	public void procesa(Resta exp) {
 		imprime_arg(exp.arg0(), 1);
-		System.out.print("+");
+		System.out.print(" - ");
 		imprime_arg(exp.arg1(), 1);
 	}
 
@@ -167,6 +167,7 @@ public class Impresion extends ProcesamientoPorDefecto {
 	}
 
 	private void imprime_arg(Exp arg, int p) {
+		
 		if (arg.prioridad() < p) {
 			System.out.print("(");
 			arg.procesa(this);
