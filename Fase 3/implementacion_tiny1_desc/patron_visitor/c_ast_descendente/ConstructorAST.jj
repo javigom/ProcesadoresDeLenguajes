@@ -72,8 +72,8 @@ PARSER_END(ConstructorAST)
   
   
   Programa PROGRAMAp()    : {Programa prog;} {prog=PROGRAMA() <EOF> {return prog;}}
-  Programa PROGRAMA()    : {Exp exp; Declaraciones decs;}
-  						{decs=DECLARACIONES() "&&" ins=INSTRUCCIONES() {return sem.P_decs(exp,decs,ins);} | ins=INSTRUCCIONES() {return sem.P_nodecs(exp,ins);}}
+  Programa PROGRAMA()    : {Declaraciones decs;}
+  						{decs=DECLARACIONES() "&&" ins=INSTRUCCIONES() {return sem.P_decs(decs,ins);} | ins=INSTRUCCIONES() {return sem.P_nodecs(ins);}}
   
 
 
