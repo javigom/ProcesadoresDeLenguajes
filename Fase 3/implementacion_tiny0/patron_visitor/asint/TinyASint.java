@@ -256,8 +256,8 @@ public class TinyASint {
 		}
 	}
 
-	public static class MenosUnario extends ExpUnaria {
-		public MenosUnario(Exp arg0) {
+	public static class Neg extends ExpUnaria {
+		public Neg(Exp arg0) {
 			super(arg0);
 		}
 
@@ -279,8 +279,8 @@ public class TinyASint {
 	
 	// Nivel 5
 
-	public static class True extends Exp {
-		public True() {
+	public static class LitTrue extends Exp {
+		public LitTrue() {
 			
 		}
 		
@@ -293,8 +293,8 @@ public class TinyASint {
 		}
 	}
 	
-	public static class False extends Exp {
-		public False() {
+	public static class LitFalse extends Exp {
+		public LitFalse() {
 			
 		}
 		
@@ -374,7 +374,7 @@ public class TinyASint {
 
 	// Tipo
 	
-	public static class Tipo {
+	public static abstract class Tipo {
 		private StringLocalizado tipo;
 
 		public Tipo(StringLocalizado tipo) {
@@ -593,7 +593,7 @@ public class TinyASint {
 
 	// Constructoras
 	
-	public Programa Programa(Declaraciones declaraciones, Instrucciones instrucciones) {
+	public Programa programa(Declaraciones declaraciones, Instrucciones instrucciones) {
 		return new Programa(declaraciones, instrucciones);
 	}
 
@@ -645,20 +645,20 @@ public class TinyASint {
 		return new Div(arg0, arg1);
 	}
 	
-	public Exp menosUnario(Exp arg0) {
-		return new MenosUnario(arg0);
+	public Exp neg(Exp arg0) {
+		return new Neg(arg0);
 	}
 	
 	public Exp not(Exp arg0) {
 		return new Not(arg0);
 	}
 
-	public Exp true_cons() {
-		return new True();
+	public Exp litTrue() {
+		return new LitTrue();
 	}
 	
-	public Exp false_cons() {
-		return new False();
+	public Exp litFalse() {
+		return new LitFalse();
 	}
 	
 	public Exp litEnt(StringLocalizado arg0) {

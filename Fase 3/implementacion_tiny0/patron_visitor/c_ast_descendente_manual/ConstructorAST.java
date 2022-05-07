@@ -40,7 +40,7 @@ public class ConstructorAST {
 			Declaraciones decs = DECLARACIONES();
 			empareja(ClaseLexica.DAMP);
 			Instrucciones ins = INSTRUCCIONES();
-			return sem.Programa(decs, ins);
+			return sem.programa(decs, ins);
 		default:
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.BOOL,
 					ClaseLexica.INT, ClaseLexica.REAL);
@@ -383,10 +383,10 @@ public class ConstructorAST {
 		switch (anticipo.clase()) {
 		case TRUE:
 			empareja(ClaseLexica.TRUE);
-			return sem.true_cons();
+			return sem.litTrue();
 		case FALSE:
 			empareja(ClaseLexica.FALSE);
-			return sem.false_cons();
+			return sem.litFalse();
 		case LIT_REAL:
 			UnidadLexica tkreal = anticipo;
 			empareja(ClaseLexica.LIT_REAL);

@@ -18,9 +18,11 @@ public class Main {
      }
      else {
     	 Programa prog = null;
+    	 //ejecuta_lexico(args[0]);
          prog = ejecuta_descendente_manual(args[0]);
          prog.procesa(new Impresion());
-         //prog.procesa(new Evaluacion());         
+         //prog.procesa(new Evaluacion());        
+         
      }
    }
    

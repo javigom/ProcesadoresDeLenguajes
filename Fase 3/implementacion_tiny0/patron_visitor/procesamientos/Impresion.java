@@ -2,9 +2,9 @@ package procesamientos;
 
 import asint.TinyASint.Suma;
 import asint.TinyASint.Tipo;
-import asint.TinyASint.True;
 import asint.TinyASint.Resta;
 import asint.TinyASint.Mul;
+import asint.TinyASint.Neg;
 import asint.TinyASint.Not;
 import asint.TinyASint.Or;
 import asint.TinyASint.Div;
@@ -14,12 +14,13 @@ import asint.TinyASint.Instruccion;
 import asint.TinyASint.Insts_muchas;
 import asint.TinyASint.Insts_una;
 import asint.TinyASint.LitEnt;
+import asint.TinyASint.LitFalse;
 import asint.TinyASint.LitReal;
+import asint.TinyASint.LitTrue;
 import asint.TinyASint.Mayor;
 import asint.TinyASint.MayorIgual;
 import asint.TinyASint.Menor;
 import asint.TinyASint.MenorIgual;
-import asint.TinyASint.MenosUnario;
 import asint.TinyASint.And;
 import asint.TinyASint.Declaracion;
 import asint.TinyASint.Decs_muchas;
@@ -28,7 +29,6 @@ import asint.TinyASint.Distinto;
 import asint.TinyASint.Programa;
 import asint.ProcesamientoPorDefecto;
 import asint.TinyASint.Exp;
-import asint.TinyASint.False;
 
 public class Impresion extends ProcesamientoPorDefecto {
 	public Impresion() {
@@ -56,7 +56,8 @@ public class Impresion extends ProcesamientoPorDefecto {
 	}
 
 	public void procesa(Declaracion dec) {
-		System.out.print(dec.val() + "  " + dec.id());
+		dec.val().procesa(this);
+		System.out.print(" " + dec.id());
 	}
 
 	// Instrucciones
@@ -80,13 +81,13 @@ public class Impresion extends ProcesamientoPorDefecto {
 
 	// Nivel 0
 	public void procesa(Suma exp) {
-		imprime_arg(exp.arg0(), 0);
+		imprime_arg(exp.arg0(), 1);
 		System.out.print("+");
-		imprime_arg(exp.arg1(), 1);
+		imprime_arg(exp.arg1(), 0);
 	}
 
 	public void procesa(Resta exp) {
-		imprime_arg(exp.arg0(), 0);
+		imprime_arg(exp.arg0(), 1);
 		System.out.print("+");
 		imprime_arg(exp.arg1(), 1);
 	}
@@ -143,20 +144,20 @@ public class Impresion extends ProcesamientoPorDefecto {
 
 	// Nivel 3
 	public void procesa(Mul exp) {
-		imprime_arg(exp.arg0(), 3);
-		System.out.print("*");
+		imprime_arg(exp.arg0(), 4);
+		System.out.print(" * ");
 		imprime_arg(exp.arg1(), 4);
 	}
 
 	public void procesa(Div exp) {
-		imprime_arg(exp.arg0(), 3);
-		System.out.print("/");
+		imprime_arg(exp.arg0(), 4);
+		System.out.print(" / ");
 		imprime_arg(exp.arg1(), 4);
 	}
 
 	// Nivel 4
-	public void procesa(MenosUnario exp) {
-		System.out.print("-");
+	public void procesa(Neg exp) {
+		System.out.print(" - ");
 		imprime_arg(exp.arg0(), 5);
 	}
 
@@ -176,11 +177,11 @@ public class Impresion extends ProcesamientoPorDefecto {
 	}
 
 	// Nivel 5
-	public void procesa(True exp) {
+	public void procesa(LitTrue exp) {
 		System.out.print("true");
 	}
 
-	public void procesa(False exp) {
+	public void procesa(LitFalse exp) {
 		System.out.print("false");
 	}
 
@@ -200,4 +201,5 @@ public class Impresion extends ProcesamientoPorDefecto {
 	public void procesa(Tipo tipo) {
 		System.out.print(tipo.tipo());
 	}
+	
 }

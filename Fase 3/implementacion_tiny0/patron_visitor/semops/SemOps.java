@@ -13,9 +13,9 @@ public class SemOps extends TinyASint {
 			return mul(arg0, arg1);
 		case '/':
 			return div(arg0, arg1);
-		case '<':
-			return mayor(arg0, arg1);
 		case '>':
+			return mayor(arg0, arg1);
+		case '<':
 			return menor(arg0, arg1);
 		}
 		throw new UnsupportedOperationException("exp " + op);
@@ -42,19 +42,15 @@ public class SemOps extends TinyASint {
 	public Exp exp(String op, Exp arg0) {
 		switch (op) {
 		case "-":
-			return menosUnario(arg0);
+			return neg(arg0);
 		case "not":
 			return not(arg0);
 		}
 		throw new UnsupportedOperationException("exp " + op);
 	}
 
-	public Exp neg(Exp arg) {
-		return new MenosUnario(arg);
-	}
-
 	public Programa prog(Instrucciones ins, Declaraciones decs) {
-		return Programa(decs, ins);
+		return programa(decs, ins);
 	}
 
 }
