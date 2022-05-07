@@ -18,23 +18,6 @@ public class TinyASint {
 		public abstract void procesa(Procesamiento p);
 	}
 	
-	public static class Lista_exp extends Exps {
-		private Exps expresiones;
-
-		public Lista_exp(Exps expresiones) {
-			super();
-			this.expresiones = expresiones;
-		}
-
-		public Exps expresiones() {
-			return expresiones;
-		}
-
-		public void procesa(Procesamiento p) {
-			p.procesa(this);
-		}
-	}
-	
 	public static class Lista_exp_empty extends Exps {
 
 		public Lista_exp_empty() {
@@ -1137,24 +1120,6 @@ public class TinyASint {
 		}
 	}
 	
-	
-	public static class Lista_inst extends Instrucciones {
-		private Instrucciones ins;
-
-		public Lista_inst(Instrucciones ins) {
-			super();
-			this.ins = ins;
-		}
-
-		public Instrucciones instrucciones() {
-			return ins;
-		}
-
-		public void procesa(Procesamiento p) {
-			p.procesa(this);
-		}
-	}
-	
 	public static class Lista_inst_empty extends Instrucciones {
 
 		public Lista_inst_empty() {
@@ -1291,23 +1256,6 @@ public class TinyASint {
 			}
 
 			public abstract void procesa(Procesamiento p);
-		}
-		
-		public static class Pformales_lista extends ParamForms {
-			private ParamForms params;
-
-			public Pformales_lista(ParamForms params) {
-				super();
-				this.params = params;
-			}
-
-			public ParamForms paramForms() {
-				return params;
-			}
-
-			public void procesa(Procesamiento p) {
-				p.procesa(this);
-			}
 		}
 		
 		public static class ParamForms_empty extends ParamForms {
@@ -1703,10 +1651,6 @@ public class TinyASint {
 		return new Bloque_inst(b);
 	}
 	
-	public Instrucciones lista_inst(Instrucciones ins) {
-		return new Lista_inst(ins);
-	}
-	
 	public Instrucciones lista_inst_empty () {
 		return new Lista_inst_empty();
 	}
@@ -1719,21 +1663,12 @@ public class TinyASint {
 		return new Lista_inst_una(in);
 	}
 	
-	
-	public ParamForms pformales_lista(ParamForms ps) {
-		return new Pformales_lista(ps);
-	}
-	
 	public ParamForm pformal_ref(Tipo t, StringLocalizado id) {
 		return new Pformal_ref(t, id);
 	}
 	
 	public ParamForm pformal(Tipo t, StringLocalizado id) {
 		return new ParamForm(t, id);
-	}
-	
-	public Exps lista_exp(Exps  exps) {
-		return new Lista_exp(exps);
 	}
 	
 	public Exps lista_exp_empty() {
