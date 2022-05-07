@@ -569,14 +569,8 @@ public class TinyASint {
 	// Tipo
 	
 	public static class Tipo {
-		private StringLocalizado tipo;
 
-		public Tipo(StringLocalizado tipo) {
-			this.tipo = tipo;
-		}
-
-		public StringLocalizado tipo() {
-			return tipo;
+		public Tipo() {
 		}
 
 		public void procesa(Procesamiento p) {
@@ -586,8 +580,15 @@ public class TinyASint {
 	
 	
 	public static class Bool extends Tipo {
+		private StringLocalizado tipo;
+		
 		public Bool(StringLocalizado tipo) {
-			super(tipo);
+			super();
+			this.tipo = tipo;
+		}
+		
+		public StringLocalizado tipo() {
+			return tipo;
 		}
 		
 		public void procesa(Procesamiento p) {
@@ -596,8 +597,15 @@ public class TinyASint {
 	}
 	
 	public static class Int extends Tipo {
+		private StringLocalizado tipo;
+		
 		public Int(StringLocalizado tipo) {
-			super(tipo);
+			super();
+			this.tipo = tipo;
+		}
+		
+		public StringLocalizado tipo() {
+			return tipo;
 		}
 		
 		public void procesa(Procesamiento p) {
@@ -606,9 +614,15 @@ public class TinyASint {
 	}
 	
 	public static class Real extends Tipo {
+		private StringLocalizado tipo;
 		
 		public Real(StringLocalizado tipo) {
-			super(tipo);
+			super();
+			this.tipo = tipo;
+		}
+		
+		public StringLocalizado tipo() {
+			return tipo;
 		}
 		
 		public void procesa(Procesamiento p) {
@@ -617,8 +631,15 @@ public class TinyASint {
 	}
 	
 	public static class String_cons extends Tipo {
+		private StringLocalizado tipo;
+		
 		public String_cons(StringLocalizado tipo) {
-			super(tipo);
+			super();
+			this.tipo = tipo;
+		}
+		
+		public StringLocalizado tipo() {
+			return tipo;
 		}
 		
 		public void procesa(Procesamiento p) {
@@ -627,9 +648,15 @@ public class TinyASint {
 	}
 	
 	public static class Tipo_Id extends Tipo {
+		private StringLocalizado tipo;
 		
 		public Tipo_Id(StringLocalizado tipo) {
-			super(tipo);
+			super();
+			this.tipo = tipo;
+		}
+		
+		public StringLocalizado tipo() {
+			return tipo;
 		}
 		
 		public void procesa(Procesamiento p) {
@@ -639,14 +666,20 @@ public class TinyASint {
 	
 	public static class Array extends Tipo {
 		private Tipo tipo;
+		private StringLocalizado id;
 		
 		public Array(StringLocalizado id, Tipo tipo) {
-			super(id);
+			super();
+			this.id = id;
 			this.tipo = tipo;
 		}
 		
 		public Tipo tipo_array() {
-			return this.tipo;
+			return tipo;
+		}
+		
+		public StringLocalizado id() {
+			return id;
 		}
 		
 		public void procesa(Procesamiento p) {
@@ -659,7 +692,7 @@ public class TinyASint {
 		private Camps c;
 		
 		public Record(Camps c) {
-			super("record");
+			super();
 			this.c = c;
 		}
 		
@@ -673,9 +706,15 @@ public class TinyASint {
 	}
 
 	public static class Pointer extends Tipo {
+		private Tipo tipo;
 		
 		public Pointer(Tipo t) {
-			super(t);
+			super();
+			this.tipo = t;
+		}
+		
+		public Tipo tipo() {
+			return tipo;
 		}
 		
 		public void procesa(Procesamiento p) {
@@ -687,20 +726,7 @@ public class TinyASint {
 	// Declaraciones
 
 	public static class Declaracion {
-		private StringLocalizado id;
-		private Tipo val;
-
-		public Declaracion(StringLocalizado id, Tipo val) {
-			this.id = id;
-			this.val = val;
-		}
-
-		public StringLocalizado id() {
-			return id;
-		}
-
-		public Tipo val() {
-			return val;
+		public Declaracion() {
 		}
 
 		public void procesa(Procesamiento p) {
@@ -758,9 +784,21 @@ public class TinyASint {
 
 
 	public static class DecVar extends Declaracion {
+		private StringLocalizado id;
+		private Tipo val;
 
 		public DecVar(StringLocalizado id, Tipo val) {
-			super(id, val);
+			super();
+			this.id = id;
+			this.val = val;
+		}
+
+		public StringLocalizado id() {
+			return id;
+		}
+
+		public Tipo val() {
+			return val;
 		}
 
 		public void procesa(Procesamiento p) {
@@ -769,9 +807,21 @@ public class TinyASint {
 	}
 	
 	public static class DecTipo extends Declaracion {
+		private StringLocalizado id;
+		private Tipo val;
 
 		public DecTipo(StringLocalizado id, Tipo val) {
-			super(id, val);
+			super();
+			this.id = id;
+			this.val = val;
+		}
+
+		public StringLocalizado id() {
+			return id;
+		}
+
+		public Tipo val() {
+			return val;
 		}
 
 		public void procesa(Procesamiento p) {
@@ -780,9 +830,27 @@ public class TinyASint {
 	}
 	
 	public static class DecProc extends Declaracion {
+		private Tipo tipo;
+		private ParamForms pforms;
+		private Bloque b;
 
 		public DecProc(Tipo tipo, ParamForms pforms, Bloque b) {
-			super(id, val);
+			super();
+			this.tipo = tipo;
+			this.pforms = pforms;
+			this.b = b;
+		}
+
+		public ParamForms pforms() {
+			return pforms;
+		}
+
+		public Bloque bloque() {
+			return b;
+		}
+
+		public Tipo tipo() {
+			return tipo;
 		}
 
 		public void procesa(Procesamiento p) {
@@ -793,21 +861,8 @@ public class TinyASint {
 	// Instrucciones
 	
 	public static class Instruccion {
-		//////////////////// quitar y dejar solo en cada uno////////////////////////////////////////////////////////////////////////////////
-		private StringLocalizado id;
-		private Exp exp;
 
-		public Instruccion(StringLocalizado id, Exp exp) {
-			this.id = id;
-			this.exp = exp;
-		}
-
-		public StringLocalizado id() {
-			return id;
-		}
-
-		public Exp exp() {
-			return exp;
+		public Instruccion() {
 		}
 
 		public void procesa(Procesamiento p) {
@@ -948,7 +1003,6 @@ public class TinyASint {
 	}
 	
 	public static class Nl extends Instruccion {
-		private Exp exp;
 
 		public Nl() {
 			super();
@@ -1596,10 +1650,6 @@ public class TinyASint {
 	
 	public Camp campo(Tipo t, StringLocalizado id) {
 		return new Camp(t, id);
-	}
-	
-	public Instruccion instruccion(StringLocalizado id, Exp exp) {
-		return new Instruccion(id, exp);
 	}
 
 	public Instrucciones insts_una(Instruccion instruccion) {

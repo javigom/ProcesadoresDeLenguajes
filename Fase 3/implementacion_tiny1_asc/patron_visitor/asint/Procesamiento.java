@@ -13,7 +13,6 @@ import asint.TinyASint.ExpN5;
 import asint.TinyASint.Exp_muchas;
 import asint.TinyASint.Exp_una;
 import asint.TinyASint.False;
-import asint.TinyASint.Felcha;
 import asint.TinyASint.Flecha;
 import asint.TinyASint.Id;
 import asint.TinyASint.Igual;
@@ -40,8 +39,6 @@ import asint.TinyASint.ParamForm;
 import asint.TinyASint.ParamForms_empty;
 import asint.TinyASint.ParamForms_muchos;
 import asint.TinyASint.ParamForms_uno;
-import asint.TinyASint.Params_muchos;
-import asint.TinyASint.Pformales_empty;
 import asint.TinyASint.Pformales_lista;
 import asint.TinyASint.And;
 import asint.TinyASint.Bloque;
@@ -96,6 +93,10 @@ public interface Procesamiento {
 	//Nivel 5
 
 	void procesa(ExpN5 expN5);
+
+	void procesa(Punto punto);
+
+	void procesa(Flecha flecha);
 	
 	//Nivel 6
 
@@ -109,6 +110,10 @@ public interface Procesamiento {
 	void procesa(LitEnt exp);
 
 	void procesa(LitReal exp);
+
+	void procesa(LitNull litNull);
+
+	void procesa(LitCad litCad);
 
 	void procesa(Id exp);
 
@@ -129,21 +134,27 @@ public interface Procesamiento {
 
 	void procesa(Insts_una insts);
 
-	// Programa
-	void procesa(Programa programa);
+	void procesa(Lista_inst lista_inst);
+
+	void procesa(Lista_inst_empty lista_inst_empty);
+
+	void procesa(Lista_inst_una lista_inst_una);
+
+	void procesa(Lista_inst_muchas lista_inst_muchas);
 	
+	//Param Formales
+
+	void procesa(ParamForm paramForm);
+
+	void procesa(Pformales_lista pformales_lista);
+
+	void procesa(ParamForms_muchos paramForms_muchos);
+
+	void procesa(ParamForms_uno paramForms_uno);
+
+	void procesa(ParamForms_empty paramForms_empty);
 	
-	//////// Por poner
-
-	void procesa(LitNull litNull);
-
-	void procesa(Punto punto);
-
-	void procesa(LitCad litCad);
-
-	void procesa(Flecha flecha);
-
-	void procesa(Params_muchos params_muchos);
+	//Expresiones 
 
 	void procesa(Lista_exp lista_exp);
 
@@ -152,34 +163,25 @@ public interface Procesamiento {
 	void procesa(Exp_muchas exp_muchas);
 
 	void procesa(Exp_una exp_una);
-
-	void procesa(Bloque_prog bloque_prog);
-
-	void procesa(ParamForm paramForm);
-
-	void procesa(Pformales_lista pformales_lista);
-
-	void procesa(Lista_inst lista_inst);
-
-	void procesa(Lista_inst_empty lista_inst_empty);
-
-	void procesa(Lista_inst_una lista_inst_una);
-
-	void procesa(Lista_inst_muchas lista_inst_muchas);
+	
+	// Campos 
 
 	void procesa(Campos_muchos campos_muchos);
 
 	void procesa(Campo_uno campo_uno);
 
 	void procesa(Camp camp);
+	
+	
+	// Bloque 
 
-	void procesa(ParamForms_muchos paramForms_muchos);
-
-	void procesa(ParamForms_uno paramForms_uno);
-
-	void procesa(ParamForms_empty paramForms_empty);
+	void procesa(Bloque_prog bloque_prog);
 
 	void procesa(No_bloque no_bloque);
 
 	void procesa(Bloque bloque);
+	
+
+	// Programa
+	void procesa(Programa programa);
 }
