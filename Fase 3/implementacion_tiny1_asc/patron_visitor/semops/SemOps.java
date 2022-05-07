@@ -45,12 +45,14 @@ public class SemOps extends TinyASint {
 			return menosUnario(arg0);
 		case "not":
 			return not(arg0);
+		case "*":
+			return star(arg0);
 		}
 		throw new UnsupportedOperationException("exp " + op);
 	}
 
-	public Exp neg(Exp arg) {
-		return new MenosUnario(arg);
+	public Exp exp(Exp op, Exp arg0) {
+		return expN5(arg0, op);
 	}
 
 	public Programa prog(Instrucciones ins, Declaraciones decs) {

@@ -83,40 +83,229 @@ non terminal  String OPBN1, OPBN2, OPBN3;
 
 
 
+PROGRAMA ::= DECLARACIONES: decs DAMP INSTRUCCIONES: ins
+    {: RESULT = sem.P_decs(decs,ins);:};
+PROGRAMA ::= INSTRUCCIONES: ins
+    {: RESULT = sem.P_nodecs(ins):};
+    
+
+DECLARACIONES ::= DECLARACIONES: decs PCOMA DECLARACION: dec
+    {: RESULT = sem.decsmuchas(decs, dec):};
+DECLARACIONES ::= DECLARACION: dec
+    {: RESULT = sem.decsuna(dec):};
+    
+
+DECLARACION ::= DECVAR: dec
+    {: RESULT = dec;:};
+DECLARACION ::= DECTIPO: dec
+    {: RESULT = dec;:};
+DECLARACION ::= DECPROC: dec
+    {: RESULT = dec;:};
+
+DECVAR ::= VAR: v TIPO: tipo ID: iden
+    {: RESULT = sem.tipo(sem.str(iden.image,iden.beginLine,iden.beginColumn), tipo, sem.str(v.image,v.beginLine,v.beginColumn));:};
+DECTIPO ::=  TYPE: t TIPO: tipo ID: iden
+    {: RESULT = sem.tipo(sem.str(iden.image,iden.beginLine,iden.beginColumn), tipo, sem.str(t.image,t.beginLine,t.beginColumn));:};
+DECPROC::=  PROC: p ID: iden PFORMALES: pforms BLOQUE: bl
+    {: RESULT = sem.proc(sem.str(p.image,p.beginLine,p.beginColumn), sem.str(iden.image,iden.beginLine,iden.beginColumn), pforms, bl);:};
 
 
-Prog ::= EVALUA E0: exp PDonde: decs 
-    {: RESULT = sem.prog(exp,decs);:};
-PDonde ::= DONDE Decs: decs 
-    {: RESULT = decs;:};
-PDonde ::= {: RESULT = null; :};
-E0 ::= E0: arg0  OP0: op E1: arg1  
-    {: RESULT = sem.exp(op,arg0,arg1); :};
-E0 ::= E1: aDeE1 
-    {: RESULT = aDeE1; :};
-E1 ::= E1: arg0 OP1: op E2: arg1 
-    {: RESULT = sem.exp(op,arg0,arg1); :};
-E1 ::= E2: aDeE2 
-    {: RESULT = aDeE2; :};
-E2 ::= NUM:  num 
-    {: RESULT = sem.num(num); :};
-E2 ::= ID:id 
-    {: RESULT = sem.id(id); :};
-E2 ::= PAP E0: aDeE0 PCIERRE 
-    {: RESULT = aDeE0; :};
-OP0 ::= MAS 
-    {: RESULT = '+'; :};
-OP0 ::= MENOS 
-    {:RESULT = '-'; :};
-OP1 ::= POR 
-    {: RESULT = '*'; :};
-OP1 ::= DIV 
-    {: RESULT = '/'; :};
-Decs ::= Decs: decs COMA Dec: dec 
-    {: RESULT = sem.decs_muchas(decs,dec);:};
-Decs ::= Dec: dec 
-    {: RESULT = sem.decs_una(dec);:};
-Dec ::= ID: id IGUAL NUM: num 
-    {: RESULT = sem.dec(id,num); :};
+PFORMALES ::=  PAP LISTA_PFORMALES: pforms PCIERRE
+    {: RESULT = pforms;:};
+PFORMALES ::=  PAP PCIERRE
+    {: RESULT = sem.nopformal();:};
+
+LISTA_PFORMALES  ::=  LISTA_PFORMALES: pforms COMA PFORMAL: pform
+    {: RESULT = sem.pformal_muchas(pforms, pform);:};
+LISTA_PFORMALES  ::=  PFORMAL: pform
+    {: RESULT = sem.pformal_uno(pform);:};
+
+PFORMAL ::=  TIPO: t AMP ID: id
+    {: RESULT = sem.pformal_ref(t, id);:};
+PFORMAL ::=  TIPO: t ID: id
+    {: RESULT = sem.pformal(t, id);:};
+
+TIPO ::=  TIPO_BASICO: t
+    {: RESULT = t;:};
+TIPO ::=  ID: id
+    {: RESULT = id;:};
+TIPO ::=  ARRAY CAP LIT_ENT: le CCIERRE OF TIPO: t
+    {: RESULT = sem.array(le, t);:};
+TIPO ::=  RECORD LLAP LISTA_CAMPOS: l LLCIERRE
+    {: RESULT = sem.listacampostipo(l);:};
+TIPO ::=  POINTER TIPO: t
+    {: RESULT = sem.pointer(t);:};
+
+TIPO_BASICO ::= INT
+    {: RESULT = sem.int_cons();:};
+TIPO_BASICO ::= REAL
+    {: RESULT = sem.real_cons();:};
+TIPO_BASICO ::= BOOL
+    {: RESULT = sem.bool_cons();:};
+TIPO_BASICO ::= STRING
+    {: RESULT = sem.string_cons();:};
+
+LISTA_CAMPOS ::= LISTA_CAMPOS: lc PCOMA CAMPO: c
+    {: RESULT = sem.campo_muchos(lc, c);:};
+LISTA_CAMPOS ::= CAMPO: c
+    {: RESULT = sem.campo_uno(c);:};
+
+CAMPO ::= TIPO: t ID: id
+    {: RESULT = sem.campo(t, id);:};
+
+INSTRUCCIONES ::= INSTRUCCIONES: ins PCOMA INSTRUCCION: in
+    {: RESULT = sem.ins_muchas(ins, in);:};
+INSTRUCCIONES ::= INSTRUCCION: in
+    {: RESULT = sem.ins_una(in);:};
+
+
+INSTRUCCION ::= EXPRESION: ex1 IGUAL EXPRESION: ex2
+    {: RESULT = sem.asig(ex1,ex2);:};
+INSTRUCCION ::= IF EXPRESION: ex THEN LISTA_INST_OP: l_ins1 ELSE LISTA_INST: l_ins2 ENDIF
+    {: RESULT = sem.if_else(ex,l_ins1, l_ins2);:};
+INSTRUCCION ::= IF EXPRESION: ex THEN LISTA_INST_OP: l_ins ENDIF
+    {: RESULT = sem.if(ex,l_ins);:};
+INSTRUCCION ::= WHILE EXPRESION: ex DO LISTA_INST_OP: l_ins ENDWHILE
+    {: RESULT = sem.while(ex,l_ins);:};
+INSTRUCCION ::= READ EXPRESION: ex
+    {: RESULT = sem.read(ex);:};
+INSTRUCCION ::= WRITE EXPRESION: ex
+    {: RESULT = sem.write(ex);:};
+INSTRUCCION ::= NEW EXPRESION: ex
+    {: RESULT = sem.new_cons(ex);:};
+INSTRUCCION ::= DELETE EXPRESION: ex
+    {: RESULT = sem.delete(ex);:};
+INSTRUCCION ::= NL
+    {: RESULT = sem.nl();:};
+INSTRUCCION ::= CALL ID: id PAP LISTA_EXPR_OP: l_ex PCIERRE
+    {: RESULT = sem.call(id, l_ex);:};
+INSTRUCCION ::= BLOQUE
+    {: RESULT = sem.bloque(b);:};
+
+
+LISTA_INST_OP ::= LISTA_INST: l_ins
+    {: RESULT = l_ins;:};
+LISTA_INST_OP ::= 
+    {: RESULT = sem.no_ins();:};
+
+LISTA_INST ::= LISTA_INST: ins PCOMA INSTRUCCION: in
+    {: RESULT = sem.ins_muchas(ins, in);:};
+LISTA_INST ::= INSTRUCCION: in
+    {: RESULT = sem.ins_una(in);:};
+
+LISTA_EXPR_OP ::= LISTA_EXPR: exps
+    {: RESULT = exps;:};
+LISTA_EXPR_OP ::= 
+    {: RESULT = sem.no_exps();:};
+
+LISTA_EXPR ::= LISTA_EXPR: exps COMA EXPRESION: exp
+    {: RESULT = sem.exp_muchas(exps, exp);:};
+LISTA_EXPR ::= EXPRESION: exp
+    {: RESULT = sem.exp_una(exp);:};
+
+BLOQUE ::= LLAP PROGRAMA: p LLCIERRE
+    {: RESULT = sem.bloque_prog(p);:};
+BLOQUE ::= LLAP LLCIERRE
+    {: RESULT = sem.no_bloque();:};
+
+EXPRESION ::= E0: e
+    {: RESULT = e;:};
+
+EXPRESION_BASICA ::= TRUE
+    {: RESULT = litTrue();:};
+EXPRESION_BASICA ::= FALSE
+    {: RESULT = litFalse();:};
+EXPRESION_BASICA ::= LIT_ENT
+    {: RESULT = sem.litEnt(c);:};
+EXPRESION_BASICA ::= LIT_REAL
+    {: RESULT = sem.litReal(c);:};
+EXPRESION_BASICA ::= LIT_CAD: c
+    {: RESULT = sem.litCad(c);:};
+EXPRESION_BASICA ::= ID
+    {: RESULT = sem.id(c);:};
+EXPRESION_BASICA ::= NULL
+    {: RESULT = litNull();:};
+    
+
+E0 ::= E0: exp1 MAS E1: exp2
+    {:RESULT = sem.exp('+',exp1,exp2);:};
+E0 ::= E1: exp1 MENOS E1: exp2
+    {:RESULT = sem.exp('-',exp1,exp2);:};
+E0 ::= E1: exp
+    {:RESULT = exp;:};
+
+E1 ::= E2: exp1 OPBN1: op E1: exp2
+    {:RESULT = sem.exp(op,exp1,exp2);:};
+E1 ::= E2: exp
+    {:RESULT = exp;:};
+
+OPBN1 ::= AND
+    {:RESULT = 'and'; :};
+OPBN1 ::= OR
+    {:RESULT = 'or'; :};
+
+E2 ::= E3: exp1 OPBN2: op E2: exp2
+    {:RESULT = sem.exp(op,exp1,exp2);:};
+E2 ::= E3: exp
+    {:RESULT = exp;:};
+
+OPBN2 ::= MENOR
+    {:RESULT = '<'; :};
+OPBN2 ::= MAYOR
+    {:RESULT = '>'; :};
+OPBN2 ::= MENOR_IGUAL
+    {:RESULT = '<='; :};
+OPBN2 ::= MAYOR_IGUAL
+    {:RESULT = '>='; :};
+OPBN2 ::= DIGUAL
+    {:RESULT = '=='; :};
+OPBN2 ::= DIF
+    {:RESULT = '!='; :};
+
+E3 ::= E4: exp1 OPBN3: op E4: exp2
+    {:RESULT = sem.exp(op,exp1,exp2);:};
+E3 ::= E4: exp
+    {:RESULT = exp;:};
+
+OPBN3 ::= DIV
+    {:RESULT = '/'; :};
+OPBN3 ::= POR
+    {:RESULT = '*'; :};
+OPBN3 ::= PERCENT
+    {:RESULT = '%'; :};
+
+E4 ::= NOT E4: exp
+    {:RESULT = sem.exp('not',exp);:};
+E4 ::= MENOS E5: exp
+    {:RESULT = sem.exp('-',exp);:};
+E4 ::= E5: exp
+    {:RESULT = exp;:};
+
+E5 ::= E5: exp OPUN5: op
+    {:RESULT = sem.exp(op,exp);:};
+E5 ::= E6: exp
+    {:RESULT = exp;:};
+
+OPUN5 ::= CAP EXPRESION: exp CCIERRE
+    {:RESULT = exp;:};
+OPUN5 ::= OP_ACCESO: op
+    {:RESULT = op;:};
+
+OP_ACCESO ::= PUNTO ID: id
+    {:RESULT = sem.punto(id);:};
+OP_ACCESO ::= FLECHA ID: id
+    {:RESULT = sem.flecha(id);:};
+
+E6 ::= POR E6: exp
+    {:RESULT = sem.exp('*',exp);:};
+E6 ::= E7: exp
+    {:RESULT = exp;:};
+
+E7 ::= EXPRESION_BASICA: exp
+    {:RESULT = exp;:};
+E7 ::= PAP E0: exp PCIERRE
+    {:RESULT = exp;:};
+
+
 
 
