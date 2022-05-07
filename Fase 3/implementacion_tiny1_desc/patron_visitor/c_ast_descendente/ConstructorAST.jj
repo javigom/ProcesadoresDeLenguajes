@@ -4,12 +4,20 @@ options  {
 PARSER_BEGIN(ConstructorAST)
 package c_ast_descendente;
 
-////////////////////////////////// mas import /////////////////////////////////////////////////////
 
 import asint.TinyASint.Exp;
-import asint.TinyASint.Dec;
-import asint.TinyASint.Decs;
-import asint.TinyASint.Prog;
+import asint.TinyASint.Exps;
+import asint.TinyASint.Declaracion;
+import asint.TinyASint.Declaraciones;
+import asint.TinyASint.Instruccion;
+import asint.TinyASint.Instrucciones;
+import asint.TinyASint.Camps;
+import asint.TinyASint.Camp;
+import asint.TinyASint.Tipo;
+import asint.TinyASint.Bloque;
+import asint.TinyASint.ParamForms;
+import asint.TinyASint.ParamForm;
+import asint.TinyASint.Programa;
 import semops.SemOps;
 
 
@@ -63,30 +71,30 @@ PARSER_END(ConstructorAST)
   TOKEN: {<litReal: <litEnt> (<parteDecimal> | <parteExponencial> | <parteDecimal> <parteExponencial>)>  }
   
   
-  Prog PROGRAMAp()    : {Prog prog;} {prog=PROGRAMA() <EOF> {return prog;}}
-  Prog PROGRAMA()    : {Exp exp; Decs decs;}
+  Programa PROGRAMAp()    : {Programa prog;} {prog=PROGRAMA() <EOF> {return prog;}}
+  Programa PROGRAMA()    : {Exp exp; Declaraciones decs;}
   						{decs=DECLARACIONES() "&&" ins=INSTRUCCIONES() {return sem.P_decs(exp,decs,ins);} | ins=INSTRUCCIONES() {return sem.P_nodecs(exp,ins);}}
   
 
 
 
 
-  Decs DECLARACIONES()  : {Decs decs;} 
+  Declaraciones DECLARACIONES()  : {Declaraciones decs;} 
                        {dec=DECLARACION() decs = RDECLARACIONES(sem.decsuna(dec)) {return decs;}}
  
-  Decs RDECLARACIONES(Dec dec_h)    : {Dec dec; Decs decs;} {";" dec = DECLARACION() decs = RDECLARACIONES(sem.decsmuchas(dec,dec_h)) {return decs;} | {return null;} }
-  Decs DECLARACION()    : {Dec dec;} {dec = DECVAR() {return dec;}| dec = DECTIPO() {return dec;} | dec = DECPROC() {return dec;} }
+  Declaraciones RDECLARACIONES(Declaracion dec_h)    : {Declaracion dec; Declaraciones decs;} {";" dec = DECLARACION() decs = RDECLARACIONES(sem.decsmuchas(dec,dec_h)) {return decs;} | {return null;} }
+  Declaraciones DECLARACION()    : {Declaracion dec;} {dec = DECVAR() {return dec;}| dec = DECTIPO() {return dec;} | dec = DECPROC() {return dec;} }
 
  
 
 
 
 
-  Dec DECVAR()    : {Token v, iden; TIPO tipo;} {v=<VAR> tipo = TIPO() iden=<identificador> {return sem.tipo(sem.str(iden.image,iden.beginLine,iden.beginColumn), 
+  Declaracion DECVAR()    : {Token v, iden; TIPO tipo;} {v=<VAR> tipo = TIPO() iden=<identificador> {return sem.tipo(sem.str(iden.image,iden.beginLine,iden.beginColumn), 
   																						    tipo, sem.str(v.image,v.beginLine,v.beginColumn));}}
-  Dec DECTIPO()    : {Token t, iden; TIPO tipo;} {t=<TYPE> tipo = TIPO() iden=<identificador> {return sem.tipo(sem.str(iden.image,iden.beginLine,iden.beginColumn), 
+  Declaracion DECTIPO()    : {Token t, iden; TIPO tipo;} {t=<TYPE> tipo = TIPO() iden=<identificador> {return sem.tipo(sem.str(iden.image,iden.beginLine,iden.beginColumn), 
   																						    tipo, sem.str(t.image,t.beginLine,t.beginColumn));}}
-  Dec DECPROC()    : {Token p, iden; Pforms pforms; B bl;} {p=<PROC> iden=<identificador> pforms = PFORMALES() bl = BLOQUE(){return sem.proc(sem.str(p.image,p.beginLine,p.beginColumn),
+  Declaracion DECPROC()    : {Token p, iden; ParamForms  pforms; B bl;} {p=<PROC> iden=<identificador> pforms = PFORMALES() bl = BLOQUE(){return sem.proc(sem.str(p.image,p.beginLine,p.beginColumn),
   																												sem.str(iden.image,iden.beginLine,iden.beginColumn), 
   																						    					pforms, bl);}}
  
@@ -94,25 +102,25 @@ PARSER_END(ConstructorAST)
 
 
 
-  Pforms PFORMALES()    : {Pforms pforms;} 
+  ParamForms  PFORMALES()    : {ParamForms  pforms;} 
   						  { "(" pforms = RPFORMALES() {return pforms;}}
   						  
-  Pforms RPFORMALES() : {Pforms pforms;} 
+  ParamForms  RPFORMALES() : {ParamForms  pforms;} 
   						{ pforms = LISTA_PFORMALES() ")" {return pforms;} | ")" {return null;} }
   						
-  Pforms LISTA_PFORMALES()    : {Pforms pforms; Pform pform;} 
+  ParamForms  LISTA_PFORMALES()    : {ParamForms  pforms; ParamForm pform;} 
   								{pform = PFORMAL() pforms = RLISTA_PFORMALES(sem.pformal_uno(pform)) {return pforms;}}
 
-  Pforms RLISTA_PFORMALES(Pforms pforms)    : {Pforms pforms; Pform pform;}
+  ParamForms  RLISTA_PFORMALES(ParamForms  pforms)    : {ParamForms  pforms; ParamForm pform;}
   												{"," pform = PFORMAL() pformsr = RLISTA_PFORMALES(sem.pformal_muchas(pform, pforms)) {return pformsr;} | {return null;} }
 
 
 
 
 
-  Pform PFORMAL()    : {TIPO t; Pform rpf;}
+  ParamForm PFORMAL()    : {TIPO t; ParamForm rpf;}
 						{t=TIPO() rpf =RPFORMAL() {return sem.tipo_formal(t,rpf);}}
-  Pform RPFORMAL() : {Token id;}
+  ParamForm RPFORMAL() : {Token id;}
   						{"&" id=<identificador> {return sem.str(id.image,id.beginLine,id.beginColumn);} | id=<identificador> {return sem.str(id.image,id.beginLine,id.beginColumn);}}
 
 
@@ -120,14 +128,14 @@ PARSER_END(ConstructorAST)
 
 
 
-  TIPO TIPO()    : {TIPO tb, t; Token id, le; CAMPS l;}
+  Tipo TIPO()    : {TIPO tb, t; Token id, le; Camps l;}
 				   {tb = TIPO_BASICO() {return tb;}|
 				    id=<identificador> {return sem.str(id.image,id.beginLine,id.beginColumn);} |
 				    <ARRAY> "[" le=<litEnt> "]" <OF> t = TIPO() {return sem.array(sem.str(le.image,le.beginLine,le.beginColumn), t);}|
 				    <RECORD> "{" l=LISTA_CAMPOS() "}" {return sem.listacampostipo(l);}|
 				    <POINTER> t=TIPO() {return sem.pointer(t);}}
 				    
-  TIPO TIPO_BASICO()    : {Token i, r, b, s;}
+  Tipo 	 TIPO_BASICO()    : {Token i, r, b, s;}
 						  {i=<INT> {return sem.tipo(sem.str(i.image,i.beginLine,i.beginColumn));}|
 						   r=<REAL> {return sem.tipo(sem.str(r.image,r.beginLine,r.beginColumn));}|
 						   b=<BOOL> {return sem.tipo(sem.str(b.image,b.beginLine,b.beginColumn));}|
@@ -140,26 +148,26 @@ PARSER_END(ConstructorAST)
 
 
 
-  CAMPS LISTA_CAMPOS()    : {CAMP c; CAMPS rl;}
+  Camps LISTA_CAMPOS()    : {Camp c; Camps rl;}
 							{c=CAMPO() rl = RLISTA_CAMPOS(sem.campo_una(c)) {return rl;}}
 
-  CAMPS RLISTA_CAMPOS(CAMPS campos)    : {CAMP c; CAMPS rl;}
+  Camps RLISTA_CAMPOS(Camps campos)    : {Camp c; Camps rl;}
 										{";" c=CAMPO() rl = RLISTA_CAMPOS(sem.campo_muchos(c, campos)) {return rl;} | {return null;} }
 
-  CAMP CAMPO()    : {TIPO t; Token id;}
+  Camp CAMPO()    : {Tipo t; Token id;}
 					{t=TIPO() id=<identificador> {return sem.campo(t,sem.str(id.image,id.beginLine,id.beginColumn));}}
 
 
 
 
 
-  INS INSTRUCCIONES()    : {In in; Ins ins;}
+  Instrucciones INSTRUCCIONES()    : {Instruccion  in; Instrucciones ins;}
   							{in=INSTRUCCION() ins=RINST(sem.ins_una(in)) {return ins;}}
   							
-  INS RINST(Ins instruc)    : {In in; Ins ins;}
+  Instrucciones RINST(Instrucciones instruc)    : {Instruccion  in; Instrucciones ins;}
 								{";" in=INSTRUCCION() ins=RINST(sem.ins_muchas(in, instruc)) | {return ins;}}
   
-  IN INSTRUCCION()    : {EX ex, ex1, ex2; INS rif, l_ins; Token id; EXS l_exp; B b;}
+  Instruccion INSTRUCCION()    : {Exp ex, ex1, ex2; Instrucciones rif, l_ins; Token id; Exps l_exp; B b;}
 						{ ex1=EXPRESION() "=" ex2=EXPRESION() {return sem.asig(ex1,ex2);}|
 						 <IF> ex=EXPRESION() <THEN> l_ins=LISTA_INST_OP() rif=RIFTHEN() <ENDIF> {return sem.if(ex,l_ins,rif);}|
   					     <WHILE> ex=EXPRESION() <DO> l_ins=LISTA_INST_OP()  <ENDWHILE> {return sem.while(ex,l_ins);}|
@@ -176,16 +184,16 @@ PARSER_END(ConstructorAST)
 
 
 
-  INS LISTA_INST_OP()    : {INS l;}
+  Instrucciones LISTA_INST_OP()    : {Instrucciones l;}
 							{l=LISTA_INST() {return l;} | {return null;} }
 
-  INS LISTA_INST()    : {IN in; INS ins;}
+  Instrucciones LISTA_INST()    : {Instruccion in; Instrucciones ins;}
 						{in=INSTRUCCION() ins=RLISTA_INST(sem.ins_una(in)) {return ins;}}
 
-  INS RLISTA_INST(INS instrucs)    : {IN in; INS ins;}
+  Instrucciones RLISTA_INST(Instrucciones instrucs)    : {Instruccion in; Instrucciones ins;}
 									 {";" in=INSTRUCCION() ins=RLISTA_INST(sem.ins_muchas(in, instrucs)) {return ins; } | {return null;}}  
 
-  INS RIFTHEN()    : {INS ins;}
+  Instrucciones RIFTHEN()    : {Instrucciones ins;}
 					{<ELSE> ins=LISTA_INST() {return ins;} | {return null;}}
 
 
@@ -194,13 +202,13 @@ PARSER_END(ConstructorAST)
 
 
 
-  EXS LISTA_EXPR_OP()    : {EXS exs;}
+  Exps LISTA_EXPR_OP()    : {Exps exs;}
 							{exs=LISTA_EXPR() {return exs;} | {return null;}}  
 
-  EXS LISTA_EXPR()    : {EX ex; EXS exs;}
+  Exps LISTA_EXPR()    : {Exp ex; Exps exs;}
 						{ex=EXPRESION() exs=RLISTA_EXPR(sem.exs_una(ex)) {return exs}}
 
-  EXS RLISTA_EXPR(EXS expres)    : {EX ex; EXS exs;}
+  Exps RLISTA_EXPR(Exps expres)    : {Exp ex; Exps exs;}
 									{"," ex=EXPRESION() exs=RLISTA_EXPR(sem.exs_muchas(ex,expres)) {return exs;} | {return null;}}
   
 
@@ -209,10 +217,10 @@ PARSER_END(ConstructorAST)
 
 
 
-  B BLOQUE()    : {B b;}
+  Bloque BLOQUE()    : {Bloque b;}
 				  { "{" b=RBLOQUE() {return b;} }
 
-  B RBLOQUE() : {B p;}
+  Bloque RBLOQUE() : {Bloque p;}
 				{ p=PROGRAMA() "}" {return p;} | "}" {return sem.no_exp();}} 
   
 
@@ -221,10 +229,10 @@ PARSER_END(ConstructorAST)
 
 
 
-  EX EXPRESION()    : {EX ex;}
+  EX EXPRESION()    : {Exp ex;}
 					  {ex=E0() {return ex;} }
 					
-  EX EXPRESION_BASICA()    : {Token t;}
+  Exp EXPRESION_BASICA()    : {Token t;}
 							{t=<TRUE> {return sem.ex(sem.str(t.image,t.beginLine,t.beginColumn));}|
 							 t=<FALSE> {return sem.ex(sem.str(t.image,t.beginLine,t.beginColumn));}|
 							 t=<identificador> {return sem.ex(sem.str(t.image,t.beginLine,t.beginColumn));}|
@@ -235,52 +243,52 @@ PARSER_END(ConstructorAST)
   
 
 
-  EX E0()       : {EX exp, resul;} {exp=E1() resul=RE0(exp) {return resul;}}
-  EX RE0(EX exph) : {EX exp;} 
+  Exp E0()       : {Exp exp, resul;} {exp=E1() resul=RE0(exp) {return resul;}}
+  Exp RE0(Exp exph) : {Exp exp;} 
                        {"+" exp=E0() {return sem.exp("+",exp,exph);} |
                        {"-" exp=E1() {return sem.exp("-",exp,exph);} |
                        {return exph;}}
                    
   
   
-  EX E1()   : {EX exp, resul;} {exp=E2() resul=RE1(exp) {return resul;}}
-  EX RE1(EX exph)  : {string op; EX exp, resul;}
+  Exp E1()   : {Exp exp, resul;} {exp=E2() resul=RE1(exp) {return resul;}}
+  Exp RE1(Exp exph)  : {string op; Exp exp, resul;}
 						{op=OPBN1() exp=E2() resul=RE1(sem.exp(op,exph,exp)) {return resul}|
 						{return exph;} }
 
 
   
-  EX E2()   : {EX exp, resul;} {exp=E3() resul=RE2(exp) {return resul;}}
-  EX RE2(EX exph)  : {string op; EX exp, resul;}
+  Exp E2()   : {Exp exp, resul;} {exp=E3() resul=RE2(exp) {return resul;}}
+  Exp RE2(Exp exph)  : {string op; Exp exp, resul;}
 						{op=OPBN2() exp=E3() RE2(sem.exp(op,exph,exp)) {return resul}|
 						{return exph;} }
 
 						
   
-  EX E3()   : {EX exp, resul;} {exp=E4() resul=RE3(exp) {return resul;}}
-  EX RE3(EX exph)  : {string op; EX exp, resul;}
+  Exp E3()   : {Exp exp, resul;} {exp=E4() resul=RE3(exp) {return resul;}}
+  Exp RE3(Exp exph)  : {string op; Exp exp, resul;}
   						{op=OPBN3() exp=E4() {return sem.exp(op,exph,exp);} |
   						{return exph;} }
   						
   
-  EX E4()   : {EX resul;}
+  Exp E4()   : {Exp resul;}
   				{<NOT> resul=E4() {return sem.not(exp);}|
   				 "-" resul=E5() {return sem.neg(exp);;}|
   				  resul=E5() {return resul;}}
   
-  EX E5()	  : {EX exp, resul;} {exp=E6() resul=RE5(exp) {return resul;}}
-  EX RE5(EX exph)  : {EX op, exp;}
+  Exp E5()	  : {Exp exp, resul;} {exp=E6() resul=RE5(exp) {return resul;}}
+  Exp RE5(Exp exph)  : {Exp op, exp;}
 						{op=OPUN5() exp=RE5() {return sem.expN5(op,exph,exp);} |
 						{return exph;}}
 
-  EX E6()   : {EX exp;} {"*" exp=E6() {return sem.star(exp);} | exp=E7() {return exp;}}
-  EX E7()   : {EX exp;} {exp=EXPRESION_BASICA() {return exp;} | "(" exp=E0() ")" {return exp;}} 
+  Exp E6()   : {Exp exp;} {"*" exp=E6() {return sem.star(exp);} | exp=E7() {return exp;}}
+  Exp E7()   : {Exp exp;} {exp=EXPRESION_BASICA() {return exp;} | "(" exp=E0() ")" {return exp;}} 
   
   string OPBN1()  : {} {<AND> {return "and";} | <OR> {return "or";}}
   string OPBN2()  : {} {"<" {return "<";} | ">" {return ">";} | "<=" {return '<=';}| ">=" {return ">=";} | "==" {return "==";}| "!=" {return "!=";}}
   string OPBN3()  : {} {"*" {return "*";} | "/" {return "/";}| "%" {return "%";}}
-  EX OPUN5()  : {EX exp;} {"[" exp=EXPRESION() "]" {return exp;} | exp=OP_ACCESO() {return exp;}}
+  Exp OPUN5()  : {Exp exp;} {"[" exp=EXPRESION() "]" {return exp;} | exp=OP_ACCESO() {return exp;}}
   
-  EX OP_ACCESO()  : {Token iden;} {"." iden=<identificador> {return sem.flecha(sem.str(iden.image,iden.beginLine,iden.beginColumn))}| "->" iden=<identificador> {return sem.flecha(sem.str(iden.image,iden.beginLine,iden.beginColumn))}}
+  Exp OP_ACCESO()  : {Token iden;} {"." iden=<identificador> {return sem.flecha(sem.str(iden.image,iden.beginLine,iden.beginColumn))}| "->" iden=<identificador> {return sem.flecha(sem.str(iden.image,iden.beginLine,iden.beginColumn))}}
 
 

@@ -1,11 +1,21 @@
 package c_ast_ascendente;
 
+
 import java_cup.runtime.*;
 import semops.SemOps;
-import asint.TinyASint.Prog;
 import asint.TinyASint.Exp;
-import asint.TinyASint.Decs;
-import asint.TinyASint.Dec;
+import asint.TinyASint.Exps;
+import asint.TinyASint.Declaracion;
+import asint.TinyASint.Declaraciones;
+import asint.TinyASint.Instruccion;
+import asint.TinyASint.Instrucciones;
+import asint.TinyASint.Camps;
+import asint.TinyASint.Camp;
+import asint.TinyASint.Tipo;
+import asint.TinyASint.Bloque;
+import asint.TinyASint.ParamForms;
+import asint.TinyASint.ParamForm;
+import asint.TinyASint.Programa;
 import asint.TinyASint.StringLocalizado;
 
 
@@ -26,14 +36,54 @@ init with {:
 :};
 
 
-terminal  MAS, MENOS, POR, DIV, PAP, PCIERRE, DONDE, EVALUA, COMA, IGUAL;
+
+
+
+terminal 	 MAS, MENOS, DIV, POR, PERCENT, AND, NOT, OR, MENOR, 
+			 MAYOR, MENOR_IGUAL, MAYOR_IGUAL, IGUAL, DIF, PAP, PCIERRE, CAP, 
+			 CCIERRE, PUNTO, FLECHA, DAMP, PCOMA, VAR, ID, TYPE, 
+			 PROC, COMA, AMP, TRUE, FALSE, LIT_ENT, LIT_REAL, LIT_CAD,
+			 NULL, ARRAY, OF, RECORD, LLAP, LLCIERRE, POINTER,
+			 INT, BOOL, REAL, STRING, IF, THEN, ELSE, WHILE, ENDIF, DO,
+			 ENDWHILE, READ, NL, DELETE, NEW, WRITE, CALL, DIGUAL;
+			 
 terminal StringLocalizado NUM, ID;
 
-non terminal  Prog Prog;
-non terminal  Decs PDonde, Decs;
-non terminal  Dec Dec;
-non terminal  Exp E0, E1, E2;
-non terminal  Character OP0, OP1;
+
+
+
+
+non terminal  Programa PROGRAMA;
+
+non terminal  Declaraciones DECLARACIONES;
+non terminal  Declaracion DECLARACION, DECVAR, DECTIPO, DECPROC;
+
+non terminal  Instrucciones INSTRUCCIONES, LISTA_INST, LISTA_INST_OP;
+non terminal  Instruccion INSTRUCCION;
+
+non terminal  Tipo TIPO, TIPO_BASICO;
+
+non terminal  ParamForms PFORMALES, LISTA_PFORMALES;
+non terminal  ParamForm PFORMAL;
+
+non terminal  Camps LISTA_CAMPOS;
+non terminal  Camp CAMPO;
+
+non terminal Bloque BLOQUE;
+
+non terminal  Exps LISTA_EXPR_OP, LISTA_EXPR;
+non terminal  Exp E0, E1, E2, E3, E4, E5, E6, E7, OPUN5, EXPRESION_BASICA,
+			  EXPRESION, OP_ACCESO;
+			  
+non terminal  String OPBN1, OPBN2, OPBN3;
+
+
+
+
+
+
+
+
 
 Prog ::= EVALUA E0: exp PDonde: decs 
     {: RESULT = sem.prog(exp,decs);:};

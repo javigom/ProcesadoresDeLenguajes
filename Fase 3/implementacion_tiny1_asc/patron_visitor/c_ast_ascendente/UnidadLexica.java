@@ -1,23 +1,24 @@
-package c_ast_descendente_manual;
+package implementacionCUP.alex;
 
-public abstract class UnidadLexica {
-	
-	private ClaseLexica clase;
+import java_cup.runtime.Symbol;
+
+public class UnidadLexica extends Symbol{
 	private int fila;
 	private int columna;
 	
-	public UnidadLexica(int fila, int columna, ClaseLexica clase) {
-		
+	public UnidadLexica(int fila, int columna, int clase, String lexema) {
+		super(clase,lexema);
 		this.fila = fila;
 		this.columna = columna;
-		this.clase = clase;
 	}
 	
-	public ClaseLexica clase () {
-		return clase;
+	public int clase () {
+		return sym;
 	}
 	
-	public abstract String lexema();
+	public String lexema() {
+		return (String)value;
+	}
 	
 	public int fila() {
 		return fila;
