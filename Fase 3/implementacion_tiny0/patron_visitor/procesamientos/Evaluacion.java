@@ -2,25 +2,25 @@ package procesamientos;
 
 import asint.TinyASint.Suma;
 import asint.TinyASint.Tipo;
-import asint.TinyASint.True;
 import asint.TinyASint.Resta;
 import asint.TinyASint.Mul;
+import asint.TinyASint.Neg;
 import asint.TinyASint.Not;
 import asint.TinyASint.Or;
 import asint.TinyASint.Div;
-import asint.TinyASint.False;
 import asint.TinyASint.Id;
 import asint.TinyASint.Igual;
 import asint.TinyASint.Instruccion;
 import asint.TinyASint.Insts_muchas;
 import asint.TinyASint.Insts_una;
 import asint.TinyASint.LitEnt;
+import asint.TinyASint.LitFalse;
 import asint.TinyASint.LitReal;
+import asint.TinyASint.LitTrue;
 import asint.TinyASint.Mayor;
 import asint.TinyASint.MayorIgual;
 import asint.TinyASint.Menor;
 import asint.TinyASint.MenorIgual;
-import asint.TinyASint.MenosUnario;
 import asint.TinyASint.And;
 import asint.TinyASint.Declaracion;
 import asint.TinyASint.Decs_muchas;
@@ -223,7 +223,7 @@ public class Evaluacion extends ProcesamientoPorDefecto {
    	}
    	
 	// Nivel 4
-   	public void procesa(MenosUnario exp) {
+   	public void procesa(Neg exp) {
         exp.arg0().procesa(this);
         resul = -(resul);
 	}
@@ -234,11 +234,11 @@ public class Evaluacion extends ProcesamientoPorDefecto {
 	}
    	
 	// Nivel 5
-   	public void procesa(True exp) {
+   	public void procesa(LitTrue exp) {
 	     resulBool = true;
 	}
 
-	public void procesa(False exp) {
+	public void procesa(LitFalse exp) {
 	     resulBool = false;
 	}
    	
