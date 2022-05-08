@@ -2,10 +2,16 @@ package asint;
 
 import asint.TinyASint.Suma;
 import asint.TinyASint.Tipo;
+import asint.TinyASint.Tipo_Id;
 import asint.TinyASint.True;
+import asint.TinyASint.While_inst;
+import asint.TinyASint.Write;
 import asint.TinyASint.Resta;
 import asint.TinyASint.Star;
+import asint.TinyASint.String_cons;
 import asint.TinyASint.Mul;
+import asint.TinyASint.New_cons;
+import asint.TinyASint.Nl;
 import asint.TinyASint.No_bloque;
 import asint.TinyASint.Not;
 import asint.TinyASint.Div;
@@ -15,10 +21,12 @@ import asint.TinyASint.Exp_una;
 import asint.TinyASint.False;
 import asint.TinyASint.Flecha;
 import asint.TinyASint.Id;
+import asint.TinyASint.If_else;
+import asint.TinyASint.If_inst;
 import asint.TinyASint.Igual;
-import asint.TinyASint.Instruccion;
 import asint.TinyASint.Insts_muchas;
 import asint.TinyASint.Insts_una;
+import asint.TinyASint.Int;
 import asint.TinyASint.Lista_exp_empty;
 import asint.TinyASint.Lista_inst_empty;
 import asint.TinyASint.Lista_inst_muchas;
@@ -38,18 +46,32 @@ import asint.TinyASint.ParamForms_empty;
 import asint.TinyASint.ParamForms_muchos;
 import asint.TinyASint.ParamForms_uno;
 import asint.TinyASint.Percent;
+import asint.TinyASint.Pformal_ref;
+import asint.TinyASint.Pointer;
 import asint.TinyASint.And;
+import asint.TinyASint.Array;
+import asint.TinyASint.Asig;
 import asint.TinyASint.Bloque;
+import asint.TinyASint.Bloque_inst;
 import asint.TinyASint.Bloque_prog;
+import asint.TinyASint.Bool;
+import asint.TinyASint.Call;
 import asint.TinyASint.Camp;
 import asint.TinyASint.Campo_uno;
 import asint.TinyASint.Campos_muchos;
-import asint.TinyASint.Declaracion;
+import asint.TinyASint.Corchete;
+import asint.TinyASint.DecProc;
+import asint.TinyASint.DecTipo;
+import asint.TinyASint.DecVar;
 import asint.TinyASint.Decs_muchas;
 import asint.TinyASint.Decs_una;
+import asint.TinyASint.Delete;
 import asint.TinyASint.Distinto;
 import asint.TinyASint.Programa;
 import asint.TinyASint.Punto;
+import asint.TinyASint.Read;
+import asint.TinyASint.Real;
+import asint.TinyASint.Record;
 
 public class ProcesamientoPorDefecto implements Procesamiento {
 
@@ -159,18 +181,6 @@ public class ProcesamientoPorDefecto implements Procesamiento {
 	}
 
 	@Override
-	public void procesa(Declaracion declaracion) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void procesa(Instruccion instruccion) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void procesa(Insts_muchas insts) {
 		// TODO Auto-generated method stub
 
@@ -186,12 +196,6 @@ public class ProcesamientoPorDefecto implements Procesamiento {
 	public void procesa(Programa programa) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void procesa(Tipo tipo) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -321,13 +325,151 @@ public class ProcesamientoPorDefecto implements Procesamiento {
 	}
 
 	@Override
-	public void procesa(Bloque bloque) {
+	public void procesa(Percent percent) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void procesa(Percent percent) {
+	public void procesa(Corchete corchete) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(DecProc decProc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(DecTipo decTipo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(DecVar decVar) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Bloque_inst bloque_inst) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Call call) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Delete delete) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(New_cons new_cons) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Nl nl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Write write) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Read read) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(While_inst while_inst) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(If_else if_else) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(If_inst if_inst) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Asig asig) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Bool bool) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Int int1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Real real) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(String_cons string_cons) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Tipo_Id tipo_Id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Array array) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Record record) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Pointer pointer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Pformal_ref paramForm) {
 		// TODO Auto-generated method stub
 		
 	}

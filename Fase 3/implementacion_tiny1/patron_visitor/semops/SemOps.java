@@ -11,6 +11,8 @@ public class SemOps extends TinyASint {
 			return resta(arg0, arg1);
 		case '*':
 			return mul(arg0, arg1);
+		case '%':
+			return percent(arg0, arg1);
 		case '/':
 			return div(arg0, arg1);
 		case '<':
@@ -48,13 +50,18 @@ public class SemOps extends TinyASint {
 		}
 		throw new UnsupportedOperationException("exp " + op);
 	}
-
-	public Exp neg(Exp arg) {
-		return new MenosUnario(arg);
+	
+	public Exp exp(Exp arg0, Exp arg1) {
+		return expN5(arg0, arg1);
 	}
 
 	public Programa prog(Instrucciones ins, Declaraciones decs) {
-		return Programa(decs, ins);
+		return P_decs(decs, ins);
+	}
+	
+
+	public Programa prog_nodecs(Instrucciones ins) {
+		return P_nodecs(ins);
 	}
 
 }

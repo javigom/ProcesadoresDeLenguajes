@@ -257,10 +257,9 @@ PARSER_END(ConstructorAST)
   				 "-" resul=E5() {return sem.exp('-', exp);;}|
   				  resul=E5() {return resul;}}
   
-  Exp E5()	  : {Exp exp, resul;} {resul=RE5(exp) exp=E6() {return resul;}}
-  Exp RE5(Exp exph)  : {Exp op, exp;}
-						{exp=RE5() op=OPUN5() {return sem.exp(op,exp,exph);} |
-						{return exph;}}
+  Exp E5()	  : {Exp exp, op;}
+  				{exp=E6() {return exp;} |
+  				{exp=E5() op=OPUN5() {return sem.exp(exp, op);} }
 
   Exp E6()   : {Exp exp;} {"*" exp=E6() {return sem.exp('*', exp);} | exp=E7() {return exp;}}
   Exp E7()   : {Exp exp;} {exp=EXPRESION_BASICA() {return exp;} | "(" exp=E0() ")" {return exp;}} 
@@ -268,8 +267,8 @@ PARSER_END(ConstructorAST)
   string OPBN1()  : {} {<AND> {return "and";} | <OR> {return "or";}}
   string OPBN2()  : {} {"<" {return "<";} | ">" {return ">";} | "<=" {return '<=';}| ">=" {return ">=";} | "==" {return "==";}| "!=" {return "!=";}}
   string OPBN3()  : {} {"*" {return "*";} | "/" {return "/";}| "%" {return "%";}}
-  Exp OPUN5()  : {Exp exp;} {"[" exp=EXPRESION() "]" {return exp;} | exp=OP_ACCESO() {return exp;}}
+  Exp OPUN5()  : {Exp exp;} {"[" exp=EXPRESION() "]" {return sem.corchete(exp);} | exp=OP_ACCESO() {return exp;}}
   
-  Exp OP_ACCESO()  : {Token iden;} {"." iden=<identificador> {return sem.punto (sem.str(iden.image,iden.beginLine,iden.beginColumn))}| "->" iden=<identificador> {return sem.flecha(sem.str(iden.image,iden.beginLine,iden.beginColumn))}}
+  Exp OP_ACCESO()  : {Token iden;} {"." iden=<identificador> {return sem.punto(sem.str(iden.image,iden.beginLine,iden.beginColumn))}| "->" iden=<identificador> {return sem.flecha(sem.str(iden.image,iden.beginLine,iden.beginColumn))}}
 
 

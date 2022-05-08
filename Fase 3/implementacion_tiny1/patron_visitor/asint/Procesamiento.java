@@ -1,11 +1,16 @@
 package asint;
 
 import asint.TinyASint.Suma;
-import asint.TinyASint.Tipo;
+import asint.TinyASint.Tipo_Id;
 import asint.TinyASint.True;
+import asint.TinyASint.While_inst;
+import asint.TinyASint.Write;
 import asint.TinyASint.Resta;
 import asint.TinyASint.Star;
+import asint.TinyASint.String_cons;
 import asint.TinyASint.Mul;
+import asint.TinyASint.New_cons;
+import asint.TinyASint.Nl;
 import asint.TinyASint.No_bloque;
 import asint.TinyASint.Not;
 import asint.TinyASint.Div;
@@ -15,10 +20,12 @@ import asint.TinyASint.Exp_una;
 import asint.TinyASint.False;
 import asint.TinyASint.Flecha;
 import asint.TinyASint.Id;
+import asint.TinyASint.If_else;
+import asint.TinyASint.If_inst;
 import asint.TinyASint.Igual;
-import asint.TinyASint.Instruccion;
 import asint.TinyASint.Insts_muchas;
 import asint.TinyASint.Insts_una;
+import asint.TinyASint.Int;
 import asint.TinyASint.Lista_exp_empty;
 import asint.TinyASint.Lista_inst_empty;
 import asint.TinyASint.Lista_inst_muchas;
@@ -38,18 +45,31 @@ import asint.TinyASint.ParamForms_empty;
 import asint.TinyASint.ParamForms_muchos;
 import asint.TinyASint.ParamForms_uno;
 import asint.TinyASint.Percent;
+import asint.TinyASint.Pformal_ref;
+import asint.TinyASint.Pointer;
 import asint.TinyASint.And;
-import asint.TinyASint.Bloque;
+import asint.TinyASint.Array;
+import asint.TinyASint.Asig;
+import asint.TinyASint.Bloque_inst;
 import asint.TinyASint.Bloque_prog;
+import asint.TinyASint.Bool;
+import asint.TinyASint.Call;
 import asint.TinyASint.Camp;
 import asint.TinyASint.Campo_uno;
 import asint.TinyASint.Campos_muchos;
-import asint.TinyASint.Declaracion;
+import asint.TinyASint.Corchete;
+import asint.TinyASint.DecProc;
+import asint.TinyASint.DecTipo;
+import asint.TinyASint.DecVar;
 import asint.TinyASint.Decs_muchas;
 import asint.TinyASint.Decs_una;
+import asint.TinyASint.Delete;
 import asint.TinyASint.Distinto;
 import asint.TinyASint.Programa;
 import asint.TinyASint.Punto;
+import asint.TinyASint.Read;
+import asint.TinyASint.Real;
+import asint.TinyASint.Record;
 
 public interface Procesamiento {
 
@@ -94,6 +114,8 @@ public interface Procesamiento {
 
 	void procesa(ExpN5 expN5);
 
+	void procesa(Corchete corchete);
+
 	void procesa(Punto punto);
 
 	void procesa(Flecha flecha);
@@ -118,17 +140,58 @@ public interface Procesamiento {
 	void procesa(Id exp);
 
 	// Tipo
-    void procesa(Tipo tipo);
+
+	void procesa(Bool bool);
+
+	void procesa(Int int1);
+
+	void procesa(Real real);
+
+	void procesa(String_cons string_cons);
+
+	void procesa(Tipo_Id tipo_Id);
+
+	void procesa(Array array);
+
+	void procesa(Record record);
+
+	void procesa(Pointer pointer);
 
 	// Declaraciones
-	void procesa(Declaracion declaracion);
+
+	void procesa(DecProc decProc);
+
+	void procesa(DecTipo decTipo);
+
+	void procesa(DecVar decVar);
 
 	void procesa(Decs_muchas decs);
 
 	void procesa(Decs_una decs);
 
 	// Instrucciones
-	void procesa(Instruccion instruccion);
+	
+	void procesa(Bloque_inst bloque_inst);
+
+	void procesa(Call call);
+
+	void procesa(Delete delete);
+
+	void procesa(New_cons new_cons);
+
+	void procesa(Nl nl);
+
+	void procesa(Write write);
+
+	void procesa(Read read);
+
+	void procesa(While_inst while_inst);
+
+	void procesa(If_else if_else);
+
+	void procesa(If_inst if_inst);
+
+	void procesa(Asig asig);
 
 	void procesa(Insts_muchas insts);
 
@@ -143,6 +206,8 @@ public interface Procesamiento {
 	//Param Formales
 
 	void procesa(ParamForm paramForm);
+	
+	void procesa(Pformal_ref paramForm);
 
 	void procesa(ParamForms_muchos paramForms_muchos);
 
@@ -172,11 +237,8 @@ public interface Procesamiento {
 	void procesa(Bloque_prog bloque_prog);
 
 	void procesa(No_bloque no_bloque);
-
-	void procesa(Bloque bloque);
 	
 
 	// Programa
 	void procesa(Programa programa);
-
 }

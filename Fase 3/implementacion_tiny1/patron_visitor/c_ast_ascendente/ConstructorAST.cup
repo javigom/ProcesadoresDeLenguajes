@@ -282,7 +282,7 @@ E4 ::= E5: exp
     {:RESULT = exp;:};
 
 E5 ::= E5: exp OPUN5: op
-    {:RESULT = sem.exp(op,exp);:};
+    {:RESULT = sem.exp(exp,op);:};
 E5 ::= E6: exp
     {:RESULT = exp;:};
 
