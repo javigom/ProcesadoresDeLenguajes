@@ -270,5 +270,3 @@ PARSER_END(ConstructorAST)
   Exp OPUN5()  : {Exp exp;} {"[" exp=EXPRESION() "]" {return sem.corchete(exp);} | exp=OP_ACCESO() {return exp;}}
   
   Exp OP_ACCESO()  : {Token iden;} {"." iden=<identificador> {return sem.punto(sem.str(iden.image,iden.beginLine,iden.beginColumn))}| "->" iden=<identificador> {return sem.flecha(sem.str(iden.image,iden.beginLine,iden.beginColumn))}}
-
-
