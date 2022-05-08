@@ -325,8 +325,8 @@ public class Impresion extends ProcesamientoPorDefecto {
 	}
 
 	public void procesa(Resta exp) {
-		imprime_arg(exp.arg0(), 0);
-		System.out.print("+");
+		imprime_arg(exp.arg0(), 1);
+		System.out.print("-");
 		imprime_arg(exp.arg1(), 1);
 	}
 
@@ -382,20 +382,20 @@ public class Impresion extends ProcesamientoPorDefecto {
 
 	// Nivel 3
 	public void procesa(Mul exp) {
-		imprime_arg(exp.arg0(), 3);
+		imprime_arg(exp.arg0(), 4);
 		System.out.print("*");
 		imprime_arg(exp.arg1(), 4);
 	}
 
 	public void procesa(Div exp) {
-		imprime_arg(exp.arg0(), 3);
+		imprime_arg(exp.arg0(), 4);
 		System.out.print("/");
 		imprime_arg(exp.arg1(), 4);
 	}
 
 	@Override
 	public void procesa(Percent exp) {
-		imprime_arg(exp.arg0(), 3);
+		imprime_arg(exp.arg0(), 4);
 		System.out.print("%");
 		imprime_arg(exp.arg1(), 4);
 	}
@@ -416,8 +416,8 @@ public class Impresion extends ProcesamientoPorDefecto {
 	@Override
 	public void procesa(ExpN5 expN5) {
 		// TODO Auto-generated method stub
-		imprime_arg(expN5.arg0(), 5);
 		imprime_arg(expN5.arg1(), 5);
+		imprime_arg(expN5.arg0(), 5);
 	}
 	
 	@Override

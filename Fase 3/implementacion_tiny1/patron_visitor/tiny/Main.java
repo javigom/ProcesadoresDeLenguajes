@@ -9,17 +9,21 @@ import procesamientos.Impresion;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
-		/*
-		 * if (args[0].equals("-lex")) { ejecuta_lexico(args[1]); } else {
-		 */
+
 		Programa prog = null; 
-		if (args[0].equals("asc"))
-			prog = ejecuta_ascendente(args[1]);
+		if (args[1].equals("asc")) {
+			prog = ejecuta_ascendente(args[0]);
+			prog.procesa(new Impresion());
+		}
 
-		else if (args[0].equals("desc"))
-			prog = ejecuta_descendente(args[1]);
-
-		prog.procesa(new Impresion());
+		else if (args[1].equals("desc")) {
+			prog = ejecuta_descendente(args[0]);
+			prog.procesa(new Impresion());
+		}
+		
+		else 
+			System.err.println("Args error");
+		
 	}
 
 	/*
