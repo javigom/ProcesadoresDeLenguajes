@@ -351,33 +351,33 @@ public class Impresion extends ProcesamientoPorDefecto {
 	}
 
 	public void procesa(Mayor exp) {
-		imprime_arg(exp.arg1(), 2);
+		imprime_arg(exp.arg0(), 2);
 		System.out.print(" > ");
-		imprime_arg(exp.arg0(), 3);
+		imprime_arg(exp.arg1(), 3);
 	}
 
 	public void procesa(MenorIgual exp) {
-		imprime_arg(exp.arg1(), 2);
+		imprime_arg(exp.arg0(), 2);
 		System.out.print(" <= ");
-		imprime_arg(exp.arg0(), 3);
+		imprime_arg(exp.arg1(), 3);
 	}
 
 	public void procesa(MayorIgual exp) {
-		imprime_arg(exp.arg1(), 2);
+		imprime_arg(exp.arg0(), 2);
 		System.out.print(" >= ");
-		imprime_arg(exp.arg0(), 3);
+		imprime_arg(exp.arg1(), 3);
 	}
 
 	public void procesa(Igual exp) {
-		imprime_arg(exp.arg1(), 2);
+		imprime_arg(exp.arg0(), 2);
 		System.out.print(" == ");
-		imprime_arg(exp.arg0(), 3);
+		imprime_arg(exp.arg1(), 3);
 	}
 
 	public void procesa(Distinto exp) {
-		imprime_arg(exp.arg1(), 2);
+		imprime_arg(exp.arg0(), 2);
 		System.out.print(" != ");
-		imprime_arg(exp.arg0(), 3);
+		imprime_arg(exp.arg1(), 3);
 	}
 
 	// Nivel 3
