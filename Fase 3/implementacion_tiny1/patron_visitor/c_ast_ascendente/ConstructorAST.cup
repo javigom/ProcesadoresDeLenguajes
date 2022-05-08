@@ -128,8 +128,8 @@ PFORMAL ::=  TIPO: t ID: id
 
 TIPO ::=  TIPO_BASICO: t
     {: RESULT = t;:};
-TIPO ::=  ID: id
-    {: RESULT = sem.tipo_id(id);:};
+TIPO ::=  ID:iden
+    {: RESULT = sem.tipo_id(iden);:};
 TIPO ::=  ARRAY CAP LIT_ENT: le CCIERRE OF TIPO: t
     {: RESULT = sem.tipo_array(le, t);:};
 TIPO ::=  RECORD LLAP LISTA_CAMPOS: l LLCIERRE
