@@ -177,13 +177,13 @@ public class ConstructorAST {
 	private Exp RE0(Exp exph) {
 		switch (anticipo.clase()) {
 		case MAS:
-			char op0 = Op0();
+			empareja(ClaseLexica.MAS);
 			Exp exp0 = E0();
-			return RE0(sem.exp(op0, exph, exp0));
+			return RE0(sem.exp('+', exph, exp0));
 		case MENOS:
-			char op1 = Op0();
+			empareja(ClaseLexica.MENOS);
 			Exp exp1 = E1();
-			return RE0(sem.exp(op1, exph, exp1));
+			return RE0(sem.exp('-', exph, exp1));
 		case PCIERRE:
 		case PCOMA:
 		case EOF:
@@ -337,13 +337,13 @@ public class ConstructorAST {
 	private Exp E4() {
 		switch (anticipo.clase()) {
 		case NOT:
-			String op0 = Op4();
+			empareja(ClaseLexica.NOT);
 			Exp exp0 = E4();
-			return sem.exp(op0, exp0);
+			return sem.exp("not", exp0);
 		case MENOS:
-			String op1 = Op4();
+			empareja(ClaseLexica.MENOS);
 			Exp exp1 = E5();
-			return sem.exp(op1, exp1);
+			return sem.exp("-", exp1);
 		case FALSE:
 		case ID:
 		case LIT_ENT:
@@ -403,21 +403,6 @@ public class ConstructorAST {
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.LIT_ENT,
 					ClaseLexica.LIT_REAL, ClaseLexica.TRUE, ClaseLexica.FALSE);
 			return null;
-		}
-	}
-
-	private char Op0() {
-		switch (anticipo.clase()) {
-		case MAS:
-			empareja(ClaseLexica.MAS);
-			return '+';
-		case MENOS:
-			empareja(ClaseLexica.MENOS);
-			return '-';
-		default:
-			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.MAS,
-					ClaseLexica.MENOS);
-			return '?';
 		}
 	}
 	
@@ -484,21 +469,6 @@ public class ConstructorAST {
 			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.POR,
 					ClaseLexica.DIV);
 			return '?';
-		}
-	}
-	
-	private String Op4() {
-		switch (anticipo.clase()) {
-		case NOT:
-			empareja(ClaseLexica.NOT);
-			return "not";
-		case MENOS:
-			empareja(ClaseLexica.MENOS);
-			return "-";
-		default:
-			errores.errorSintactico(anticipo.fila(), anticipo.columna(), anticipo.clase(), ClaseLexica.MAS,
-					ClaseLexica.MENOS);
-			return "?";
 		}
 	}
 
