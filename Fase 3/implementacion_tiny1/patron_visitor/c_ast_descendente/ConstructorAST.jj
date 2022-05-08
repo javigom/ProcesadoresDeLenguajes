@@ -161,7 +161,7 @@ PARSER_END(ConstructorAST)
   Instruccion INSTRUCCION()    : {Exp ex, ex1, ex2; Instrucciones l_ins1, l_ins; Token id; Exps l_exp; B b;}
 						{ ex1=EXPRESION() "=" ex2=EXPRESION() {return sem.asig(ex1,ex2);}|
 						 <IF> ex=EXPRESION() <THEN> l_ins=LISTA_INST_OP() <ENDIF> {return sem.if_inst(ex,l_ins,rif);}|
-						 <IF> ex=EXPRESION() <THEN> l_ins=LISTA_INST_OP() <ELSE> l_ins1=RIFTHEN() <ENDIF> {return sem.if_else(ex,l_ins,l_ins1);}|
+						 <IF> ex=EXPRESION() <THEN> l_ins=LISTA_INST_OP() <ELSE> l_ins1=LISTA_INST() <ENDIF> {return sem.if_else(ex,l_ins,l_ins1);}|
   					     <WHILE> ex=EXPRESION() <DO> l_ins=LISTA_INST_OP()  <ENDWHILE> {return sem.while_inst(ex,l_ins);}|
   					     <READ> ex=EXPRESION() {return sem.read(ex);}|
   					     <WRITE> ex=EXPRESION() {return sem.write(ex);}|
@@ -193,7 +193,7 @@ PARSER_END(ConstructorAST)
 							{exs=LISTA_EXPR() {return exs;} | {return sem.lista_exp_empty();}}  
 
   Exps LISTA_EXPR()    : {Exp ex; Exps exs;}
-						{exs=RLISTA_EXPR(sem.exp_una(ex)) ex=EXPRESION() {return exs}}
+						{exs=RLISTA_EXPR(sem.exp_una(ex)) ex=EXPRESION() {return exs;}}
 
   Exps RLISTA_EXPR(Exps exps_h)    : {Exp exp; Exps exps;}
 									{exps=RLISTA_EXPR(sem.exp_muchas(exps_h, exp)) exp=EXPRESION() "," {return exps;} | {return exps_h;}}
@@ -227,21 +227,21 @@ PARSER_END(ConstructorAST)
   Exp E0()       : {Exp exp, resul;} {resul=RE0(exp) exp=E1() {return resul;}}
   Exp RE0(Exp exph) : {Exp exp;} 
                        {exp=E0() "+" {return sem.exp("+",exp,exph);} |
-                       {exp=E1() "-" {return sem.exp("-",exp,exph);} |
+                        exp=E1() "-" {return sem.exp("-",exp,exph);} |
                        {return exph;}}
                    
   
   
   Exp E1()   : {Exp exp, resul;} {resul=RE1(exp) exp=E2() {return resul;}}
   Exp RE1(Exp exph)  : {string op; Exp exp, resul;}
-						{resul=RE1(sem.exp(op,exp,exph)) exp=E2() op=OPBN1() {return resul}|
+						{resul=RE1(sem.exp(op,exp,exph)) exp=E2() op=OPBN1() {return resul;}|
 						{return exph;} }
 
 
   
   Exp E2()   : {Exp exp, resul;} {resul=RE2(exp) exp=E3() {return resul;}}
   Exp RE2(Exp exph)  : {string op; Exp exp, resul;}
-						{resul = RE2(sem.exp(op,exp,exph)) exp=E3() op=OPBN2() {return resul}|
+						{resul = RE2(sem.exp(op,exp,exph)) exp=E3() op=OPBN2() {return resul;}|
 						{return exph;} }
 
 						
@@ -253,20 +253,22 @@ PARSER_END(ConstructorAST)
   						
   
   Exp E4()   : {Exp resul;}
-  				{<NOT> resul=E4() {return sem.exp('not', exp);}|
-  				 "-" resul=E5() {return sem.exp('-', exp);;}|
+  				{<NOT> resul=E4() {return sem.exp("not", exp);}|
+  				 "-" resul=E5() {return sem.exp("-", exp);}|
   				  resul=E5() {return resul;}}
   
   Exp E5()	  : {Exp exp, op;}
   				{exp=E6() {return exp;} |
-  				{exp=E5() op=OPUN5() {return sem.exp(exp, op);} }
+  				 exp=E5() op=OPUN5() {return sem.exp(exp, op);} }
 
   Exp E6()   : {Exp exp;} {"*" exp=E6() {return sem.exp('*', exp);} | exp=E7() {return exp;}}
   Exp E7()   : {Exp exp;} {exp=EXPRESION_BASICA() {return exp;} | "(" exp=E0() ")" {return exp;}} 
   
   string OPBN1()  : {} {<AND> {return "and";} | <OR> {return "or";}}
-  string OPBN2()  : {} {"<" {return "<";} | ">" {return ">";} | "<=" {return '<=';}| ">=" {return ">=";} | "==" {return "==";}| "!=" {return "!=";}}
+  string OPBN2()  : {} {"<" {return "<";} | ">" {return ">";} | "<=" {return "<=";}| ">=" {return ">=";} | "==" {return "==";}| "!=" {return "!=";}}
   string OPBN3()  : {} {"*" {return "*";} | "/" {return "/";}| "%" {return "%";}}
   Exp OPUN5()  : {Exp exp;} {"[" exp=EXPRESION() "]" {return sem.corchete(exp);} | exp=OP_ACCESO() {return exp;}}
   
-  Exp OP_ACCESO()  : {Token iden;} {"." iden=<identificador> {return sem.punto(sem.str(iden.image,iden.beginLine,iden.beginColumn))}| "->" iden=<identificador> {return sem.flecha(sem.str(iden.image,iden.beginLine,iden.beginColumn))}}
+  Exp OP_ACCESO()  : {Token iden;} {"." iden=<identificador> {return sem.punto(sem.str(iden.image,iden.beginLine,iden.beginColumn));}| "->" iden=<identificador> {return sem.flecha(sem.str(iden.image,iden.beginLine,iden.beginColumn));}}
+  
+  
