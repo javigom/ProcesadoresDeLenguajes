@@ -1,7 +1,7 @@
 package tiny;
 
 import asint.TinyASint.Programa;
-import c_ast_ascendente.UnidadLexica;
+import c_ast_ascendente.AnalizadorLexicoTiny;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -12,14 +12,14 @@ public class Main {
 		/*
 		 * if (args[0].equals("-lex")) { ejecuta_lexico(args[1]); } else {
 		 */
-		Programa prog = null;
+		Programa prog = null; 
 		if (args[0].equals("asc"))
 			prog = ejecuta_ascendente(args[1]);
+
 		else if (args[0].equals("desc"))
 			prog = ejecuta_descendente(args[1]);
 
 		prog.procesa(new Impresion());
-		// }
 	}
 
 	/*
@@ -33,14 +33,14 @@ public class Main {
 
 	private static Programa ejecuta_ascendente(String in) throws Exception {
 		Reader input = new InputStreamReader(new FileInputStream(in));
-		AnalizadorLexico alex = new AnalizadorLexico(input);
-		ConstructorAST constructorast = new ConstructorAST(alex);
-		return (Prog) constructorast.parse().value;
+		AnalizadorLexicoTiny alex = new AnalizadorLexicoTiny(input);
+		c_ast_ascendente.ConstructorAST constructorast = new c_ast_ascendente.ConstructorAST(alex);
+		return (Programa) constructorast.parse().value;
 	}
 
 	private static Programa ejecuta_descendente(String in) throws Exception {
 		Reader input = new InputStreamReader(new FileInputStream(in));
 		c_ast_descendente.ConstructorAST constructorast = new c_ast_descendente.ConstructorAST(input);
-		return constructorast.Init();
+		return constructorast.PROGRAMAp();
 	}
 }

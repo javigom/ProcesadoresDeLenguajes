@@ -1,4 +1,4 @@
-package alex;
+package c_ast_ascendente;
 
 import errors.GestionErroresTiny;
 
@@ -159,4 +159,4 @@ puntoComa = \;
 {diferente}               	{return ops.unidadDif();}
 {ampersand}				  	{return ops.unidadAmp();}
 {dobleAmpersand}		  	{return ops.unidadDAmp();}
-[^]                         {errores.errorLexico(fila(), lexema());}  
+[^]                         {errores.errorLexico(fila(), columna(),lexema());}  

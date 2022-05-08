@@ -1,0 +1,3 @@
+Java –cp cup.jar java_cup.Main –parser <nombre del parser> -symbols <nombre de la clase con las constantes para las clases léxicas> -nopositions <archivo cup>
+
+java -cp cup.jar java_cup.Main -parser ConstructorAST -symbols ClaseLexica -dump_states -nopositions ConstructorAST.cup

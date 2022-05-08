@@ -1,6 +1,6 @@
 package c_ast_ascendente;
 
-public class UnidadLexica extends Symbol{
+public class UnidadLexica extends java_cup.runtime.Symbol{
 	private int fila;
 	private int columna;
 	
@@ -10,7 +10,7 @@ public class UnidadLexica extends Symbol{
 		this.columna = columna;
 	}
 	
-	public int clase () {
+	public int clase() {
 		return sym;
 	}
 	

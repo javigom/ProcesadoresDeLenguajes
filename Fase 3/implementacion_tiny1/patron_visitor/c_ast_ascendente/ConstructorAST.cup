@@ -17,6 +17,7 @@ import asint.TinyASint.ParamForms;
 import asint.TinyASint.ParamForm;
 import asint.TinyASint.Programa;
 import asint.TinyASint.StringLocalizado;
+import errors.GestionErroresTiny;
 
 
 scan with {: return getScanner().next_token(); :};
@@ -24,14 +25,14 @@ action code {:
    private SemOps sem = new SemOps();
 :};
 parser code {: 
-   private GestionErrores errores;
+   private GestionErroresTiny errores;
    public void syntax_error(Symbol unidadLexica) {
      errores.errorSintactico((UnidadLexica)unidadLexica);
    }
 :};
 init with {: 
-   errores = new GestionErrores();
-   AnalizadorLexico alex = (AnalizadorLexico)getScanner();
+   errores = new GestionErroresTiny();
+   AnalizadorLexicoTiny alex = (AnalizadorLexicoTiny)getScanner();
    alex.fijaGestionErrores(errores);
 :};
 
@@ -41,13 +42,13 @@ init with {:
 
 terminal 	 MAS, MENOS, DIV, POR, PERCENT, AND, NOT, OR, MENOR, 
 			 MAYOR, MENOR_IGUAL, MAYOR_IGUAL, IGUAL, DIF, PAP, PCIERRE, CAP, 
-			 CCIERRE, PUNTO, FLECHA, DAMP, PCOMA, VAR, ID, TYPE, 
-			 PROC, COMA, AMP, TRUE, FALSE, LIT_ENT, LIT_REAL, LIT_CAD,
+			 CCIERRE, PUNTO, FLECHA, DAMP, PCOMA, VAR, TYPE, 
+			 PROC, COMA, AMP, TRUE, FALSE, 
 			 NULL, ARRAY, OF, RECORD, LLAP, LLCIERRE, POINTER,
 			 INT, BOOL, REAL, STRING, IF, THEN, ELSE, WHILE, ENDIF, DO,
 			 ENDWHILE, READ, NL, DELETE, NEW, WRITE, CALL, DIGUAL;
 			 
-terminal StringLocalizado NUM, ID;
+terminal StringLocalizado ID, LIT_ENT, LIT_REAL, LIT_CAD;
 
 
 
@@ -86,13 +87,13 @@ non terminal  String OPBN1, OPBN2, OPBN3;
 PROGRAMA ::= DECLARACIONES: decs DAMP INSTRUCCIONES: ins
     {: RESULT = sem.P_decs(decs,ins);:};
 PROGRAMA ::= INSTRUCCIONES: ins
-    {: RESULT = sem.P_nodecs(ins):};
+    {: RESULT = sem.P_nodecs(ins);:};
     
 
 DECLARACIONES ::= DECLARACIONES: decs PCOMA DECLARACION: dec
-    {: RESULT = sem.decsmuchas(decs, dec):};
+    {: RESULT = sem.decs_muchas(decs, dec);:};
 DECLARACIONES ::= DECLARACION: dec
-    {: RESULT = sem.decsuna(dec):};
+    {: RESULT = sem.decs_una(dec); :};
     
 
 DECLARACION ::= DECVAR: dec
@@ -102,23 +103,23 @@ DECLARACION ::= DECTIPO: dec
 DECLARACION ::= DECPROC: dec
     {: RESULT = dec;:};
 
-DECVAR ::= VAR: v TIPO: tipo ID: iden
-    {: RESULT = sem.tipo(sem.str(iden.image,iden.beginLine,iden.beginColumn), tipo, sem.str(v.image,v.beginLine,v.beginColumn));:};
-DECTIPO ::=  TYPE: t TIPO: tipo ID: iden
-    {: RESULT = sem.tipo(sem.str(iden.image,iden.beginLine,iden.beginColumn), tipo, sem.str(t.image,t.beginLine,t.beginColumn));:};
-DECPROC::=  PROC: p ID: iden PFORMALES: pforms BLOQUE: bl
-    {: RESULT = sem.proc(sem.str(p.image,p.beginLine,p.beginColumn), sem.str(iden.image,iden.beginLine,iden.beginColumn), pforms, bl);:};
+DECVAR ::= VAR TIPO: tipo ID: iden
+    {: RESULT = sem.decvar(tipo, iden);:};
+DECTIPO ::=  TYPE TIPO: tipo ID: iden
+    {: RESULT = sem.dectipo(tipo, iden);:};
+DECPROC::=  PROC ID: iden PFORMALES: pforms BLOQUE: bl
+    {: RESULT = sem.decproc(iden, pforms, bl);:};
 
 
 PFORMALES ::=  PAP LISTA_PFORMALES: pforms PCIERRE
     {: RESULT = pforms;:};
 PFORMALES ::=  PAP PCIERRE
-    {: RESULT = sem.nopformal();:};
+    {: RESULT = sem.pformales_empty();:};
 
 LISTA_PFORMALES  ::=  LISTA_PFORMALES: pforms COMA PFORMAL: pform
-    {: RESULT = sem.pformal_muchas(pforms, pform);:};
+    {: RESULT = sem.pformales_muchos(pforms, pform);:};
 LISTA_PFORMALES  ::=  PFORMAL: pform
-    {: RESULT = sem.pformal_uno(pform);:};
+    {: RESULT = sem.pformales_uno(pform);:};
 
 PFORMAL ::=  TIPO: t AMP ID: id
     {: RESULT = sem.pformal_ref(t, id);:};
@@ -128,13 +129,13 @@ PFORMAL ::=  TIPO: t ID: id
 TIPO ::=  TIPO_BASICO: t
     {: RESULT = t;:};
 TIPO ::=  ID: id
-    {: RESULT = id;:};
+    {: RESULT = sem.tipo_id(id);:};
 TIPO ::=  ARRAY CAP LIT_ENT: le CCIERRE OF TIPO: t
-    {: RESULT = sem.array(le, t);:};
+    {: RESULT = sem.tipo_array(le, t);:};
 TIPO ::=  RECORD LLAP LISTA_CAMPOS: l LLCIERRE
-    {: RESULT = sem.listacampostipo(l);:};
+    {: RESULT = sem.tipo_record(l);:};
 TIPO ::=  POINTER TIPO: t
-    {: RESULT = sem.pointer(t);:};
+    {: RESULT = sem.tipo_pointer(t);:};
 
 TIPO_BASICO ::= INT
     {: RESULT = sem.int_cons();:};
@@ -146,7 +147,7 @@ TIPO_BASICO ::= STRING
     {: RESULT = sem.string_cons();:};
 
 LISTA_CAMPOS ::= LISTA_CAMPOS: lc PCOMA CAMPO: c
-    {: RESULT = sem.campo_muchos(lc, c);:};
+    {: RESULT = sem.campos_muchos(lc, c);:};
 LISTA_CAMPOS ::= CAMPO: c
     {: RESULT = sem.campo_uno(c);:};
 
@@ -154,9 +155,9 @@ CAMPO ::= TIPO: t ID: id
     {: RESULT = sem.campo(t, id);:};
 
 INSTRUCCIONES ::= INSTRUCCIONES: ins PCOMA INSTRUCCION: in
-    {: RESULT = sem.ins_muchas(ins, in);:};
+    {: RESULT = sem.insts_muchas(ins, in);:};
 INSTRUCCIONES ::= INSTRUCCION: in
-    {: RESULT = sem.ins_una(in);:};
+    {: RESULT = sem.insts_una(in);:};
 
 
 INSTRUCCION ::= EXPRESION: ex1 IGUAL EXPRESION: ex2
@@ -164,9 +165,9 @@ INSTRUCCION ::= EXPRESION: ex1 IGUAL EXPRESION: ex2
 INSTRUCCION ::= IF EXPRESION: ex THEN LISTA_INST_OP: l_ins1 ELSE LISTA_INST: l_ins2 ENDIF
     {: RESULT = sem.if_else(ex,l_ins1, l_ins2);:};
 INSTRUCCION ::= IF EXPRESION: ex THEN LISTA_INST_OP: l_ins ENDIF
-    {: RESULT = sem.if(ex,l_ins);:};
+    {: RESULT = sem.if_inst(ex,l_ins);:};
 INSTRUCCION ::= WHILE EXPRESION: ex DO LISTA_INST_OP: l_ins ENDWHILE
-    {: RESULT = sem.while(ex,l_ins);:};
+    {: RESULT = sem.while_inst(ex,l_ins);:};
 INSTRUCCION ::= READ EXPRESION: ex
     {: RESULT = sem.read(ex);:};
 INSTRUCCION ::= WRITE EXPRESION: ex
@@ -179,24 +180,24 @@ INSTRUCCION ::= NL
     {: RESULT = sem.nl();:};
 INSTRUCCION ::= CALL ID: id PAP LISTA_EXPR_OP: l_ex PCIERRE
     {: RESULT = sem.call(id, l_ex);:};
-INSTRUCCION ::= BLOQUE
-    {: RESULT = sem.bloque(b);:};
+INSTRUCCION ::= BLOQUE: b
+    {: RESULT = sem.bloque_inst(b);:};
 
 
 LISTA_INST_OP ::= LISTA_INST: l_ins
     {: RESULT = l_ins;:};
 LISTA_INST_OP ::= 
-    {: RESULT = sem.no_ins();:};
+    {: RESULT = sem.lista_inst_empty();:};
 
 LISTA_INST ::= LISTA_INST: ins PCOMA INSTRUCCION: in
-    {: RESULT = sem.ins_muchas(ins, in);:};
+    {: RESULT = sem.insts_muchas(ins, in);:};
 LISTA_INST ::= INSTRUCCION: in
-    {: RESULT = sem.ins_una(in);:};
+    {: RESULT = sem.insts_una(in);:};
 
 LISTA_EXPR_OP ::= LISTA_EXPR: exps
     {: RESULT = exps;:};
 LISTA_EXPR_OP ::= 
-    {: RESULT = sem.no_exps();:};
+    {: RESULT = sem.lista_exp_empty();:};
 
 LISTA_EXPR ::= LISTA_EXPR: exps COMA EXPRESION: exp
     {: RESULT = sem.exp_muchas(exps, exp);:};
@@ -212,25 +213,25 @@ EXPRESION ::= E0: e
     {: RESULT = e;:};
 
 EXPRESION_BASICA ::= TRUE
-    {: RESULT = litTrue();:};
+    {: RESULT = sem.litTrue();:};
 EXPRESION_BASICA ::= FALSE
-    {: RESULT = litFalse();:};
-EXPRESION_BASICA ::= LIT_ENT
+    {: RESULT = sem.litFalse();:};
+EXPRESION_BASICA ::= LIT_ENT: c
     {: RESULT = sem.litEnt(c);:};
-EXPRESION_BASICA ::= LIT_REAL
+EXPRESION_BASICA ::= LIT_REAL: c
     {: RESULT = sem.litReal(c);:};
 EXPRESION_BASICA ::= LIT_CAD: c
     {: RESULT = sem.litCad(c);:};
-EXPRESION_BASICA ::= ID
+EXPRESION_BASICA ::= ID: c
     {: RESULT = sem.id(c);:};
 EXPRESION_BASICA ::= NULL
-    {: RESULT = litNull();:};
+    {: RESULT = sem.litNull();:};
     
 
 E0 ::= E0: exp1 MAS E1: exp2
-    {:RESULT = sem.exp('+',exp1,exp2);:};
+    {:RESULT = sem.exp("+",exp1,exp2);:};
 E0 ::= E1: exp1 MENOS E1: exp2
-    {:RESULT = sem.exp('-',exp1,exp2);:};
+    {:RESULT = sem.exp("-",exp1,exp2);:};
 E0 ::= E1: exp
     {:RESULT = exp;:};
 
@@ -240,9 +241,9 @@ E1 ::= E2: exp
     {:RESULT = exp;:};
 
 OPBN1 ::= AND
-    {:RESULT = 'and'; :};
+    {:RESULT = "and"; :};
 OPBN1 ::= OR
-    {:RESULT = 'or'; :};
+    {:RESULT = "or"; :};
 
 E2 ::= E3: exp1 OPBN2: op E2: exp2
     {:RESULT = sem.exp(op,exp1,exp2);:};
@@ -250,17 +251,17 @@ E2 ::= E3: exp
     {:RESULT = exp;:};
 
 OPBN2 ::= MENOR
-    {:RESULT = '<'; :};
+    {:RESULT = "<"; :};
 OPBN2 ::= MAYOR
-    {:RESULT = '>'; :};
+    {:RESULT = ">"; :};
 OPBN2 ::= MENOR_IGUAL
-    {:RESULT = '<='; :};
+    {:RESULT = "<="; :};
 OPBN2 ::= MAYOR_IGUAL
-    {:RESULT = '>='; :};
+    {:RESULT = ">="; :};
 OPBN2 ::= DIGUAL
-    {:RESULT = '=='; :};
+    {:RESULT = "=="; :};
 OPBN2 ::= DIF
-    {:RESULT = '!='; :};
+    {:RESULT = "!="; :};
 
 E3 ::= E4: exp1 OPBN3: op E4: exp2
     {:RESULT = sem.exp(op,exp1,exp2);:};
@@ -268,16 +269,16 @@ E3 ::= E4: exp
     {:RESULT = exp;:};
 
 OPBN3 ::= DIV
-    {:RESULT = '/'; :};
+    {:RESULT = "/"; :};
 OPBN3 ::= POR
-    {:RESULT = '*'; :};
+    {:RESULT = "*"; :};
 OPBN3 ::= PERCENT
-    {:RESULT = '%'; :};
+    {:RESULT = "%"; :};
 
 E4 ::= NOT E4: exp
-    {:RESULT = sem.exp('not',exp);:};
+    {:RESULT = sem.exp("not",exp);:};
 E4 ::= MENOS E5: exp
-    {:RESULT = sem.exp('-',exp);:};
+    {:RESULT = sem.exp("-",exp);:};
 E4 ::= E5: exp
     {:RESULT = exp;:};
 
@@ -297,7 +298,7 @@ OP_ACCESO ::= FLECHA ID: id
     {:RESULT = sem.flecha(id);:};
 
 E6 ::= POR E6: exp
-    {:RESULT = sem.exp('*',exp);:};
+    {:RESULT = sem.exp("*",exp);:};
 E6 ::= E7: exp
     {:RESULT = exp;:};
 

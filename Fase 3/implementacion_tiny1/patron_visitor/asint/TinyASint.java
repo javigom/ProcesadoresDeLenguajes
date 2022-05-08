@@ -1547,8 +1547,8 @@ public class TinyASint {
 		return new Tipo_Id(id);
 	}
 	
-	public Tipo tipo_array(StringLocalizado id, Tipo t) {
-		return new Array(id, t);
+	public Tipo tipo_array(StringLocalizado tam, Tipo t) {
+		return new Array(tam, t);
 	}
 	
 	public Tipo tipo_record(Camps c) {

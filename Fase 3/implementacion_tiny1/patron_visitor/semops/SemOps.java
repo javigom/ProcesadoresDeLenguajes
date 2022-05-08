@@ -3,28 +3,23 @@ package semops;
 import asint.TinyASint;
 
 public class SemOps extends TinyASint {
-	public Exp exp(char op, Exp arg0, Exp arg1) {
-		switch (op) {
-		case '+':
-			return suma(arg0, arg1);
-		case '-':
-			return resta(arg0, arg1);
-		case '*':
-			return mul(arg0, arg1);
-		case '%':
-			return percent(arg0, arg1);
-		case '/':
-			return div(arg0, arg1);
-		case '<':
-			return mayor(arg0, arg1);
-		case '>':
-			return menor(arg0, arg1);
-		}
-		throw new UnsupportedOperationException("exp " + op);
-	}
 
 	public Exp exp(String op, Exp arg0, Exp arg1) {
 		switch (op) {
+		case "+":
+			return suma(arg0, arg1);
+		case "-":
+			return resta(arg0, arg1);
+		case "*":
+			return mul(arg0, arg1);
+		case "%":
+			return percent(arg0, arg1);
+		case "/":
+			return div(arg0, arg1);
+		case "<":
+			return mayor(arg0, arg1);
+		case ">":
+			return menor(arg0, arg1);
 		case "and":
 			return and_cons(arg0, arg1);
 		case "or":
@@ -47,6 +42,8 @@ public class SemOps extends TinyASint {
 			return menosUnario(arg0);
 		case "not":
 			return not(arg0);
+		case "*":
+			return star(arg0);
 		}
 		throw new UnsupportedOperationException("exp " + op);
 	}
