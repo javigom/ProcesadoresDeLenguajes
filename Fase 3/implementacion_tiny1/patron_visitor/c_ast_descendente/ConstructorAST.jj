@@ -267,7 +267,7 @@ PARSER_END(ConstructorAST)
 
   				 
   Exp E5()   : {Exp exp, resul;} {exp=E6() resul=RE5(exp) {return resul;}}
-  Exp RE5(Exp exph)  : {String op; Exp exp, resul;}
+  Exp RE5(Exp exph)  : {Exp op, exp, resul;}
   						{op=OPUN5() exp=RE5(sem.exp(op,exph)) {return exp;} |
   						{return exph;} }
 

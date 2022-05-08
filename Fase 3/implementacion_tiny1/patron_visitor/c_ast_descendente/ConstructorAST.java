@@ -796,7 +796,7 @@ public class ConstructorAST implements ConstructorASTConstants {
   }
 
   final public Exp RE5(Exp exph) throws ParseException {
-                        String op; Exp exp, resul;
+                        Exp op, exp, resul;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case 51:
     case 67:
