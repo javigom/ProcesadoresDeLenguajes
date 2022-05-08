@@ -19,9 +19,7 @@ import asint.TinyASint.Igual;
 import asint.TinyASint.Instruccion;
 import asint.TinyASint.Insts_muchas;
 import asint.TinyASint.Insts_una;
-import asint.TinyASint.Lista_exp;
 import asint.TinyASint.Lista_exp_empty;
-import asint.TinyASint.Lista_inst;
 import asint.TinyASint.Lista_inst_empty;
 import asint.TinyASint.Lista_inst_muchas;
 import asint.TinyASint.Lista_inst_una;
@@ -39,7 +37,7 @@ import asint.TinyASint.ParamForm;
 import asint.TinyASint.ParamForms_empty;
 import asint.TinyASint.ParamForms_muchos;
 import asint.TinyASint.ParamForms_uno;
-import asint.TinyASint.Pformales_lista;
+import asint.TinyASint.Percent;
 import asint.TinyASint.And;
 import asint.TinyASint.Bloque;
 import asint.TinyASint.Bloque_prog;
@@ -84,6 +82,8 @@ public interface Procesamiento {
 	void procesa(Mul exp);
 
 	void procesa(Div exp);
+	
+	void procesa(Percent percent);
 
 	// Nivel 4
 	void procesa(MenosUnario exp);
@@ -134,8 +134,6 @@ public interface Procesamiento {
 
 	void procesa(Insts_una insts);
 
-	void procesa(Lista_inst lista_inst);
-
 	void procesa(Lista_inst_empty lista_inst_empty);
 
 	void procesa(Lista_inst_una lista_inst_una);
@@ -146,8 +144,6 @@ public interface Procesamiento {
 
 	void procesa(ParamForm paramForm);
 
-	void procesa(Pformales_lista pformales_lista);
-
 	void procesa(ParamForms_muchos paramForms_muchos);
 
 	void procesa(ParamForms_uno paramForms_uno);
@@ -155,8 +151,6 @@ public interface Procesamiento {
 	void procesa(ParamForms_empty paramForms_empty);
 	
 	//Expresiones 
-
-	void procesa(Lista_exp lista_exp);
 
 	void procesa(Lista_exp_empty lista_exp_empty);
 
@@ -184,4 +178,5 @@ public interface Procesamiento {
 
 	// Programa
 	void procesa(Programa programa);
+
 }

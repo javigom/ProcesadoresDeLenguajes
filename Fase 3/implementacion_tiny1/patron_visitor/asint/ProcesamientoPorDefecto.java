@@ -19,9 +19,7 @@ import asint.TinyASint.Igual;
 import asint.TinyASint.Instruccion;
 import asint.TinyASint.Insts_muchas;
 import asint.TinyASint.Insts_una;
-import asint.TinyASint.Lista_exp;
 import asint.TinyASint.Lista_exp_empty;
-import asint.TinyASint.Lista_inst;
 import asint.TinyASint.Lista_inst_empty;
 import asint.TinyASint.Lista_inst_muchas;
 import asint.TinyASint.Lista_inst_una;
@@ -39,7 +37,7 @@ import asint.TinyASint.ParamForm;
 import asint.TinyASint.ParamForms_empty;
 import asint.TinyASint.ParamForms_muchos;
 import asint.TinyASint.ParamForms_uno;
-import asint.TinyASint.Pformales_lista;
+import asint.TinyASint.Percent;
 import asint.TinyASint.And;
 import asint.TinyASint.Bloque;
 import asint.TinyASint.Bloque_prog;
@@ -233,12 +231,6 @@ public class ProcesamientoPorDefecto implements Procesamiento {
 	}
 
 	@Override
-	public void procesa(Lista_inst lista_inst) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void procesa(Lista_inst_empty lista_inst_empty) {
 		// TODO Auto-generated method stub
 		
@@ -263,12 +255,6 @@ public class ProcesamientoPorDefecto implements Procesamiento {
 	}
 
 	@Override
-	public void procesa(Pformales_lista pformales_lista) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void procesa(ParamForms_muchos paramForms_muchos) {
 		// TODO Auto-generated method stub
 		
@@ -282,12 +268,6 @@ public class ProcesamientoPorDefecto implements Procesamiento {
 
 	@Override
 	public void procesa(ParamForms_empty paramForms_empty) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void procesa(Lista_exp lista_exp) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -342,6 +322,12 @@ public class ProcesamientoPorDefecto implements Procesamiento {
 
 	@Override
 	public void procesa(Bloque bloque) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void procesa(Percent percent) {
 		// TODO Auto-generated method stub
 		
 	}

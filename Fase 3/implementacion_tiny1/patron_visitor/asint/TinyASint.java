@@ -299,6 +299,16 @@ public class TinyASint {
 		}
 	}
 	
+	public static class Percent extends ExpMultiplicativa {
+		public Percent(Exp arg0, Exp arg1) {
+			super(arg0, arg1);
+		}
+
+		public void procesa(Procesamiento p) {
+			p.procesa(this);
+		}
+	}
+	
 	
 	// Nivel 4
 	

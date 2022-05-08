@@ -1,6 +1,4 @@
-package implementacionCUP.alex;
-
-import java_cup.runtime.Symbol;
+package c_ast_ascendente;
 
 public class UnidadLexica extends Symbol{
 	private int fila;
