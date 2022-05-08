@@ -110,12 +110,16 @@ public class Impresion extends ProcesamientoPorDefecto {
 
 	@Override
 	public void procesa(DecTipo dec) {
-		System.out.print("type " + dec.val() + "  " + dec.id());
+		System.out.print("type ");
+		dec.val().procesa(this);
+		System.out.print(" " + dec.id());
 	}
 
 	@Override
 	public void procesa(DecVar dec) {
-		System.out.print("var " + dec.val() + "  " + dec.id());
+		System.out.print("var ");
+		dec.val().procesa(this);
+		System.out.print(" " + dec.id());
 	}
 
 	// Instrucciones
@@ -511,19 +515,21 @@ public class Impresion extends ProcesamientoPorDefecto {
 
 	@Override
 	public void procesa(Array array) {
-		System.out.print("array [" + array.tam() + "] of " + array.tipo_array() + " ");
+		System.out.print("array [" + array.tam() + "] of ");
+		array.tipo_array().procesa(this);
 	}
 
 	@Override
 	public void procesa(Record record) {
-		System.out.println("type record {");
+		System.out.println("record {");
 		record.campos().procesa(this);
 		System.out.println("} ");
 	}
 
 	@Override
 	public void procesa(Pointer pointer) {
-		System.out.println("type pointer " + pointer.tipo() + " ");
+		System.out.print("pointer ");
+		pointer.tipo().procesa(this);
 	}
 	
 	
