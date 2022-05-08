@@ -70,10 +70,6 @@ public class TinyASint {
 	}
 	
 	
-	
-	
-	
-
 	public static class StringLocalizado {
 		private String s;
 		private int fila;
@@ -1583,7 +1579,7 @@ public class TinyASint {
 		return new Decs_muchas(declaraciones, declaracion);
 	}
 	
-	public ParamForms nopformal() {
+	public ParamForms pformales_empty() {
 		return new ParamForms_empty();
 	}
 	
