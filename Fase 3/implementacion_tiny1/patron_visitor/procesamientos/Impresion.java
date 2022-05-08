@@ -332,15 +332,15 @@ public class Impresion extends ProcesamientoPorDefecto {
 
 	// Nivel 1
 	public void procesa(And exp) {
-		imprime_arg(exp.arg0(), 1);
+		imprime_arg(exp.arg1(), 1);
 		System.out.print(" and ");
-		imprime_arg(exp.arg1(), 2);
+		imprime_arg(exp.arg0(), 2);
 	}
 
 	public void procesa(Or exp) {
-		imprime_arg(exp.arg0(), 1);
+		imprime_arg(exp.arg1(), 1);
 		System.out.print(" or ");
-		imprime_arg(exp.arg1(), 2);
+		imprime_arg(exp.arg0(), 2);
 	}
 
 	// Nivel 2
@@ -351,33 +351,33 @@ public class Impresion extends ProcesamientoPorDefecto {
 	}
 
 	public void procesa(Mayor exp) {
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg1(), 2);
 		System.out.print(" > ");
-		imprime_arg(exp.arg1(), 3);
+		imprime_arg(exp.arg0(), 3);
 	}
 
 	public void procesa(MenorIgual exp) {
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg1(), 2);
 		System.out.print(" <= ");
-		imprime_arg(exp.arg1(), 3);
+		imprime_arg(exp.arg0(), 3);
 	}
 
 	public void procesa(MayorIgual exp) {
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg1(), 2);
 		System.out.print(" >= ");
-		imprime_arg(exp.arg1(), 3);
+		imprime_arg(exp.arg0(), 3);
 	}
 
 	public void procesa(Igual exp) {
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg1(), 2);
 		System.out.print(" == ");
-		imprime_arg(exp.arg1(), 3);
+		imprime_arg(exp.arg0(), 3);
 	}
 
 	public void procesa(Distinto exp) {
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg1(), 2);
 		System.out.print(" != ");
-		imprime_arg(exp.arg1(), 3);
+		imprime_arg(exp.arg0(), 3);
 	}
 
 	// Nivel 3

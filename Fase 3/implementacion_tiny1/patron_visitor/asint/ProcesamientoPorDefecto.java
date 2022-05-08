@@ -1,7 +1,6 @@
 package asint;
 
 import asint.TinyASint.Suma;
-import asint.TinyASint.Tipo;
 import asint.TinyASint.Tipo_Id;
 import asint.TinyASint.True;
 import asint.TinyASint.While_inst;
