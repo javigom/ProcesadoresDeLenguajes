@@ -259,7 +259,7 @@ PARSER_END(ConstructorAST)
   
   Exp E5()	  : {Exp exp, op;}
   				{exp=E6() {return exp;} |
-  				 op=OPUN5() exp=E5(){return sem.exp(exp, op);} }
+  				 exp=E5() op=OPUN5() {return sem.exp(exp, op);} }
 
   Exp E6()   : {Exp exp;} {"*" exp=E6() {return sem.exp('*', exp);} | exp=E7() {return exp;}}
   Exp E7()   : {Exp exp;} {exp=EXPRESION_BASICA() {return exp;} | "(" exp=E0() ")" {return exp;}} 
