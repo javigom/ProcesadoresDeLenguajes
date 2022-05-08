@@ -58,6 +58,7 @@ public class ConstructorAST implements ConstructorASTConstants {
     case litReal:
     case 47:
     case 53:
+    case 56:
     case 57:
     case 58:
       ins = INSTRUCCIONES();
@@ -148,30 +149,21 @@ public class ConstructorAST implements ConstructorASTConstants {
 
   final public ParamForms PFORMALES() throws ParseException {
                                 ParamForms  pforms;
-    jj_consume_token(47);
-    pforms = RPFORMALES();
-    jj_consume_token(48);
-                                                                                 {if (true) return pforms;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public ParamForms RPFORMALES() throws ParseException {
-                                         ParamForms pforms;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case INT:
-    case REAL:
-    case STRING:
-    case BOOL:
-    case RECORD:
-    case ARRAY:
-    case POINTER:
-    case identificador:
+    case 47:
+      jj_consume_token(47);
       pforms = LISTA_PFORMALES();
-                                                                                      {if (true) return pforms;}
+      jj_consume_token(48);
+                                                                                        {if (true) return pforms;}
+      break;
+      jj_consume_token(47);
+      jj_consume_token(48);
+                                                                                                                   {if (true) return sem.pformales_empty();}
       break;
     default:
       jj_la1[3] = jj_gen;
-                                                                                                         {if (true) return sem.pformales_empty();}
+      jj_consume_token(-1);
+      throw new ParseException();
     }
     throw new Error("Missing return statement in function");
   }
@@ -202,22 +194,23 @@ public class ConstructorAST implements ConstructorASTConstants {
 
   final public ParamForm PFORMAL() throws ParseException {
                             Tipo t; Token id;
-    t = TIPO();
-                                                           {if (true) return RPFORMAL(t);}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public ParamForm RPFORMAL(Tipo t) throws ParseException {
-                                   Token id;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 50:
+    case INT:
+    case REAL:
+    case STRING:
+    case BOOL:
+    case RECORD:
+    case ARRAY:
+    case POINTER:
+    case identificador:
+      t = TIPO();
       jj_consume_token(50);
       id = jj_consume_token(identificador);
-                                                                                         {if (true) return sem.pformal_ref(t,sem.str(id.image,id.beginLine,id.beginColumn));}
+                                                                                  {if (true) return sem.pformal_ref(t,sem.str(id.image,id.beginLine,id.beginColumn));}
       break;
-    case identificador:
+      t = TIPO();
       id = jj_consume_token(identificador);
-                                                                                    {if (true) return sem.pformal(t,sem.str(id.image,id.beginLine,id.beginColumn));}
+                                                                                                                                                                                           {if (true) return sem.pformal_ref(t,sem.str(id.image,id.beginLine,id.beginColumn));}
       break;
     default:
       jj_la1[5] = jj_gen;
@@ -364,6 +357,7 @@ public class ConstructorAST implements ConstructorASTConstants {
     case litEnt:
     case litReal:
     case 47:
+    case 56:
     case 57:
     case 58:
       ex1 = EXPRESION();
@@ -376,7 +370,17 @@ public class ConstructorAST implements ConstructorASTConstants {
       ex = EXPRESION();
       jj_consume_token(THEN);
       l_ins = LISTA_INST_OP();
-                                                                                                   {if (true) return RIf(ex, l_ins);}
+      jj_consume_token(ENDIF);
+                                                                                                           {if (true) return sem.if_inst(ex,l_ins,rif);}
+      break;
+      jj_consume_token(IF);
+      ex = EXPRESION();
+      jj_consume_token(THEN);
+      l_ins = LISTA_INST_OP();
+      jj_consume_token(ELSE);
+      l_ins1 = LISTA_INST();
+      jj_consume_token(ENDIF);
+                                                                                                                                      {if (true) return sem.if_else(ex,l_ins,l_ins1);}
       break;
     case WHILE:
       jj_consume_token(WHILE);
@@ -416,35 +420,14 @@ public class ConstructorAST implements ConstructorASTConstants {
       jj_consume_token(47);
       l_exp = LISTA_EXPR_OP();
       jj_consume_token(48);
-                                                                                                          {if (true) return sem.call(sem.str(id.image,id.beginLine,id.beginColumn),l_exp);}
+                                                                                                          {if (true) return sem.call(str(id.image,id.beginLine,id.beginColumn),l_exp);}
       break;
     case 53:
       b = BLOQUE();
-                                                             {if (true) return sem.bloque_inst(b);}
+                                                             {if (true) return se.bloque_inst(b);}
       break;
     default:
       jj_la1[10] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
-    }
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Instruccion RIf(Exp ex, Instrucciones l_ins) throws ParseException {
-                                                 Instrucciones l_ins1;
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case ENDIF:
-      jj_consume_token(ENDIF);
-                          {if (true) return sem.if_inst(ex,l_ins);}
-      break;
-    case ELSE:
-      jj_consume_token(ELSE);
-      l_ins1 = LISTA_INST();
-      jj_consume_token(ENDIF);
-                                                    {if (true) return sem.if_else(ex,l_ins,l_ins1);}
-      break;
-    default:
-      jj_la1[11] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -472,14 +455,15 @@ public class ConstructorAST implements ConstructorASTConstants {
     case litReal:
     case 47:
     case 53:
+    case 56:
     case 57:
     case 58:
       l = LISTA_INST();
                                                                          {if (true) return l;}
       break;
     default:
-      jj_la1[12] = jj_gen;
-                                                                                       {if (true) return sem.lista_inst_empty();}
+      jj_la1[11] = jj_gen;
+                                                                                       {if (true) return sem.noins();}
     }
     throw new Error("Missing return statement in function");
   }
@@ -502,7 +486,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                                                                                                              {if (true) return ins;}
       break;
     default:
-      jj_la1[13] = jj_gen;
+      jj_la1[12] = jj_gen;
                                                                                                                                                              {if (true) return ins_h;}
     }
     throw new Error("Missing return statement in function");
@@ -520,13 +504,14 @@ public class ConstructorAST implements ConstructorASTConstants {
     case litEnt:
     case litReal:
     case 47:
+    case 56:
     case 57:
     case 58:
       exs = LISTA_EXPR();
                                                                            {if (true) return exs;}
       break;
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[13] = jj_gen;
                                                                                            {if (true) return sem.lista_exp_empty();}
     }
     throw new Error("Missing return statement in function");
@@ -550,53 +535,29 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                                                                                                             {if (true) return exps;}
       break;
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[14] = jj_gen;
                                                                                                                                                              {if (true) return exps_h;}
     }
     throw new Error("Missing return statement in function");
   }
 
   final public Bloque BLOQUE() throws ParseException {
-                        Bloque p;
-    jj_consume_token(53);
-    p = RBLOQUE();
-    jj_consume_token(54);
-                                                         {if (true) return p;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Bloque RBLOQUE() throws ParseException {
-                           Programa p;
+                        Programa p;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case NOT:
-    case FALSE:
-    case TRUE:
-    case NULL:
-    case PROC:
-    case IF:
-    case WHILE:
-    case CALL:
-    case NEW:
-    case DELETE:
-    case READ:
-    case WRITE:
-    case NL:
-    case VAR:
-    case TYPE:
-    case litCad:
-    case identificador:
-    case litEnt:
-    case litReal:
-    case 47:
     case 53:
-    case 57:
-    case 58:
+      jj_consume_token(53);
       p = PROGRAMA();
-                                                        {if (true) return sem.bloque_prog(p);}
+      jj_consume_token(54);
+                                                          {if (true) return sem.bloque_prog(p);}
+      break;
+      jj_consume_token(53);
+      jj_consume_token(54);
+                                                                                                 {if (true) return sem.no_bloque();}
       break;
     default:
-      jj_la1[16] = jj_gen;
-                                                                                       {if (true) return sem.no_bloque();}
+      jj_la1[15] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
     }
     throw new Error("Missing return statement in function");
   }
@@ -640,7 +601,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                                      {if (true) return sem.litCad(sem.str(t.image,t.beginLine,t.beginColumn));}
       break;
     default:
-      jj_la1[17] = jj_gen;
+      jj_la1[16] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -649,8 +610,8 @@ public class ConstructorAST implements ConstructorASTConstants {
 
   final public Exp E0() throws ParseException {
                     Exp exp, resul;
-    exp = E1();
     resul = RE0(exp);
+    exp = E1();
                                                                {if (true) return resul;}
     throw new Error("Missing return statement in function");
   }
@@ -669,7 +630,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                       {if (true) return sem.exp("-",exp,exph);}
       break;
     default:
-      jj_la1[18] = jj_gen;
+      jj_la1[17] = jj_gen;
                         {if (true) return exph;}
     }
     throw new Error("Missing return statement in function");
@@ -694,7 +655,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                                                                       {if (true) return resul;}
       break;
     default:
-      jj_la1[19] = jj_gen;
+      jj_la1[18] = jj_gen;
                                                  {if (true) return exph;}
     }
     throw new Error("Missing return statement in function");
@@ -723,7 +684,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                                                                         {if (true) return resul;}
       break;
     default:
-      jj_la1[20] = jj_gen;
+      jj_la1[19] = jj_gen;
                                                  {if (true) return exph;}
     }
     throw new Error("Missing return statement in function");
@@ -748,7 +709,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                                       {if (true) return sem.exp(op,exph,exp);}
       break;
     default:
-      jj_la1[21] = jj_gen;
+      jj_la1[20] = jj_gen;
                                                  {if (true) return exph;}
     }
     throw new Error("Missing return statement in function");
@@ -780,7 +741,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                               {if (true) return resul;}
       break;
     default:
-      jj_la1[22] = jj_gen;
+      jj_la1[21] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -802,11 +763,11 @@ public class ConstructorAST implements ConstructorASTConstants {
     case 67:
     case 68:
       op = OPUN5();
-      exp = RE5(sem.exp(op,exph));
-                                                                                       {if (true) return exp;}
+      exp = RE5();
+                                                                       {if (true) return sem.exp(op,exph,exp);}
       break;
     default:
-      jj_la1[23] = jj_gen;
+      jj_la1[22] = jj_gen;
                                                  {if (true) return exph;}
     }
     throw new Error("Missing return statement in function");
@@ -818,7 +779,7 @@ public class ConstructorAST implements ConstructorASTConstants {
     case 58:
       jj_consume_token(58);
       exp = E6();
-                                         {if (true) return sem.exp("*", exp);}
+                                         {if (true) return sem.exp('*', exp);}
       break;
     case FALSE:
     case TRUE:
@@ -832,7 +793,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                                                 {if (true) return exp;}
       break;
     default:
-      jj_la1[24] = jj_gen;
+      jj_la1[23] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -859,7 +820,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                                                     {if (true) return exp;}
       break;
     default:
-      jj_la1[25] = jj_gen;
+      jj_la1[24] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -877,7 +838,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                       {if (true) return "or";}
       break;
     default:
-      jj_la1[26] = jj_gen;
+      jj_la1[25] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -911,7 +872,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                                                                                                       {if (true) return "!=";}
       break;
     default:
-      jj_la1[27] = jj_gen;
+      jj_la1[26] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -933,7 +894,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                                     {if (true) return "%";}
       break;
     default:
-      jj_la1[28] = jj_gen;
+      jj_la1[27] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -955,7 +916,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                                                                     {if (true) return exp;}
       break;
     default:
-      jj_la1[29] = jj_gen;
+      jj_la1[28] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -976,7 +937,7 @@ public class ConstructorAST implements ConstructorASTConstants {
                                                                                                                                                                   {if (true) return sem.flecha(sem.str(iden.image,iden.beginLine,iden.beginColumn));}
       break;
     default:
-      jj_la1[30] = jj_gen;
+      jj_la1[29] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -988,7 +949,7 @@ public class ConstructorAST implements ConstructorASTConstants {
   public Token token, jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[31];
+  final private int[] jj_la1 = new int[30];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -998,13 +959,13 @@ public class ConstructorAST implements ConstructorASTConstants {
       jj_la1_2();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x12387000,0x0,0x100000,0x60078000,0x0,0x0,0x60078000,0x78000,0x0,0x0,0x12287000,0x1800000,0x12287000,0x0,0x87000,0x0,0x12387000,0x86000,0x0,0xc00,0x0,0x0,0x87000,0x0,0x86000,0x86000,0xc00,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0x12387000,0x0,0x100000,0x0,0x0,0x60078000,0x60078000,0x78000,0x0,0x0,0x12287000,0x12287000,0x0,0x87000,0x0,0x0,0x86000,0x0,0xc00,0x0,0x0,0x87000,0x0,0x86000,0x86000,0xc00,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x6209efe,0x4000,0xc0,0x401,0x20000,0x40400,0x401,0x0,0x4000,0x4000,0x6209e3e,0x0,0x6209e3e,0x4000,0x6009e00,0x20000,0x6209efe,0x1e00,0x3000000,0x0,0xf8000000,0x4000000,0x6009e00,0x80000,0x4009e00,0x9e00,0x0,0xf8000000,0x4000000,0x80000,0x0,};
+      jj_la1_1 = new int[] {0x7209efe,0x4000,0xc0,0x8000,0x20000,0x401,0x401,0x0,0x4000,0x4000,0x7209e3e,0x7209e3e,0x4000,0x7009e00,0x20000,0x200000,0x1e00,0x3000000,0x0,0xf8000000,0x4000000,0x6009e00,0x80000,0x4009e00,0x9e00,0x0,0xf8000000,0x4000000,0x80000,0x0,};
    }
    private static void jj_la1_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x6,0x0,0x18,0x0,0x0,0x0,0x1,0x6,0x18,0x18,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x6,0x0,0x18,0x0,0x0,0x0,0x1,0x6,0x18,0x18,};
    }
 
   public ConstructorAST(java.io.InputStream stream) {
@@ -1013,7 +974,7 @@ public class ConstructorAST implements ConstructorASTConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 30; i++) jj_la1[i] = -1;
   }
 
   public void ReInit(java.io.InputStream stream) {
@@ -1022,7 +983,7 @@ public class ConstructorAST implements ConstructorASTConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 30; i++) jj_la1[i] = -1;
   }
 
   public ConstructorAST(java.io.Reader stream) {
@@ -1031,7 +992,7 @@ public class ConstructorAST implements ConstructorASTConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 30; i++) jj_la1[i] = -1;
   }
 
   public void ReInit(java.io.Reader stream) {
@@ -1040,7 +1001,7 @@ public class ConstructorAST implements ConstructorASTConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 30; i++) jj_la1[i] = -1;
   }
 
   public ConstructorAST(ConstructorASTTokenManager tm) {
@@ -1048,7 +1009,7 @@ public class ConstructorAST implements ConstructorASTConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 30; i++) jj_la1[i] = -1;
   }
 
   public void ReInit(ConstructorASTTokenManager tm) {
@@ -1056,7 +1017,7 @@ public class ConstructorAST implements ConstructorASTConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 31; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 30; i++) jj_la1[i] = -1;
   }
 
   final private Token jj_consume_token(int kind) throws ParseException {
@@ -1111,7 +1072,7 @@ public class ConstructorAST implements ConstructorASTConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 31; i++) {
+    for (int i = 0; i < 30; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
