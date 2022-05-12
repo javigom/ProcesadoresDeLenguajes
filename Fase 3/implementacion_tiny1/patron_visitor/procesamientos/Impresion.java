@@ -422,7 +422,9 @@ public class Impresion extends ProcesamientoPorDefecto {
 	
 	@Override
 	public void procesa(Corchete corchete) {
-		System.out.println("[" + corchete.exp() + "]");
+		System.out.print("[");
+		corchete.exp().procesa(this); 
+		System.out.print("]");
 	}
 
 	@Override
