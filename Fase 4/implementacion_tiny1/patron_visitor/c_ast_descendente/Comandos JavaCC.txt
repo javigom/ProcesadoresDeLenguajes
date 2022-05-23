@@ -1,0 +1,2 @@
+set classpath=C:\Users\...\implementacion_tiny1\ImplementacionJavaCC\asint\javacc.jar
+java javacc ConstructorAST.jj
