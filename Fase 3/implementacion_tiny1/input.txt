@@ -13,7 +13,6 @@ var tListaNombres nombres; # Aquí se guardarán los nombres leídos (max. 50)
 var tArbol arbol; # Aquí se construirá un árbol de búsqueda que contendrá
 			# los nombres leídos, sin duplicados
 
-
 # Lee los nombres a ordenar (max. 50 nombres)
 proc lee_nombres(tListaNombres & nombres) {
 	var int i

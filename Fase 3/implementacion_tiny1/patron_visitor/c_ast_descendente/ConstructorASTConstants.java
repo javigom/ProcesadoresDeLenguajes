@@ -108,6 +108,8 @@ public interface ConstructorASTConstants {
     "\"=\"",
     "\"+\"",
     "\"-\"",
+    "\".\"",
+    "\"->\"",
     "\"*\"",
     "\"<\"",
     "\">\"",
@@ -117,8 +119,6 @@ public interface ConstructorASTConstants {
     "\"!=\"",
     "\"/\"",
     "\"%\"",
-    "\".\"",
-    "\"->\"",
   };
 
 }

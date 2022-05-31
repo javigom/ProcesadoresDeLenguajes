@@ -16,9 +16,9 @@ public class SemOps extends TinyASint {
 			return percent(arg0, arg1);
 		case "/":
 			return div(arg0, arg1);
-		case "<":
-			return mayor(arg0, arg1);
 		case ">":
+			return mayor(arg0, arg1);
+		case "<":
 			return menor(arg0, arg1);
 		case "and":
 			return and_cons(arg0, arg1);
@@ -48,8 +48,16 @@ public class SemOps extends TinyASint {
 		throw new UnsupportedOperationException("exp " + op);
 	}
 	
-	public Exp exp(Exp arg0, Exp arg1) {
-		return expN5(arg0, arg1);
+	public Exp exp(String op, Exp arg0, Exp arg1, StringLocalizado id) {
+		switch(op) {
+		case "[]":
+			return corchete(arg0, arg1);
+		case ".":
+			return punto(arg0, id);
+		case "->":
+			return flecha(arg0, id);
+		}
+		throw new UnsupportedOperationException("exp " + op);
 	}
 
 	public Programa prog(Instrucciones ins, Declaraciones decs) {

@@ -347,31 +347,10 @@ public class TinyASint {
 	
 	//Nivel 5
 	
-	public static class ExpN5 extends ExpBin {
-		public ExpN5(Exp arg0, Exp arg1) {
+	public static class Corchete extends ExpBin {
+
+		public Corchete(Exp arg0, Exp arg1) {
 			super(arg0, arg1);
-		}
-
-		public void procesa(Procesamiento p) {
-			p.procesa(this);
-		}
-
-		@Override
-		public int prioridad() {
-			return 5;
-		}
-	}
-	
-	public static class Corchete extends Exp {
-		private Exp exp;
-
-		public Corchete(Exp exp) {
-			super();
-			this.exp = exp;
-		}
-	
-		public Exp exp() {
-			return exp;
 		}
 	
 		public void procesa(Procesamiento p) {
@@ -384,11 +363,16 @@ public class TinyASint {
 	}
 	
 	public static class Punto extends Exp {
+		private Exp exp;
 		private StringLocalizado id;
 
-		public Punto(StringLocalizado id) {
-			super();
+		public Punto(Exp exp, StringLocalizado id) {
+			this.exp = exp;
 			this.id = id;
+		}
+		
+		public Exp exp() {
+			return exp;
 		}
 	
 		public StringLocalizado id() {
@@ -405,11 +389,16 @@ public class TinyASint {
 	}
 	
 	public static class Flecha extends Exp {
+		private Exp exp;
 		private StringLocalizado id;
 
-		public Flecha(StringLocalizado id) {
-			super();
+		public Flecha(Exp exp, StringLocalizado id) {
+			this.exp = exp;
 			this.id = id;
+		}
+		
+		public Exp exp() {
+			return exp;
 		}
 	
 		public StringLocalizado id() {
@@ -1478,10 +1467,6 @@ public class TinyASint {
 	public Exp star(Exp arg0) {
 		return new Star(arg0);
 	}
-
-	public Exp expN5(Exp arg0, Exp arg1) {
-		return new ExpN5(arg0, arg1);
-	}
 	
 	public Exp not(Exp arg0) {
 		return new Not(arg0);
@@ -1515,16 +1500,16 @@ public class TinyASint {
 		return new Id(arg0);
 	}
 	
-	public Exp corchete(Exp arg0) {
-		return new Corchete(arg0);
+	public Exp corchete(Exp arg0, Exp arg1) {
+		return new Corchete(arg0, arg1);
 	}
 	
-	public Exp punto(StringLocalizado arg0) {
-		return new Punto(arg0);
+	public Exp punto(Exp arg0, StringLocalizado arg1) {
+		return new Punto(arg0, arg1);
 	}
 	
-	public Exp flecha(StringLocalizado arg0) {
-		return new Flecha(arg0);
+	public Exp flecha(Exp arg0, StringLocalizado arg1) {
+		return new Flecha(arg0, arg1);
 	}
 	
 	public Tipo bool_cons() {

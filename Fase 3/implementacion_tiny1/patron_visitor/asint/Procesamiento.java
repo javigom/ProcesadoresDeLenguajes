@@ -14,7 +14,6 @@ import asint.TinyASint.Nl;
 import asint.TinyASint.No_bloque;
 import asint.TinyASint.Not;
 import asint.TinyASint.Div;
-import asint.TinyASint.ExpN5;
 import asint.TinyASint.Exp_muchas;
 import asint.TinyASint.Exp_una;
 import asint.TinyASint.False;
@@ -111,8 +110,6 @@ public interface Procesamiento {
 	void procesa(Not exp);
 	
 	//Nivel 5
-
-	void procesa(ExpN5 expN5);
 
 	void procesa(Corchete corchete);
 

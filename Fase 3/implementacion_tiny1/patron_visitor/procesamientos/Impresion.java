@@ -67,7 +67,6 @@ import asint.TinyASint.Real;
 import asint.TinyASint.Record;
 import asint.ProcesamientoPorDefecto;
 import asint.TinyASint.Exp;
-import asint.TinyASint.ExpN5;
 import asint.TinyASint.Exp_muchas;
 import asint.TinyASint.Exp_una;
 import asint.TinyASint.False;
@@ -83,6 +82,7 @@ public class Impresion extends ProcesamientoPorDefecto {
 		if(prog.declaraciones() != null) {
 			prog.declaraciones().procesa(this);
 			System.out.println();
+			System.out.println("&&");
 		}
 		prog.instrucciones().procesa(this);
 		System.out.println();
@@ -103,7 +103,9 @@ public class Impresion extends ProcesamientoPorDefecto {
 	@Override
 	public void procesa(DecProc dec) {
 		System.out.print("proc " + dec.id());
+		System.out.print("(");
 		dec.pforms().procesa(this);
+		System.out.print(") ");
 		dec.bloque().procesa(this);
 		
 	}
@@ -132,9 +134,9 @@ public class Impresion extends ProcesamientoPorDefecto {
 	
 	@Override
 	public void procesa(Call call) {
-		System.out.println("call " + call.string() + " (");
+		System.out.print("call " + call.string() + " (");
 		call.exps().procesa(this);
-		System.out.println(")");
+		System.out.print(")");
 	}
 
 	@Override
@@ -151,7 +153,7 @@ public class Impresion extends ProcesamientoPorDefecto {
 
 	@Override
 	public void procesa(Nl nl) {
-		System.out.print("nl ");
+		System.out.print("nl");
 	}
 
 	@Override
@@ -170,32 +172,33 @@ public class Impresion extends ProcesamientoPorDefecto {
 	public void procesa(While_inst while_inst) {
 		System.out.print("while ");
 		while_inst.exp().procesa(this);
-		System.out.print(" do\n");
+		System.out.println(" do");
 		while_inst.instrucciones().procesa(this);
+		System.out.println("endwhile");
 	}
 
 	@Override
 	public void procesa(If_else if_else) {
-		System.out.println("if");
+		System.out.print("if");
 		if_else.exp().procesa(this);
-		System.out.println("\nthen");
+		System.out.println("then ");
 		if_else.instrucciones().procesa(this);
-		System.out.println("\nelse");
+		System.out.println("else ");
 		if_else.instrucciones_else().procesa(this);
 	}
 
 	@Override
 	public void procesa(If_inst if_inst) {
-		System.out.println("if");
+		System.out.print("if ");
 		if_inst.exp().procesa(this);
-		System.out.println("\nthen");
+		System.out.println("then ");
 		if_inst.instrucciones().procesa(this);
 	}
 
 	@Override
 	public void procesa(Asig asig) {
 		asig.exp0().procesa(this);
-		System.out.println(" = ");
+		System.out.print(" = ");
 		asig.exp1().procesa(this);
 	}
 
@@ -246,7 +249,7 @@ public class Impresion extends ProcesamientoPorDefecto {
 	@Override
 	public void procesa(ParamForms_muchos paramForms_muchos) {
 		paramForms_muchos.params().procesa(this);
-		System.out.println(",");
+		System.out.print(",");
 		paramForms_muchos.param().procesa(this);
 	}
 
@@ -257,7 +260,6 @@ public class Impresion extends ProcesamientoPorDefecto {
 
 	@Override
 	public void procesa(ParamForms_empty paramForms_empty) {
-		System.out.println();
 	}
 	
 	// Campos
@@ -306,7 +308,7 @@ public class Impresion extends ProcesamientoPorDefecto {
 	@Override
 	public void procesa(Exp_muchas exp_muchas) {
 		exp_muchas.expresiones().procesa(this);
-		System.out.println(",");
+		System.out.print(",");
 		exp_muchas.expresion().procesa(this);
 	}
 
@@ -319,123 +321,118 @@ public class Impresion extends ProcesamientoPorDefecto {
 
 	// Nivel 0
 	public void procesa(Suma exp) {
-		imprime_arg(exp.arg0(), 0);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print("+");
-		imprime_arg(exp.arg1(), 1);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	public void procesa(Resta exp) {
-		imprime_arg(exp.arg0(), 1);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print("-");
-		imprime_arg(exp.arg1(), 1);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	// Nivel 1
 	public void procesa(And exp) {
-		imprime_arg(exp.arg1(), 1);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print(" and ");
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	public void procesa(Or exp) {
-		imprime_arg(exp.arg1(), 1);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print(" or ");
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	// Nivel 2
 	public void procesa(Menor exp) {
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print(" < ");
-		imprime_arg(exp.arg1(), 3);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	public void procesa(Mayor exp) {
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print(" > ");
-		imprime_arg(exp.arg1(), 3);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	public void procesa(MenorIgual exp) {
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print(" <= ");
-		imprime_arg(exp.arg1(), 3);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	public void procesa(MayorIgual exp) {
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print(" >= ");
-		imprime_arg(exp.arg1(), 3);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	public void procesa(Igual exp) {
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print(" == ");
-		imprime_arg(exp.arg1(), 3);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	public void procesa(Distinto exp) {
-		imprime_arg(exp.arg0(), 2);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print(" != ");
-		imprime_arg(exp.arg1(), 3);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	// Nivel 3
 	public void procesa(Mul exp) {
-		imprime_arg(exp.arg0(), 4);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print("*");
-		imprime_arg(exp.arg1(), 4);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	public void procesa(Div exp) {
-		imprime_arg(exp.arg0(), 4);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print("/");
-		imprime_arg(exp.arg1(), 4);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	@Override
 	public void procesa(Percent exp) {
-		imprime_arg(exp.arg0(), 4);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 		System.out.print("%");
-		imprime_arg(exp.arg1(), 4);
+		imprime_arg(exp.arg1(), exp.arg1().prioridad());
 	}
 
 	// Nivel 4
 	public void procesa(MenosUnario exp) {
 		System.out.print("-");
-		imprime_arg(exp.arg0(), 5);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 	}
 
 	public void procesa(Not exp) {
 		System.out.print(" not ");
-		imprime_arg(exp.arg0(), 4);
+		imprime_arg(exp.arg0(), exp.arg0().prioridad());
 	}
 	
 	//Nivel 5
 	
 	@Override
-	public void procesa(ExpN5 expN5) {
-		// TODO Auto-generated method stub
-		imprime_arg(expN5.arg1(), 5);
-		imprime_arg(expN5.arg0(), 5);
-	}
-	
-	@Override
 	public void procesa(Corchete corchete) {
-		System.out.print("[");
-		corchete.exp().procesa(this); 
+		corchete.arg0().procesa(this);
+		System.out.print("[" );
+		corchete.arg1().procesa(this);
 		System.out.print("]");
 	}
 
 	@Override
 	public void procesa(Punto punto) {
-		System.out.println("." + punto.id());
+		punto.exp().procesa(this);
+		System.out.print("." + punto.id());
 	}
 
 	@Override
 	public void procesa(Flecha flecha) {
-		System.out.println("->" + flecha.id());
-		
+		flecha.exp().procesa(this);
+		System.out.print("->" + flecha.id());
 	}
 
 	//Nivel 6
@@ -443,18 +440,7 @@ public class Impresion extends ProcesamientoPorDefecto {
 	@Override
 	public void procesa(Star star) {
 		System.out.print(" not ");
-		imprime_arg(star.arg0(), 6);
-	}
-
-
-	private void imprime_arg(Exp arg, int p) {
-		if (arg.prioridad() < p) {
-			System.out.print("(");
-			arg.procesa(this);
-			System.out.print(")");
-		} else {
-			arg.procesa(this);
-		}
+		imprime_arg(star.arg0(), star.arg0().prioridad());
 	}
 
 	// Nivel 7
@@ -480,7 +466,7 @@ public class Impresion extends ProcesamientoPorDefecto {
 
 	@Override
 	public void procesa(LitNull exp) {
-		System.out.print("null");
+		System.out.print("null ");
 	}
 
 	@Override
@@ -523,9 +509,9 @@ public class Impresion extends ProcesamientoPorDefecto {
 
 	@Override
 	public void procesa(Record record) {
-		System.out.println("record {");
+		System.out.print("record {" + "\n");
 		record.campos().procesa(this);
-		System.out.println("} ");
+		System.out.print("\n" +  "}");
 	}
 
 	@Override
@@ -534,6 +520,14 @@ public class Impresion extends ProcesamientoPorDefecto {
 		pointer.tipo().procesa(this);
 	}
 	
-	
+	private void imprime_arg(Exp arg, int p) {
+		if (arg.prioridad() < p) {
+			System.out.print("(");
+			arg.procesa(this);
+			System.out.print(")");
+		} else {
+			arg.procesa(this);
+		}
+	}
 	
 }
