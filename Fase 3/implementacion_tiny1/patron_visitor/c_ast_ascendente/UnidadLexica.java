@@ -1,11 +1,13 @@
 package c_ast_ascendente;
 
+import asint.TinyASint.StringLocalizado;
+
 public class UnidadLexica extends java_cup.runtime.Symbol{
 	private int fila;
 	private int columna;
 	
 	public UnidadLexica(int fila, int columna, int clase, String lexema) {
-		super(clase,lexema);
+		super(clase,new StringLocalizado(lexema, fila, columna));
 		this.fila = fila;
 		this.columna = columna;
 	}

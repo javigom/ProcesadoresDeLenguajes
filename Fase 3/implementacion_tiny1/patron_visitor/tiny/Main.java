@@ -19,12 +19,10 @@ public class Main {
 			prog = ejecuta_ascendente(args[0]);
 			prog.procesa(new Impresion());
 		}
-
 		else if (args[1].equals("desc")) {
 			prog = ejecuta_descendente(args[0]);
 			prog.procesa(new Impresion());
 		}
-		
 		else 
 			System.err.println("Args error");
 		
