@@ -134,7 +134,7 @@ public class Impresion extends ProcesamientoPorDefecto {
 	
 	@Override
 	public void procesa(Call call) {
-		System.out.print("call " + call.string() + " (");
+		System.out.print("call " + call.string() + "(");
 		call.exps().procesa(this);
 		System.out.print(")");
 	}
@@ -185,6 +185,7 @@ public class Impresion extends ProcesamientoPorDefecto {
 		if_else.instrucciones().procesa(this);
 		System.out.println("else ");
 		if_else.instrucciones_else().procesa(this);
+		System.out.println("endif");
 	}
 
 	@Override

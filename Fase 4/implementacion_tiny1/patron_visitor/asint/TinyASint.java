@@ -1,17 +1,45 @@
 package asint;
 
+import procesamientos.ComprobacionTipos.TTipo;
+import procesamientos.ComprobacionTipos.TTipo_OK;
+import procesamientos.ComprobacionTipos.TTipo_Record;
+
 public class TinyASint {
 
-	public static abstract class Exp {
-		public Exp() {
+
+	public static abstract class Genero {
+		public int line = -1;
+		public int col = -1;
+		
+		public int dir = -1;
+		public int nivel = -1;
+		public int size = -1;
+		public int basesize = -1;
+		
+		public int etqi = -1;
+		public int etqs = -1;
+		
+		public String toString() {
+			return getClass().getSimpleName()+"@"+line+":"+col;
 		}
+		
+		private TTipo tipo;
+		public TTipo getTipo() { return tipo; }
+		public void setTipo(TTipo t) { tipo = t ; }
+	}
 
+
+	public static abstract class Prog extends Genero {
+		public abstract void procesa(Procesamiento p);
+	}
+		
+	public static abstract class Exp extends Genero {
 		public abstract int prioridad();
-
+		public boolean esDesignador() { return false; }
 		public abstract void procesa(Procesamiento procesamiento);
 	}
 	
-	public static abstract class Exps {
+	public static abstract class Exps extends Genero {
 		public Exps() {
 		}
 
@@ -347,31 +375,10 @@ public class TinyASint {
 	
 	//Nivel 5
 	
-	public static class ExpN5 extends ExpBin {
-		public ExpN5(Exp arg0, Exp arg1) {
+	public static class Corchete extends ExpBin {
+
+		public Corchete(Exp arg0, Exp arg1) {
 			super(arg0, arg1);
-		}
-
-		public void procesa(Procesamiento p) {
-			p.procesa(this);
-		}
-
-		@Override
-		public int prioridad() {
-			return 5;
-		}
-	}
-	
-	public static class Corchete extends Exp {
-		private Exp exp;
-
-		public Corchete(Exp exp) {
-			super();
-			this.exp = exp;
-		}
-	
-		public Exp exp() {
-			return exp;
 		}
 	
 		public void procesa(Procesamiento p) {
@@ -384,11 +391,16 @@ public class TinyASint {
 	}
 	
 	public static class Punto extends Exp {
+		private Exp exp;
 		private StringLocalizado id;
 
-		public Punto(StringLocalizado id) {
-			super();
+		public Punto(Exp exp, StringLocalizado id) {
+			this.exp = exp;
 			this.id = id;
+		}
+		
+		public Exp exp() {
+			return exp;
 		}
 	
 		public StringLocalizado id() {
@@ -405,11 +417,16 @@ public class TinyASint {
 	}
 	
 	public static class Flecha extends Exp {
+		private Exp exp;
 		private StringLocalizado id;
 
-		public Flecha(StringLocalizado id) {
-			super();
+		public Flecha(Exp exp, StringLocalizado id) {
+			this.exp = exp;
 			this.id = id;
+		}
+		
+		public Exp exp() {
+			return exp;
 		}
 	
 		public StringLocalizado id() {
@@ -555,6 +572,7 @@ public class TinyASint {
 
 	public static class Id extends Exp {
 		private StringLocalizado id;
+		private DecVar vinculo;
 
 		public Id(StringLocalizado id) {
 			super();
@@ -572,13 +590,26 @@ public class TinyASint {
 		public final int prioridad() {
 			return 7;
 		}
+		
+		@Override
+		public boolean esDesignador() {
+			return true;
+		}
+		
+		public void setVinculo(DecVar v) {
+			vinculo = v;
+		}
+		
+		public DecVar getVinculo() {
+			return vinculo;
+		}
 	}
 	
 	
 
 	// Tipo
 	
-	public static abstract class Tipo {
+	public static abstract class Tipo extends Genero{
 
 		public Tipo() {
 		}
@@ -633,6 +664,7 @@ public class TinyASint {
 	
 	public static class Tipo_Id extends Tipo {
 		private StringLocalizado tipo;
+		private DecTipo vinculo;
 		
 		public Tipo_Id(StringLocalizado tipo) {
 			super();
@@ -645,6 +677,14 @@ public class TinyASint {
 		
 		public void procesa(Procesamiento p) {
 			p.procesa(this);
+		}
+		
+		public void setVinculo(DecTipo v) {
+			vinculo = v;
+		}
+		
+		public DecTipo getVinculo() {
+			return vinculo;
 		}
 	}
 	
@@ -709,14 +749,14 @@ public class TinyASint {
 	
 	// Declaraciones
 
-	public static abstract class Declaracion {
+	public static abstract class Declaracion extends Genero {
 		public Declaracion() {
 		}
 
 		public abstract void procesa(Procesamiento p);
 	}
 
-	public static abstract class Declaraciones {
+	public static abstract class Declaraciones extends Genero{
 		public Declaraciones() {
 		}
 
@@ -838,11 +878,14 @@ public class TinyASint {
 		public void procesa(Procesamiento p) {
 			p.procesa(this);
 		}
+		
+
+		public TTipo getTipo() { return new TTipo_OK(); }
 	}
 	
 	// Instrucciones
 	
-	public static abstract class Instruccion {
+	public static abstract class Instruccion extends Genero {
 
 		public Instruccion() {
 		}
@@ -1030,6 +1073,7 @@ public class TinyASint {
 	public static class Call extends Instruccion {
 		private Exps exps;
 		private StringLocalizado s;
+		private DecProc vinculo;
 
 		public Call(StringLocalizado s,Exps exps) {
 			super();
@@ -1047,6 +1091,15 @@ public class TinyASint {
 
 		public void procesa(Procesamiento p) {
 			p.procesa(this);
+		}
+		
+
+		public void setVinculo(DecProc v) {
+			vinculo = v;
+		}
+		
+		public DecProc getVinculo() {
+			return vinculo;
 		}
 	}
 	
@@ -1070,7 +1123,7 @@ public class TinyASint {
 	
 	
 	
-	public static abstract class Instrucciones {
+	public static abstract class Instrucciones extends Genero{
 		public Instrucciones() {
 		}
 
@@ -1171,7 +1224,7 @@ public class TinyASint {
 	
 	// Bloque
 	
-		public static abstract class Bloque {
+		public static abstract class Bloque extends Genero {
 
 			public Bloque() {
 			
@@ -1211,7 +1264,7 @@ public class TinyASint {
 		
 		// Param Formales
 		
-		public static class ParamForm {
+		public static class ParamForm extends Genero {
 			private Tipo t;
 			private StringLocalizado id;
 
@@ -1246,7 +1299,7 @@ public class TinyASint {
 		
 		
 		
-		public static abstract class ParamForms {
+		public static abstract class ParamForms extends Genero{
 			public ParamForms() {
 			}
 
@@ -1307,9 +1360,10 @@ public class TinyASint {
 	// Camps
 		
 		
-		public static class Camp {
+		public static class Camp extends Genero {
 			private Tipo t;
 			private StringLocalizado id;
+			public int despl = -1;
 
 			public Camp(Tipo t, StringLocalizado id) {
 				this.id = id;
@@ -1330,8 +1384,21 @@ public class TinyASint {
 		}
 		
 		
-		public static abstract class Camps {
+		public static abstract class Camps extends Genero{
+			
+
+			private TTipo_Record tipo;
+			
 			public Camps() {
+			}
+			
+			public void setRecord(TTipo_Record r) {
+				setTipo(r);
+				tipo = r;
+			}
+			
+			public TTipo_Record getRecord() {
+				return tipo;
 			}
 
 			public abstract void procesa(Procesamiento p);
@@ -1379,7 +1446,7 @@ public class TinyASint {
 	
 	// Programa
 
-	public static class Programa {
+	public static class Programa extends Genero {
 		private Declaraciones declaraciones;
 		private Instrucciones instrucciones;
 
@@ -1478,10 +1545,6 @@ public class TinyASint {
 	public Exp star(Exp arg0) {
 		return new Star(arg0);
 	}
-
-	public Exp expN5(Exp arg0, Exp arg1) {
-		return new ExpN5(arg0, arg1);
-	}
 	
 	public Exp not(Exp arg0) {
 		return new Not(arg0);
@@ -1515,16 +1578,16 @@ public class TinyASint {
 		return new Id(arg0);
 	}
 	
-	public Exp corchete(Exp arg0) {
-		return new Corchete(arg0);
+	public Exp corchete(Exp arg0, Exp arg1) {
+		return new Corchete(arg0, arg1);
 	}
 	
-	public Exp punto(StringLocalizado arg0) {
-		return new Punto(arg0);
+	public Exp punto(Exp arg0, StringLocalizado arg1) {
+		return new Punto(arg0, arg1);
 	}
 	
-	public Exp flecha(StringLocalizado arg0) {
-		return new Flecha(arg0);
+	public Exp flecha(Exp arg0, StringLocalizado arg1) {
+		return new Flecha(arg0, arg1);
 	}
 	
 	public Tipo bool_cons() {

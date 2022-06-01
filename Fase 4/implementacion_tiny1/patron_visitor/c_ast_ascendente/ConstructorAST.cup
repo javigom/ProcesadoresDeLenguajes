@@ -282,20 +282,17 @@ E4 ::= MENOS E5: exp
 E4 ::= E5: exp
     {:RESULT = exp;:};
 
-E5 ::= E5: exp OPUN5: op
-    {:RESULT = sem.exp(exp,op);:};
+E5 ::= E5: arg0 CAP EXPRESION: arg1 CCIERRE
+	{:RESULT = sem.exp("[]", arg0, arg1, null);:};
+
+E5 ::= E5: arg0 PUNTO ID: arg1
+	{:RESULT = sem.exp(".", arg0, null, arg1);:};
+	
+E5 ::= E5: arg0 FLECHA ID: arg1
+	{:RESULT = sem.exp("->", arg0, null, arg1);:};
+
 E5 ::= E6: exp
     {:RESULT = exp;:};
-
-OPUN5 ::= CAP EXPRESION: exp CCIERRE
-    {:RESULT = exp;:};
-OPUN5 ::= OP_ACCESO: op
-    {:RESULT = op;:};
-
-OP_ACCESO ::= PUNTO ID: id
-    {:RESULT = sem.punto(id);:};
-OP_ACCESO ::= FLECHA ID: id
-    {:RESULT = sem.flecha(id);:};
 
 E6 ::= POR E6: exp
     {:RESULT = sem.exp("*",exp);:};

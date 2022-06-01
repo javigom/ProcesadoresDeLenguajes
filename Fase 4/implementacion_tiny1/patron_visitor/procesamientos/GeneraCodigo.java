@@ -1,5 +1,6 @@
 package procesamientos;
 
+import asint.ProcesamientoPorDefecto;
 import asint.TinyASint.And;
 import asint.TinyASint.Array;
 import asint.TinyASint.Asig;
@@ -19,11 +20,11 @@ import asint.TinyASint.Decs_una;
 import asint.TinyASint.Delete;
 import asint.TinyASint.Distinto;
 import asint.TinyASint.Div;
-import asint.TinyASint.ExpN5;
 import asint.TinyASint.Exp_muchas;
 import asint.TinyASint.Exp_una;
 import asint.TinyASint.False;
 import asint.TinyASint.Flecha;
+import asint.TinyASint.Genero;
 import asint.TinyASint.Id;
 import asint.TinyASint.If_else;
 import asint.TinyASint.If_inst;
@@ -71,363 +72,592 @@ import asint.TinyASint.True;
 import asint.TinyASint.While_inst;
 import asint.TinyASint.Write;
 import maquinaP.MaquinaP;
+import procesamientos.ComprobacionTipos.TTipo_OK;
+import procesamientos.ComprobacionTipos.TTipo_Pointer;
+import procesamientos.ComprobacionTipos.TTipo_Record;
+import procesamientos.ComprobacionTipos.TTipo_String;
 
-public class GeneraCodigo implements Procesamiento{
+public class GeneraCodigo extends ProcesamientoPorDefecto{
 
 	private MaquinaP p;
 	
 	public GeneraCodigo(MaquinaP p) {
-		p = p;
+		this.p = p;
+	}
+	
+	private void checkNinstsi(Genero g) {
+		if (p.tamcodigo() != g.etqi) {
+			System.err.println("Warning: El numero de instrucciones no coincide con la etqi en " + g);
+			System.err.printf("  numero de instrucciones:" + p.tamcodigo() + "etqi: " + g.etqi);
+		}
+	}
+	
+	private void checkNinsts(Genero g) {
+		if (p.tamcodigo() != g.etqs) {
+			System.err.println("Warning: El numero de instrucciones no coincide con la etqs en " + g);
+			System.err.printf("  numero de instrucciones:" + p.tamcodigo() + "etqs: " + g.etqs);
+		}
 	}
 		
+	// Programa
+
 	public void procesa(Programa prog) {
-		
+		if(prog.declaraciones() != null) {
+			prog.declaraciones().procesa(this);
+		}
+		prog.instrucciones().procesa(this);
+		checkNinsts(prog);
+	}
+
+	// Declaraciones
+
+	public void procesa(Decs_muchas decs) {
+		decs.declaraciones().procesa(this);
+		decs.declaracion().procesa(this);
+	}
+
+	public void procesa(Decs_una decs) {
+		decs.declaracion().procesa(this);
 	}
 	
-	public void procesa(Decs_muchas dec) {
-		
+	@Override
+	public void procesa(DecProc dec) {
 	}
-	
-	public void procesa(Decs_una dec) {
-		
+
+	@Override
+	public void procesa(DecTipo dec) {
 	}
-	
-	public void procesa(DecVar var) {
-		
+
+	@Override
+	public void procesa(DecVar dec) {
 	}
+
+	// Instrucciones
 	
-	public void procesa(DecTipo type) {
-		
-	}
-	
-	public void procesa(DecProc proc) {
-		
-	}
-	
+
+	@Override
 	public void procesa(Bloque_inst bloque_inst) {
-		
-	}
-	
-	
-	public void procesa(Call call) {
-		
+		bloque_inst.bloque().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Delete delete) {
-		
+		delete.exp().procesa(this);
+		p.ponInstruccion(p.dealloc(delete.exp().basesize));
 	}
 
-	
+	@Override
 	public void procesa(New_cons new_cons) {
-		
+		new_cons.exp().procesa(this);
+		p.ponInstruccion(p.alloc(new_cons.exp().basesize));
+		p.ponInstruccion(p.desapilaInd());
 	}
 
-	
+	@Override
 	public void procesa(Nl nl) {
-		
+		p.ponInstruccion(p.apilaString("\n"));
+		p.ponInstruccion(p.writeString());
 	}
 
-	
+	@Override
 	public void procesa(Write write) {
-		
+		write.exp().procesa(this);
+		if (write.exp().esDesignador()) {
+			p.ponInstruccion(p.apilaInd());
+		}
+		if (write.exp().getTipo().isEntero()) {
+			p.ponInstruccion(p.writeInt());
+		} else if (write.exp().getTipo().isReal()) {
+			p.ponInstruccion(p.writeReal());
+		} else if (write.exp().getTipo().isBool()) {
+			p.ponInstruccion(p.writeBool());
+		} else if (write.exp().getTipo().isString()) {
+			p.ponInstruccion(p.writeString());
+		} else {
+			throw new IllegalStateException("Esto no debería pasar");
+		}
 	}
 
-	
+	@Override
 	public void procesa(Read read) {
+		read.exp().procesa(this);
+		if (read.exp().getTipo().isEntero()) {
+			p.ponInstruccion(p.readInt());
+		} else if (read.exp().getTipo().isReal()) {
+			p.ponInstruccion(p.readReal());
+		} else if (read.exp().getTipo().isString()) {
+			p.ponInstruccion(p.readString());
+		} else {
+			throw new IllegalStateException("Hubo un error de tipos no capturado");
+		}
 		
+		p.ponInstruccion(p.desapilaInd());
 	}
 
-	
+	@Override
 	public void procesa(While_inst while_inst) {
-		
+		checkNinstsi(while_inst);
+		while_inst.exp().procesa(this);
+		p.ponInstruccion(p.irF(while_inst.etqs));
+		while_inst.instrucciones().procesa(this);
+		p.ponInstruccion(p.irA(while_inst.etqi));
+		checkNinstsi(while_inst);
 	}
 
-	
+	@Override
 	public void procesa(If_else if_else) {
-		
+		if_else.exp().procesa(this);
+		p.ponInstruccion(p.irF(if_else.instrucciones_else().etqi));
+		if_else.instrucciones().procesa(this);
+		p.ponInstruccion(p.irA(if_else.etqs));
+		if_else.instrucciones_else().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(If_inst if_inst) {
-		
+		if_inst.exp().procesa(this);
+		p.ponInstruccion(p.irF(if_inst.etqs));
+		if_inst.instrucciones().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Asig asig) {
+		checkNinstsi(asig);
+		asig.exp0().procesa(this);
+		asig.exp1().procesa(this);
 		
+		if (asig.exp1().esDesignador()) {
+			p.ponInstruccion(p.mueve(asig.exp1().size));
+		} else {
+			p.ponInstruccion(p.desapilaInd());
+		}
+		checkNinsts(asig);
 	}
 
 	public void procesa(Insts_muchas insts) {
-		
+		insts.instrucciones().procesa(this);
+		insts.instruccion().procesa(this);
 	}
 
 	public void procesa(Insts_una insts) {
-		
+		insts.instruccion().procesa(this);
 	}
 	
-	
+	@Override
 	public void procesa(Lista_inst_empty lista_inst_empty) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Lista_inst_una lista_inst_una) {
-		
+		lista_inst_una.instruccion().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Lista_inst_muchas lista_inst_muchas) {
-		
+		lista_inst_muchas.instrucciones().procesa(this);
+		lista_inst_muchas.instruccion().procesa(this);
 	}
 	
 	
 	// Param Formales
 
 
-	
+	@Override
 	public void procesa(ParamForm paramForm) {
-		
 	}
 	
 
-	
+	@Override
 	public void procesa(Pformal_ref paramForm) {
-		
 	}
 
-	
+	@Override
 	public void procesa(ParamForms_muchos paramForms_muchos) {
-		
 	}
 
-	
+	@Override
 	public void procesa(ParamForms_uno paramForms_uno) {
-		
 	}
 
-	
+	@Override
 	public void procesa(ParamForms_empty paramForms_empty) {
-		
 	}
 	
 	// Campos
 	
-	
+	@Override
 	public void procesa(Campos_muchos campos_muchos) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Campo_uno campo_uno) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Camp camp) {
-		
 	}
 	
 	
 	// Bloque 
 	
-	
+	@Override
 	public void procesa(Bloque_prog bloque_prog) {
-		
+		bloque_prog.programa().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(No_bloque no_bloque) {
-		
 	}
 
 	
 	// Expresiones
 	
-	
+	@Override
 	public void procesa(Lista_exp_empty lista_exp_empty) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Exp_muchas exp_muchas) {
-		
+		exp_muchas.expresiones().procesa(this);
+		exp_muchas.expresion().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Exp_una exp_una) {
-		
+		exp_una.expresion().procesa(this);
 	}
-
+	
 	// Operadores
 
 	// Nivel 0
 	public void procesa(Suma exp) {
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
+		if (exp.getTipo().isEntero()) {
+			p.ponInstruccion(p.suma());
+		} else if (exp.getTipo().isReal()) {
+			p.ponInstruccion(p.sumaR());
+		}
 	}
 
 	public void procesa(Resta exp) {
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
+		if (exp.getTipo().isEntero()) {
+			p.ponInstruccion(p.restaR());
+		} else if (exp.getTipo().isReal()) {
+			p.ponInstruccion(p.restaR());
+		}
 	}
 
 	// Nivel 1
 	public void procesa(And exp) {
-		
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
+		p.ponInstruccion(p.and());
 	}
 
 	public void procesa(Or exp) {
-		
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
+		p.ponInstruccion(p.or());
 	}
 
 	// Nivel 2
 	public void procesa(Menor exp) {
+		checkNinstsi(exp);
 		
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		if (exp.arg0().getTipo().isBool()) p.ponInstruccion(p.not());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
+		
+		if (exp.arg0().getTipo().isNum()) {
+			p.ponInstruccion(p.menorNum());
+		} else if (exp.arg0().getTipo().isString()) {
+			p.ponInstruccion(p.menorString());
+		} else if (exp.arg0().getTipo().isBool()){
+			p.ponInstruccion(p.and());
+		} else {
+			throw new IllegalStateException("Hubo un error de tipos no detectado");
+		}
+		
+		checkNinsts(exp);
 	}
 
 	public void procesa(Mayor exp) {
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		if (exp.arg0().getTipo().isBool()) p.ponInstruccion(p.not());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
+		if (exp.arg0().getTipo().isNum()) {
+			p.ponInstruccion(p.mayorNum());
+		} else if (exp.arg0().getTipo().isString()) {
+			p.ponInstruccion(p.mayorString());
+		} else if (exp.arg0().getTipo().isBool()){
+			p.ponInstruccion(p.and());
+		} else {
+			throw new IllegalStateException("Hubo un error de tipos no detectado");
+		}
 	}
 
 	public void procesa(MenorIgual exp) {
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		if (exp.arg0().getTipo().isBool()) p.ponInstruccion(p.not());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
+		if (exp.arg0().getTipo().isNum()) {
+			p.ponInstruccion(p.menorIgNum());
+		} else if (exp.arg0().getTipo().isString()) {
+			p.ponInstruccion(p.menorIgString());
+		} else if (exp.arg0().getTipo().isBool()){
+			p.ponInstruccion(p.or());
+		} else {
+			throw new IllegalStateException("Hubo un error de tipos no detectado");
+		}
 	}
 
 	public void procesa(MayorIgual exp) {
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		if (exp.arg0().getTipo().isBool()) p.ponInstruccion(p.not());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
+		if (exp.arg0().getTipo().isNum()) {
+			p.ponInstruccion(p.mayorIgNum());
+		} else if (exp.arg0().getTipo().isString()) {
+			p.ponInstruccion(p.mayorIgString());
+		} else if (exp.arg0().getTipo().isBool()){
+			p.ponInstruccion(p.or());
+		} else {
+			throw new IllegalStateException("Hubo un error de tipos no detectado");
+		}
 	}
 
 	public void procesa(Igual exp) {
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		if (exp.arg0().getTipo().isBool()) p.ponInstruccion(p.not());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
+		if (exp.arg0().getTipo().isNum()) {
+			p.ponInstruccion(p.IgNum());
+		} else if (exp.arg0().getTipo().isString()) {
+			p.ponInstruccion(p.IgString());
+		} else if (exp.arg0().getTipo().isBool()){
+			p.ponInstruccion(p.and());
+		} else {
+			throw new IllegalStateException("Hubo un error de tipos no detectado");
+		}
 	}
 
 	public void procesa(Distinto exp) {
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
+		if (exp.arg0().getTipo().isNum()) {
+			p.ponInstruccion(p.IgNum());
+		} else if (exp.arg0().getTipo().isString()) {
+			p.ponInstruccion(p.IgString());
+		} else if (exp.arg0().getTipo().isBool()) {
+			p.ponInstruccion(p.and());
+		}
+	
+		p.ponInstruccion(p.not());
 	}
 
 	// Nivel 3
 	public void procesa(Mul exp) {
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
+		if (exp.getTipo().isEntero()) {
+			p.ponInstruccion(p.mul());
+		} else if (exp.getTipo().isReal()) {
+			p.ponInstruccion(p.mulR());
+		}
 	}
 
 	public void procesa(Div exp) {
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
+		if (exp.getTipo().isEntero()) {
+			p.ponInstruccion(p.div());
+		} else if (exp.getTipo().isReal()) {
+			p.ponInstruccion(p.divR());
+		}
 	}
 
-	
+	@Override
 	public void procesa(Percent exp) {
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		exp.arg1().procesa(this);
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
+		p.ponInstruccion(p.percent());
 	}
 
 	// Nivel 4
 	public void procesa(MenosUnario exp) {
-		
+		if (exp.getTipo().isEntero()) {
+			p.ponInstruccion(p.apilaInt(0));
+			exp.arg0().procesa(this);
+			if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+			p.ponInstruccion(p.restaR());
+		} else if (exp.getTipo().isReal()) {
+			p.ponInstruccion(p.apilaReal(0));
+			exp.arg0().procesa(this);
+			if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+			p.ponInstruccion(p.restaR());
+		} else {
+			throw new IllegalStateException("Hubo un error de tipos no detectado");
+		}
 	}
 
 	public void procesa(Not exp) {
-		
+		exp.arg0().procesa(this);
+		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
+		p.ponInstruccion(p.not());
 	}
 	
 	//Nivel 5
 	
-	
-	public void procesa(ExpN5 expN5) {
-		
-	}
-	
-	
+	@Override
 	public void procesa(Corchete corchete) {
-		
+		corchete.arg0().procesa(this);
+		corchete.arg1().procesa(this);
+		if (corchete.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
+		p.ponInstruccion(p.apilaInt(corchete.arg0().basesize));
+		p.ponInstruccion(p.mul());
+		p.ponInstruccion(p.suma());
 	}
 
-	
+	@Override
 	public void procesa(Punto punto) {
-		
+		punto.exp().procesa(this);
+		// Apilar desplazamiento del campo
+		TTipo_Record tr = (TTipo_Record) punto.exp().getTipo();
+		int despl = tr.campos.get(punto.id().toString()).despl;
+		p.ponInstruccion(p.apilaInt(despl));
+		p.ponInstruccion(p.suma());
 	}
 
-	
+	@Override
 	public void procesa(Flecha flecha) {
+		flecha.exp().procesa(this);
+		p.ponInstruccion(p.apilaInd());
 		
-		
+		TTipo_Pointer pointer = (TTipo_Pointer) flecha.exp().getTipo();
+		TTipo_Record tr = (TTipo_Record) pointer.of;
+		int despl = tr.campos.get(flecha.id().toString()).despl;
+		p.ponInstruccion(p.apilaInt(despl));
+		p.ponInstruccion(p.suma());
 	}
 
 	//Nivel 6
 	
-	
+	@Override
 	public void procesa(Star star) {
-		
+		star.arg0().procesa(this);
+		p.ponInstruccion(p.apilaInd());
 	}
 
 	// Nivel 7
 	public void procesa(True exp) {
-		
+		p.ponInstruccion(p.apilaBool(true));
 	}
 
 	public void procesa(False exp) {
-		
+		p.ponInstruccion(p.apilaBool(false));
 	}
 
 	public void procesa(LitReal exp) {
-		
+		p.ponInstruccion(p.apilaInt(Integer.parseInt(exp.num().toString())));
 	}
 
 	public void procesa(Id exp) {
-		
+		if (exp.nivel == 0) {
+			p.ponInstruccion(p.apilaInt(exp.dir));
+		} else {
+			p.ponInstruccion(p.apilad(exp.nivel));
+			p.ponInstruccion(p.apilaInt(exp.dir));
+			p.ponInstruccion(p.suma());
+		}
 	}
 
 	public void procesa(LitEnt exp) {
-		
+		p.ponInstruccion(p.apilaInt(Integer.parseInt(exp.num().toString())));
 	}
 
-	
+	@Override
 	public void procesa(LitNull exp) {
-		
+		p.ponInstruccion(p.apilaInt(-1));
 	}
 
-	
+	@Override
 	public void procesa(LitCad exp) {
-		
+		p.ponInstruccion(p.apilaString(exp.cad().toString()));
 	}
 
 	// Tipo
 
-	
-	public void procesa(Bool bool) {
-		
+	@Override
+	public void procesa(Bool bool){
 	}
 
-	
+	@Override
 	public void procesa(Int int1) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Real real) {
-		
 	}
 
-	
+	@Override
 	public void procesa(String_cons string_cons) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Tipo_Id tipo_Id) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Array array) {
 		
 	}
 
-	
+	@Override
 	public void procesa(Record record) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Pointer pointer) {
-		
 	}
+	
 	
 }

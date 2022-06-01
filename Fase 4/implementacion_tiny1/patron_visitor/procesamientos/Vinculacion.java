@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import asint.ProcesamientoPorDefecto;
 import asint.TinyASint.And;
 import asint.TinyASint.Array;
 import asint.TinyASint.Asig;
@@ -23,11 +24,11 @@ import asint.TinyASint.Decs_una;
 import asint.TinyASint.Delete;
 import asint.TinyASint.Distinto;
 import asint.TinyASint.Div;
-import asint.TinyASint.ExpN5;
 import asint.TinyASint.Exp_muchas;
 import asint.TinyASint.Exp_una;
 import asint.TinyASint.False;
 import asint.TinyASint.Flecha;
+import asint.TinyASint.Genero;
 import asint.TinyASint.Id;
 import asint.TinyASint.If_else;
 import asint.TinyASint.If_inst;
@@ -71,13 +72,12 @@ import asint.TinyASint.Star;
 import asint.TinyASint.StringLocalizado;
 import asint.TinyASint.String_cons;
 import asint.TinyASint.Suma;
-import asint.TinyASint.Tipo;
 import asint.TinyASint.Tipo_Id;
 import asint.TinyASint.True;
 import asint.TinyASint.While_inst;
 import asint.TinyASint.Write;
 
-public class Vinculacion implements Procesamiento{
+public class Vinculacion extends ProcesamientoPorDefecto{
 	private TablaSimbolos t_sim;
 	private boolean dirty = false;
 	
@@ -158,7 +158,7 @@ public class Vinculacion implements Procesamiento{
 		}
 	}
 	
-	private class VinculacionPointer implements Procesamiento {
+	private class VinculacionPointer  extends ProcesamientoPorDefecto{
 		public void procesa(Decs_muchas decs_muchas) {
 			decs_muchas.declaraciones().procesa(this);
 			decs_muchas.declaracion().procesa(this);
@@ -186,19 +186,19 @@ public class Vinculacion implements Procesamiento{
 			t.tipo().procesa(this);
 		}
 		
-		public void procesa(Igual tipo_iden) {
-			if (!t_sim.contieneAny(tipo_iden.iden())) {
-				errorNoDec(tipo_iden.iden());
+		public void procesa(Tipo_Id id) {
+			if (!t_sim.contieneAny(id.tipo())) {
+				errorNoDec(id.tipo());
 			} else {
-				tipo_iden.setVinculo((Tipo) t_sim.get(tipo_iden.iden()).gen);
+				id.setVinculo((DecTipo) t_sim.get(id.tipo()).gen);
 			}
 		}
 		
 		public void procesa(Array t) {
-			t.tipo().procesa(this);
+			t.tipo_array().procesa(this);
 		}
 		
-		public void procesa(Rrecord t) {
+		public void procesa(Record t) {
 			t.campos().procesa(this);
 		}
 		
@@ -231,354 +231,434 @@ public class Vinculacion implements Procesamiento{
 		System.out.println("  El identificador " + id + " no ha sido declarado anteriormente");
 	}
 	
+	// Programa
+
 	public void procesa(Programa prog) {
-		
+		if(prog.declaraciones() != null) {
+			prog.declaraciones().procesa(this);
+			prog.declaraciones().procesa(new VinculacionPointer());
+		}
+		prog.instrucciones().procesa(this);
+	}
+
+	// Declaraciones
+
+	public void procesa(Decs_muchas decs) {
+		decs.declaraciones().procesa(this);
+		decs.declaracion().procesa(this);
+	}
+
+	public void procesa(Decs_una decs) {
+		decs.declaracion().procesa(this);
 	}
 	
-	public void procesa(Decs_muchas dec) {
+	@Override
+	public void procesa(DecProc dec) {
+		StringLocalizado id = dec.id();
 		
+		if (t_sim.contieneAct(id)) {
+			errorDec(id);
+		} else {
+			t_sim.put(id, dec);
+			t_sim.anida();
+			dec.pforms().procesa(this);    
+			dec.bloque().procesa(this);
+			t_sim.desanida();
+		}
 	}
-	
-	public void procesa(Decs_una dec) {
+
+	@Override
+	public void procesa(DecTipo dec) {
+		StringLocalizado id = dec.id();
+		dec.val().procesa(this);
 		
+		if (t_sim.contieneAct(id)) {
+			errorDec(id);
+		} else {
+			t_sim.put(id, dec.val());
+		}
+		dec.val().procesa(this);
+		dec.size = dec.val().size;
 	}
-	
-	public void procesa(DecVar var) {
+
+	@Override
+	public void procesa(DecVar dec) {
+		dec.val().procesa(this);
 		
+		StringLocalizado id = dec.id();
+		if (t_sim.contieneAct(id)) {
+			errorDec(id);
+		} else {
+			t_sim.put(id, dec);
+		}
 	}
+
+	// Instrucciones
 	
-	public void procesa(DecTipo type) {
-		
-	}
-	
-	public void procesa(DecProc proc) {
-		
-	}
-	
+
+	@Override
 	public void procesa(Bloque_inst bloque_inst) {
-		
+		t_sim.anida();
+		bloque_inst.bloque().procesa(this);
+		t_sim.desanida();
 	}
 	
-	
+	@Override
 	public void procesa(Call call) {
+		StringLocalizado id = call.string();
 		
+		if (!t_sim.contieneAny(id)) {
+			errorNoDec(id);
+		} else {
+			call.setVinculo((DecProc) t_sim.get(id).gen);
+			call.exps().procesa(this);
+		}
 	}
 
-	
+	@Override
 	public void procesa(Delete delete) {
-		
+		delete.exp().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(New_cons new_cons) {
-		
+		new_cons.exp().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Nl nl) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Write write) {
-		
+		write.exp().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Read read) {
-		
+		read.exp().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(While_inst while_inst) {
-		
+		while_inst.exp().procesa(this);
+		while_inst.instrucciones().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(If_else if_else) {
-		
+		if_else.exp().procesa(this);
+		if_else.instrucciones().procesa(this);
+		if_else.instrucciones_else().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(If_inst if_inst) {
-		
+		if_inst.exp().procesa(this);
+		if_inst.instrucciones().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Asig asig) {
-		
+		asig.exp0().procesa(this);
+		asig.exp1().procesa(this);
 	}
 
 	public void procesa(Insts_muchas insts) {
-		
+		insts.instrucciones().procesa(this);;
+		insts.instruccion().procesa(this);
 	}
 
 	public void procesa(Insts_una insts) {
-		
+		insts.instruccion().procesa(this);
 	}
 	
-	
+	@Override
 	public void procesa(Lista_inst_empty lista_inst_empty) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Lista_inst_una lista_inst_una) {
-		
+		lista_inst_una.instruccion().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Lista_inst_muchas lista_inst_muchas) {
-		
+		lista_inst_muchas.instrucciones().procesa(this);
+		lista_inst_muchas.instruccion().procesa(this);
 	}
 	
 	
 	// Param Formales
 
 
-	
+	@Override
 	public void procesa(ParamForm paramForm) {
+		StringLocalizado id = paramForm.id();
 		
+		if (t_sim.contieneAct(id)) {
+			errorDec(id);
+		} else {
+			t_sim.put(id, paramForm);
+		}
 	}
 	
 
-	
+	@Override
 	public void procesa(Pformal_ref paramForm) {
+		StringLocalizado id = paramForm.id();
 		
+		if (t_sim.contieneAct(id)) {
+			errorDec(id);
+		} else {
+			t_sim.put(id, paramForm);
+		}
 	}
 
-	
+	@Override
 	public void procesa(ParamForms_muchos paramForms_muchos) {
-		
+		paramForms_muchos.params().procesa(this);
+		paramForms_muchos.param().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(ParamForms_uno paramForms_uno) {
-		
+		paramForms_uno.param().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(ParamForms_empty paramForms_empty) {
-		
 	}
 	
 	// Campos
 	
-	
+	@Override
 	public void procesa(Campos_muchos campos_muchos) {
-		
+		campos_muchos.campos().procesa(this);
+		campos_muchos.campo().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Campo_uno campo_uno) {
-		
+		campo_uno.campo().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Camp camp) {
-		
+		camp.tipo().procesa(this);
 	}
 	
 	
 	// Bloque 
 	
-	
+	@Override
 	public void procesa(Bloque_prog bloque_prog) {
-		
+		t_sim.anida();
+		bloque_prog.programa().procesa(this);
+		t_sim.desanida();
 	}
 
-	
+	@Override
 	public void procesa(No_bloque no_bloque) {
-		
 	}
 
 	
 	// Expresiones
 	
-	
+	@Override
 	public void procesa(Lista_exp_empty lista_exp_empty) {
-		
+		System.out.println();
 	}
 
-	
+	@Override
 	public void procesa(Exp_muchas exp_muchas) {
-		
+		exp_muchas.expresiones().procesa(this);
+		System.out.print(",");
+		exp_muchas.expresion().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Exp_una exp_una) {
-		
+		exp_una.expresion().procesa(this);
 	}
 
 	// Operadores
 
 	// Nivel 0
 	public void procesa(Suma exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
 	public void procesa(Resta exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
 	// Nivel 1
 	public void procesa(And exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
 	public void procesa(Or exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
 	// Nivel 2
 	public void procesa(Menor exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
 	public void procesa(Mayor exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
 	public void procesa(MenorIgual exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
 	public void procesa(MayorIgual exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
 	public void procesa(Igual exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
 	public void procesa(Distinto exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
 	// Nivel 3
 	public void procesa(Mul exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
 	public void procesa(Div exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Percent exp) {
-		
+		exp.arg0().procesa(this);
+		exp.arg1().procesa(this);
 	}
 
 	// Nivel 4
 	public void procesa(MenosUnario exp) {
-		
+		exp.arg0().procesa(this);
 	}
 
 	public void procesa(Not exp) {
-		
+		exp.arg0().procesa(this);
 	}
 	
 	//Nivel 5
 	
-	
-	public void procesa(ExpN5 expN5) {
-		
-	}
-	
-	
+	@Override
 	public void procesa(Corchete corchete) {
-		
+		corchete.arg0().procesa(this);
+		corchete.arg1().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Punto punto) {
-		
+		punto.exp().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Flecha flecha) {
-		
-		
+		flecha.exp().procesa(this);
 	}
 
 	//Nivel 6
 	
-	
+	@Override
 	public void procesa(Star star) {
-		
+		star.arg0().procesa(this);
 	}
 
 	// Nivel 7
 	public void procesa(True exp) {
-		
 	}
 
 	public void procesa(False exp) {
-		
 	}
 
 	public void procesa(LitReal exp) {
-		
 	}
 
 	public void procesa(Id exp) {
-		
+		StringLocalizado id = exp.id();
+		if (!t_sim.contieneAny(id)) {
+			errorNoDec(id);
+		} else {
+			exp.setVinculo((DecVar) t_sim.get(id).gen);
+		}
 	}
 
 	public void procesa(LitEnt exp) {
-		
 	}
 
-	
+	@Override
 	public void procesa(LitNull exp) {
-		
 	}
 
-	
+	@Override
 	public void procesa(LitCad exp) {
-		
 	}
 
 	// Tipo
 
-	
+	@Override
 	public void procesa(Bool bool) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Int int1) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Real real) {
-		
 	}
 
-	
+	@Override
 	public void procesa(String_cons string_cons) {
-		
 	}
 
-	
+	@Override
 	public void procesa(Tipo_Id tipo_Id) {
-		
+		if (!t_sim.contieneAny(tipo_Id.tipo())) {
+			errorNoDec(tipo_Id.tipo());
+		} else {
+			tipo_Id.setVinculo((DecTipo) t_sim.get(tipo_Id.tipo()).gen);
+		}
 	}
 
-	
+	@Override
 	public void procesa(Array array) {
-		
+		array.tipo_array().procesa(this);
 	}
 
-	
+	@Override
 	public void procesa(Record record) {
-		
+		record.campos().procesa(this);
+		record.setTipo(record.campos().getTipo());
 	}
 
-	
+	@Override
 	public void procesa(Pointer pointer) {
-		
+		//Segunda pasada
 	}
 	
 }
