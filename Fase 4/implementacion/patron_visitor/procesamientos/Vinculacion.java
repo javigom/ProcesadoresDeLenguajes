@@ -85,6 +85,10 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 		t_sim = new TablaSimbolos();
 	}
 	
+	public boolean isCorrect() {
+		return !dirty;
+	}
+	
 	private static class TablaSimbolos {
 		private Map<String, DecInfo> _tabla_sim_act;       // la tabla de símbolos actual
 		private Stack<Map<String, DecInfo>> _tablas_sim;   // Todas las tablas de símbolos

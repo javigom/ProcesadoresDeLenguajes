@@ -81,6 +81,10 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	
 	private boolean _dirty = false;
 	
+	public boolean isCorrect() {
+		return !_dirty;
+	}
+	
 	public static abstract class TTipo {
 		public boolean isNum() { return false; }
 		public boolean isOK() { return false; }
