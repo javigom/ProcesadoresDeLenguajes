@@ -70,13 +70,7 @@ import asint.TinyASint.Tipo_Id;
 import asint.TinyASint.True;
 import asint.TinyASint.While_inst;
 import asint.TinyASint.Write;
-import procesamientos.ComprobacionTipos.TTipo_Bool;
-import procesamientos.ComprobacionTipos.TTipo_Entero;
-import procesamientos.ComprobacionTipos.TTipo_Null;
-import procesamientos.ComprobacionTipos.TTipo_Pointer;
-import procesamientos.ComprobacionTipos.TTipo_Real;
-import procesamientos.ComprobacionTipos.TTipo_Record;
-import procesamientos.ComprobacionTipos.TTipo_String;
+import procesamientos.ComprobacionTipos.Tipo_Nodo;
 
 public class AsignaEspacio extends ProcesamientoPorDefecto{
 	private int dir = 0;
@@ -417,8 +411,7 @@ public class AsignaEspacio extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(Punto punto) {
 		punto.exp().procesa(this);
-		TTipo_Record tr = (TTipo_Record) punto.exp().getTipo();
-		Camp c = tr.campos.get(punto.id().toString());
+		Camp c = punto.exp().getCampos().get(punto.id().toString());
 		punto.size = c.size;
 		punto.basesize = c.basesize;
 	}
@@ -426,9 +419,7 @@ public class AsignaEspacio extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(Flecha flecha) {
 		flecha.exp().procesa(this);
-		TTipo_Pointer p = (TTipo_Pointer) flecha.exp().getTipo();
-		TTipo_Record tr = (TTipo_Record) p.of;
-		Camp c = tr.campos.get(flecha.id().toString());
+		Camp c = flecha.exp().getCampos().get(flecha.id().toString());
 		flecha.size = c.size;
 		flecha.basesize = c.basesize;
 	}
@@ -444,15 +435,15 @@ public class AsignaEspacio extends ProcesamientoPorDefecto{
 
 	// Nivel 7
 	public void procesa(True exp) {
-		exp.setTipo(new TTipo_Bool());
+		exp.setTipo(Tipo_Nodo.BOOL);
 	}
 
 	public void procesa(False exp) {
-		exp.setTipo(new TTipo_Bool());
+		exp.setTipo(Tipo_Nodo.BOOL);
 	}
 
 	public void procesa(LitReal exp) {
-		exp.setTipo(new TTipo_Real());
+		exp.setTipo(Tipo_Nodo.LIT_REAL);
 	}
 
 	public void procesa(Id exp) {
@@ -460,17 +451,17 @@ public class AsignaEspacio extends ProcesamientoPorDefecto{
 	}
 
 	public void procesa(LitEnt exp) {
-		exp.setTipo(new TTipo_Entero());
+		exp.setTipo(Tipo_Nodo.LIT_ENT);
 	}
 
 	@Override
 	public void procesa(LitNull exp) {
-		exp.setTipo(new TTipo_Null());
+		exp.setTipo(Tipo_Nodo.NULL);
 	}
 
 	@Override
 	public void procesa(LitCad exp) {
-		exp.setTipo(new TTipo_String());
+		exp.setTipo(Tipo_Nodo.STRING);
 	}
 
 	// Tipo

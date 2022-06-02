@@ -299,6 +299,21 @@ public class MaquinaP {
 		public void ejecuta() {
 			Valor opnd2 = pilaEvaluacion.pop();
 			Valor opnd1 = pilaEvaluacion.pop();
+			pilaEvaluacion.push(new ValorBool(opnd1.valorInt() < opnd2.valorInt()));
+			pc++;
+		}
+
+		public String toString() {
+			return "menor";
+		};
+	}
+	
+	private IMenorR IMENORR;
+
+	private class IMenorR implements Instruccion {
+		public void ejecuta() {
+			Valor opnd2 = pilaEvaluacion.pop();
+			Valor opnd1 = pilaEvaluacion.pop();
 			pilaEvaluacion.push(new ValorBool(opnd1.valorReal() < opnd2.valorReal()));
 			pc++;
 		}
@@ -329,6 +344,21 @@ public class MaquinaP {
 		public void ejecuta() {
 			Valor opnd2 = pilaEvaluacion.pop();
 			Valor opnd1 = pilaEvaluacion.pop();
+			pilaEvaluacion.push(new ValorBool(opnd1.valorInt() > opnd2.valorInt()));
+			pc++;
+		}
+
+		public String toString() {
+			return "mayor";
+		};
+	}
+	
+	private IMayorR IMAYORR;
+
+	private class IMayorR implements Instruccion {
+		public void ejecuta() {
+			Valor opnd2 = pilaEvaluacion.pop();
+			Valor opnd1 = pilaEvaluacion.pop();
 			pilaEvaluacion.push(new ValorBool(opnd1.valorReal() > opnd2.valorReal()));
 			pc++;
 		}
@@ -352,10 +382,25 @@ public class MaquinaP {
 			return "mayorString";
 		};
 	}
-
+	
 	private IMenorig IMENORIG;
 
 	private class IMenorig implements Instruccion {
+		public void ejecuta() {
+			Valor opnd2 = pilaEvaluacion.pop();
+			Valor opnd1 = pilaEvaluacion.pop();
+			pilaEvaluacion.push(new ValorBool(opnd1.valorInt() <= opnd2.valorInt()));
+			pc++;
+		}
+
+		public String toString() {
+			return "menorIgual";
+		};
+	}
+
+	private IMenorigR IMENORIGR;
+
+	private class IMenorigR implements Instruccion {
 		public void ejecuta() {
 			Valor opnd2 = pilaEvaluacion.pop();
 			Valor opnd1 = pilaEvaluacion.pop();
@@ -382,10 +427,25 @@ public class MaquinaP {
 			return "menorIgualString";
 		};
 	}
-
+	
 	private IMayorig IMAYORIG;
 
 	private class IMayorig implements Instruccion {
+		public void ejecuta() {
+			Valor opnd2 = pilaEvaluacion.pop();
+			Valor opnd1 = pilaEvaluacion.pop();
+			pilaEvaluacion.push(new ValorBool(opnd1.valorInt() >= opnd2.valorInt()));
+			pc++;
+		}
+
+		public String toString() {
+			return "mayorIgual";
+		};
+	}
+
+	private IMayorigR IMAYORIGR;
+
+	private class IMayorigR implements Instruccion {
 		public void ejecuta() {
 			Valor opnd2 = pilaEvaluacion.pop();
 			Valor opnd1 = pilaEvaluacion.pop();
@@ -412,14 +472,29 @@ public class MaquinaP {
 			return "mayorIgualString";
 		};
 	}
-
+	
 	private IIg IIG;
 
 	private class IIg implements Instruccion {
 		public void ejecuta() {
 			Valor opnd2 = pilaEvaluacion.pop();
 			Valor opnd1 = pilaEvaluacion.pop();
-			pilaEvaluacion.push(new ValorBool(opnd1.valorBool() == opnd2.valorBool()));
+			pilaEvaluacion.push(new ValorBool(opnd1.valorInt() == opnd2.valorInt()));
+			pc++;
+		}
+
+		public String toString() {
+			return "igual";
+		};
+	}
+
+	private IIgR IIGR;
+
+	private class IIgR implements Instruccion {
+		public void ejecuta() {
+			Valor opnd2 = pilaEvaluacion.pop();
+			Valor opnd1 = pilaEvaluacion.pop();
+			pilaEvaluacion.push(new ValorBool(opnd1.valorReal() == opnd2.valorReal()));
 			pc++;
 		}
 
@@ -931,16 +1006,24 @@ public class MaquinaP {
 		return IOR;
 	}
 
-	public Instruccion menorNum() {
+	public Instruccion menor() {
 		return IMENOR;
+	}
+	
+	public Instruccion menorR() {
+		return IMENORR;
 	}
 
 	public Instruccion menorString() {
 		return IMENORS;
 	}
 
-	public Instruccion mayorNum() {
+	public Instruccion mayor() {
 		return IMAYOR;
+	}
+	
+	public Instruccion mayorR() {
+		return IMAYORR;
 	}
 
 	public Instruccion mayorString() {
@@ -951,24 +1034,36 @@ public class MaquinaP {
 		return INOT;
 	}
 
-	public Instruccion menorIgNum() {
+	public Instruccion menorIg() {
 		return IMENORIG;
+	}
+	
+	public Instruccion menorIgR() {
+		return IMENORIGR;
 	}
 
 	public Instruccion menorIgString() {
 		return IMENORIGS;
 	}
 
-	public Instruccion mayorIgNum() {
+	public Instruccion mayorIg() {
 		return IMAYORIG;
+	}
+	
+	public Instruccion mayorIgR() {
+		return IMAYORIGR;
 	}
 
 	public Instruccion mayorIgString() {
 		return IMAYORIGS;
 	}
 
-	public Instruccion IgNum() {
+	public Instruccion Ig() {
 		return IIG;
+	}
+	
+	public Instruccion IgR() {
+		return IIGR;
 	}
 
 	public Instruccion IgString() {
@@ -1107,15 +1202,20 @@ public class MaquinaP {
 		IDIV = new IDiv();
 		IDIVR = new IDivR();
 		IMENOR = new IMenor();
+		IMENORR = new IMenorR();
 		IMENORS = new IMenorS();
 		IMAYOR = new IMayor();
+		IMAYORR = new IMayorR();
 		IMAYORS = new IMayorS();
 		INOT = new INot();
 		IMENORIG = new IMenorig();
+		IMENORIGR = new IMenorigR();
 		IMENORIGS = new IMenorigS();
 		IMAYORIG = new IMayorig();
+		IMAYORIGR = new IMayorigR();
 		IMAYORIGS = new IMayorigS();
 		IIG = new IIg();
+		IIGR = new IIgR();
 		IIGS = new IIgS();
 		IPERCENT = new IPercent();
 		IPERCENTR = new IPercentR();

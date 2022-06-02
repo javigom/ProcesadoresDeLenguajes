@@ -1,5 +1,8 @@
 package asint;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import procesamientos.ComprobacionTipos.Tipo_Nodo;
 
 public class TinyASint {
@@ -24,6 +27,9 @@ public class TinyASint {
 		private Tipo_Nodo tipo;
 		public Tipo_Nodo getTipo() { return tipo; }
 		public void setTipo(Tipo_Nodo t) { tipo = t ; }
+		public Tipo_Nodo tipo_nodo_array() {return null;}
+		public Tipo_Nodo getTipoNodo() {return null;}
+		public Map<String, Camp> getCampos() {return null;}
 	}
 
 
@@ -704,6 +710,7 @@ public class TinyASint {
 	
 	public static class Array extends Tipo {
 		private Tipo tipo;
+		private Tipo_Nodo tipo_Nodo;
 		private StringLocalizado tam;
 		
 		public Array(StringLocalizado tam, Tipo tipo) {
@@ -722,6 +729,15 @@ public class TinyASint {
 		
 		public void procesa(Procesamiento p) {
 			p.procesa(this);
+		}
+
+		public void setArray(Tipo_Nodo tipo_array) {
+			setTipo(Tipo_Nodo.ARRAY);
+			this.tipo_Nodo = tipo_array;
+		}
+		
+		public Tipo_Nodo tipo_nodo_array() {
+			return tipo_Nodo;
 		}
 	}
 	
@@ -745,6 +761,7 @@ public class TinyASint {
 
 	public static class Pointer extends Tipo {
 		private Tipo tipo;
+		private Tipo_Nodo tipo_nodo;
 		
 		public Pointer(Tipo t) {
 			super();
@@ -757,6 +774,15 @@ public class TinyASint {
 		
 		public void procesa(Procesamiento p) {
 			p.procesa(this);
+		}
+
+		public void setPointer(Tipo_Nodo tipo) {
+			setTipo(Tipo_Nodo.POINTER);
+			this.tipo_nodo = tipo;
+		}
+		
+		public Tipo_Nodo getTipoNodo() {
+			return tipo_nodo;
 		}
 	}
 	
@@ -1400,19 +1426,31 @@ public class TinyASint {
 		
 		public static abstract class Camps extends Genero{
 			
+			Map<String, Camp> campo_Nodo;
 
-			private Tipo_Nodo tipo;
+			private Tipo_Nodo tipo_campos;
 			
 			public Camps() {
 			}
 			
-			public void setRecord(Tipo_Nodo r) {
-				setTipo(r);
-				tipo = r;
+			public void setRecord(Tipo_Nodo record, Camp campo) {
+				setTipo(Tipo_Nodo.RECORD);
+				tipo_campos = record;
+				campo_Nodo = new HashMap<String, Camp>();
+				campo_Nodo.put(campo.id().toString(), campo);
+			}
+
+			public void setRecord(Camp campo) {
+				setTipo(Tipo_Nodo.RECORD);
+				campo_Nodo.put(campo.id().toString(), campo);
+			}
+			
+			public Map<String, Camp> getCampos() {
+				return campo_Nodo;
 			}
 			
 			public Tipo_Nodo getRecord() {
-				return tipo;
+				return tipo_campos;
 			}
 
 			public abstract void procesa(Procesamiento p);
