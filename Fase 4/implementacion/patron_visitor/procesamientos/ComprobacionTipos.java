@@ -271,6 +271,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	
 	@Override
 	public void procesa(DecProc dec) {
+		dec.pforms().procesa(this);
 		dec.bloque().procesa(this);
 		dec.setTipo(dec.bloque().getTipo());
 	}
@@ -601,7 +602,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo().isBool() && exp.arg1().getTipo().isBool()) {
+		if (compatible(exp.arg0().getTipo(), exp.arg1().getTipo())) {
 			exp.setTipo(new TTipo_Bool());
 		} else {
 			error(exp);
@@ -612,7 +613,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo().isBool() && exp.arg1().getTipo().isBool()) {
+		if (compatible(exp.arg0().getTipo(), exp.arg1().getTipo())) {
 			exp.setTipo(new TTipo_Bool());
 		} else {
 			error(exp);
@@ -623,7 +624,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo().isBool() && exp.arg1().getTipo().isBool()) {
+		if (compatible(exp.arg0().getTipo(), exp.arg1().getTipo())) {
 			exp.setTipo(new TTipo_Bool());
 		} else {
 			error(exp);
@@ -634,7 +635,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo().isBool() && exp.arg1().getTipo().isBool()) {
+		if (compatible(exp.arg0().getTipo(), exp.arg1().getTipo())) {
 			exp.setTipo(new TTipo_Bool());
 		} else {
 			error(exp);
@@ -645,7 +646,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo().isBool() && exp.arg1().getTipo().isBool()) {
+		if (compatible(exp.arg0().getTipo(), exp.arg1().getTipo())) {
 			exp.setTipo(new TTipo_Bool());
 		} else {
 			error(exp);
@@ -656,7 +657,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo().isBool() && exp.arg1().getTipo().isBool()) {
+		if (compatible(exp.arg0().getTipo(), exp.arg1().getTipo())) {
 			exp.setTipo(new TTipo_Bool());
 		} else {
 			error(exp);

@@ -33,14 +33,14 @@ public class Main {
 
 		ejecuta_impresion(prog);
 		ejecuta_vinculacion(prog);
-		ejecuta_comprobacion_tipos(prog);
+		ejecuta_comprobacion_tipos(prog); /////////////////////////// Fallo es en flecha porq al coger el vin
 		AsignaEspacio asignaEspacio = ejecuta_asignacion_espacio(prog);
 		ejecuta_etiquetado(prog);
 		MaquinaP maquina = new MaquinaP(prog.size, 30, 20, asignaEspacio.getMaxNivel());
 		prog.procesa(new GeneraCodigo(maquina));
 
 	}
-
+	
 	private static void ejecuta_lexico(String in) throws Exception {
 		Reader input = new InputStreamReader(new FileInputStream(in));
 		AnalizadorLexicoTiny alex = new AnalizadorLexicoTiny(input);
@@ -51,7 +51,7 @@ public class Main {
 			t = (UnidadLexica) alex.next_token();
 		}
 	}
-
+	
 	private static Programa ejecuta_ascendente(String in) throws Exception {
 		Reader input = new InputStreamReader(new FileInputStream(in));
 		AnalizadorLexicoTiny alex = new AnalizadorLexicoTiny(input);

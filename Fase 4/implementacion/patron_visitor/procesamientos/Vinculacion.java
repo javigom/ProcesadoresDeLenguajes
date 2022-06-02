@@ -72,6 +72,7 @@ import asint.TinyASint.Star;
 import asint.TinyASint.StringLocalizado;
 import asint.TinyASint.String_cons;
 import asint.TinyASint.Suma;
+import asint.TinyASint.Tipo;
 import asint.TinyASint.Tipo_Id;
 import asint.TinyASint.True;
 import asint.TinyASint.While_inst;
@@ -194,7 +195,7 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 			if (!t_sim.contieneAny(id.tipo())) {
 				errorNoDec(id.tipo());
 			} else {
-				id.setVinculo((DecTipo) t_sim.get(id.tipo()).gen);
+				id.setVinculo((Tipo) t_sim.get(id.tipo()).gen);
 			}
 		}
 		
@@ -645,7 +646,7 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 		if (!t_sim.contieneAny(tipo_Id.tipo())) {
 			errorNoDec(tipo_Id.tipo());
 		} else {
-			tipo_Id.setVinculo((DecTipo) t_sim.get(tipo_Id.tipo()).gen);
+			tipo_Id.setVinculo((Tipo) t_sim.get(tipo_Id.tipo()).gen);
 		}
 	}
 

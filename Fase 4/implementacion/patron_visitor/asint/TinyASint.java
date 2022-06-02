@@ -388,6 +388,10 @@ public class TinyASint {
 		public final int prioridad() {
 			return 5;
 		}
+		
+		public boolean esDesignador() {
+			return true;
+		}
 	}
 	
 	public static class Punto extends Exp {
@@ -413,6 +417,10 @@ public class TinyASint {
 	
 		public final int prioridad() {
 			return 5;
+		}
+		
+		public boolean esDesignador() {
+			return true;
 		}
 	}
 	
@@ -440,6 +448,10 @@ public class TinyASint {
 		public final int prioridad() {
 			return 5;
 		}
+		
+		public boolean esDesignador() {
+			return true;
+		}
 	}
 	
 	
@@ -457,6 +469,10 @@ public class TinyASint {
 		@Override
 		public int prioridad() {
 			return 6;
+		}
+		
+		public boolean esDesignador() {
+			return true;
 		}
 	}
 	
@@ -664,7 +680,7 @@ public class TinyASint {
 	
 	public static class Tipo_Id extends Tipo {
 		private StringLocalizado tipo;
-		private DecTipo vinculo;
+		private Tipo vinculo;
 		
 		public Tipo_Id(StringLocalizado tipo) {
 			super();
@@ -679,11 +695,11 @@ public class TinyASint {
 			p.procesa(this);
 		}
 		
-		public void setVinculo(DecTipo v) {
-			vinculo = v;
+		public void setVinculo(Tipo gen) {
+			vinculo = gen;
 		}
 		
-		public DecTipo getVinculo() {
+		public Tipo getVinculo() {
 			return vinculo;
 		}
 	}
