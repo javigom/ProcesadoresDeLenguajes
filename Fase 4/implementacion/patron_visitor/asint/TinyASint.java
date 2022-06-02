@@ -1,8 +1,6 @@
 package asint;
 
-import procesamientos.ComprobacionTipos.TTipo;
-import procesamientos.ComprobacionTipos.TTipo_OK;
-import procesamientos.ComprobacionTipos.TTipo_Record;
+import procesamientos.ComprobacionTipos.Tipo_Nodo;
 
 public class TinyASint {
 
@@ -23,9 +21,9 @@ public class TinyASint {
 			return getClass().getSimpleName()+"@"+line+":"+col;
 		}
 		
-		private TTipo tipo;
-		public TTipo getTipo() { return tipo; }
-		public void setTipo(TTipo t) { tipo = t ; }
+		private Tipo_Nodo tipo;
+		public Tipo_Nodo getTipo() { return tipo; }
+		public void setTipo(Tipo_Nodo t) { tipo = t ; }
 	}
 
 
@@ -680,7 +678,7 @@ public class TinyASint {
 	
 	public static class Tipo_Id extends Tipo {
 		private StringLocalizado tipo;
-		private Tipo vinculo;
+		private DecTipo vinculo;
 		
 		public Tipo_Id(StringLocalizado tipo) {
 			super();
@@ -695,11 +693,11 @@ public class TinyASint {
 			p.procesa(this);
 		}
 		
-		public void setVinculo(Tipo gen) {
-			vinculo = gen;
+		public void setVinculo(DecTipo d) {
+			vinculo = d;
 		}
 		
-		public Tipo getVinculo() {
+		public DecTipo getVinculo() {
 			return vinculo;
 		}
 	}
@@ -896,7 +894,7 @@ public class TinyASint {
 		}
 		
 
-		public TTipo getTipo() { return new TTipo_OK(); }
+		public Tipo_Nodo getTipo() { return Tipo_Nodo.OK; }
 	}
 	
 	// Instrucciones
@@ -1280,7 +1278,7 @@ public class TinyASint {
 		
 		// Param Formales
 		
-		public static class ParamForm extends Genero {
+		public static class ParamForm extends Declaracion {
 			private Tipo t;
 			private StringLocalizado id;
 
@@ -1315,7 +1313,7 @@ public class TinyASint {
 		
 		
 		
-		public static abstract class ParamForms extends Genero{
+		public static abstract class ParamForms extends Declaraciones{
 			public ParamForms() {
 			}
 
@@ -1403,17 +1401,17 @@ public class TinyASint {
 		public static abstract class Camps extends Genero{
 			
 
-			private TTipo_Record tipo;
+			private Tipo_Nodo tipo;
 			
 			public Camps() {
 			}
 			
-			public void setRecord(TTipo_Record r) {
+			public void setRecord(Tipo_Nodo r) {
 				setTipo(r);
 				tipo = r;
 			}
 			
-			public TTipo_Record getRecord() {
+			public Tipo_Nodo getRecord() {
 				return tipo;
 			}
 

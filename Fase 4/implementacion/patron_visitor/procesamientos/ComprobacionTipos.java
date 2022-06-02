@@ -79,123 +79,38 @@ import asint.TinyASint.Write;
 
 public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	
-	private boolean _dirty = false;
+	private boolean error = false;
+	
+	public enum Tipo_Nodo{
+		BOOL, OK, LIT_ENT, LIT_REAL, STRING, ERROR, ARRAY, RECORD, REF, NULL;
+	}
 	
 	public boolean isCorrect() {
-		return !_dirty;
-	}
-	
-	public static abstract class TTipo {
-		public boolean isNum() { return false; }
-		public boolean isOK() { return false; }
-		public boolean isError() { return false; }
-		public boolean isBool() { return false; }
-		public boolean isEntero() { return false; }
-		public boolean isReal() { return false; }
-		public boolean isString() { return false; }
-		public boolean isArray() { return false; }
-		public boolean isRecord() { return false; }
-		public boolean isPointer() { return false; }
-		public boolean isRef() { return false; }
-		public boolean isNull() { return false; }
-	}
-	
-	public static class TTipo_OK extends TTipo {
-		public boolean isOK() { return true; }
-	}
-	
-	public static class TTipo_Error extends TTipo {
-		public boolean isError() { return true; }
-	}
-	
-	public static class TTipo_Bool extends TTipo {
-		public boolean isBool() { return true; }
-	}
-	
-	public static class TTipo_Entero extends TTipo {
-		public boolean isNum() { return true; }
-		public boolean isEntero() { return true; }
-	}
-	
-	public static class TTipo_Real extends TTipo {
-		public boolean isNum() { return true; }
-		public boolean isReal() { return true; }
-	}
-	
-	public static class TTipo_String extends TTipo {
-		public boolean isString() { return true; }
-	}
-	
-	public static class TTipo_Null extends TTipo {
-		public boolean isNull() { return true; }
-	}
-	
-	public static abstract class TTipo_Ref extends TTipo {
-		public TTipo of;
-		
-		public TTipo_Ref(TTipo of) {
-			this.of = of;
-		}
-		
-		public boolean isRef() { return true; }
-	}
-	
-	public static class TTipo_Pointer extends TTipo_Ref {
-		public TTipo_Pointer(TTipo of) {
-			super(of);
-		}
-		
-		public boolean isPointer() { return true; }
-	}
-	
-	public static class TTipo_Array extends TTipo_Ref {
-		public int _n;
-		public TTipo_Array(int n, TTipo of) {
-			super(of);
-			_n = n;
-		}
-		
-		public boolean isArray() { return true; }
-	}
-	
-	public static class TTipo_Record extends TTipo {
-		public Map<String, Camp> campos;
-		
-		public TTipo_Record(Camp c) {
-			campos = new HashMap<String, Camp>();
-			campos.put(c.id().toString(), c);
-		}
-		
-		public TTipo_Record(TTipo_Record r, Camp c) {
-			campos = r.campos;
-			campos.put(c.id().toString(), c);
-		}
-		
-		public boolean isRecord() { return true; }
+		return !error;
 	}
 	
 	public boolean isDirty() {
-		return _dirty;
+		return error;
 	}
 	
 	private void error(Genero g) {
 		System.out.println("Error de tipos en " + g);
-		_dirty = true;
-		g.setTipo(new TTipo_Error());
+		error = true;
+		g.setTipo(Tipo.ERROR);
 	}
 
-	private TTipo compatibleNumero(TTipo t0, TTipo t1) {
-		if (t0.isEntero() && t1.isEntero()) {
-			return new TTipo_Entero();
-		} else if ( t0.isReal() && t1.isNum()) {
-			return new TTipo_Real();
+	private Tipo compatibleNumero(Tipo t0, Tipo t1) {
+		if (t0.getTipo() == Tipo.LIT_ENT && t1.getTipo() == Tipo.LIT_ENT) {
+			return Tipo.LIT_ENT;
+		} else if (t0.getTipo() == Tipo.LIT_REAL && t1.getTipo() == Tipo.LIT_REAL) {
+			return Tipo.LIT_REAL;
 		}
 		
-		return new TTipo_Error();
+		return Tipo.ERROR;
 	}
 	
-	private boolean compatiblePointer(TTipo t0, TTipo t1) {
-		if (!(t0.isPointer())) return false;
+	private boolean compatiblePointer(Tipo t0, Tipo t1) {
+		if (!(t0.getTipo() == Tipo.REF)) return false;
 		
 		return t1.isNull() 
 			|| (t1.isPointer() && compatible(((TTipo_Pointer)t0).of, ((TTipo_Pointer)t1).of));

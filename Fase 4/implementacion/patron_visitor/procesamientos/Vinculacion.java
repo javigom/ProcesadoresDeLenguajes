@@ -19,6 +19,7 @@ import asint.TinyASint.Corchete;
 import asint.TinyASint.DecProc;
 import asint.TinyASint.DecTipo;
 import asint.TinyASint.DecVar;
+import asint.TinyASint.Declaracion;
 import asint.TinyASint.Decs_muchas;
 import asint.TinyASint.Decs_una;
 import asint.TinyASint.Delete;
@@ -79,87 +80,78 @@ import asint.TinyASint.While_inst;
 import asint.TinyASint.Write;
 
 public class Vinculacion extends ProcesamientoPorDefecto{
-	private TablaSimbolos t_sim;
-	private boolean dirty = false;
+	private Stack<Map<String, Nodo>> ts;
 	
 	public Vinculacion() {
-		t_sim = new TablaSimbolos();
+		ts = new Stack<Map<String, Nodo>>();
+		ts.push(new HashMap<String, Nodo>());
 	}
 	
-	public boolean isCorrect() {
-		return !dirty;
-	}
-	
-	private static class TablaSimbolos {
-		private Map<String, DecInfo> _tabla_sim_act;       // la tabla de símbolos actual
-		private Stack<Map<String, DecInfo>> _tablas_sim;   // Todas las tablas de símbolos
-		
-		public TablaSimbolos() {
-			_tabla_sim_act = new HashMap<String,DecInfo>();
-			_tablas_sim = new Stack<Map<String, DecInfo>>();
-			_tablas_sim.push(_tabla_sim_act);
-		}
 
-		private void anida() {
-			_tabla_sim_act = new HashMap<String,DecInfo>();
-			_tablas_sim.push(_tabla_sim_act);
+	
+	public Declaracion getDec(StringLocalizado id) {
+		for (Map<String, Nodo> t: ts) {
+			if (t.containsKey(id.toString())) return t.get(id.toString()).d;
 		}
 		
-		private void desanida() {
-			_tablas_sim.pop();
-			_tabla_sim_act = _tablas_sim.peek();
+		return null;
+	}
+	
+	public boolean idDuplicadoTodos(StringLocalizado id) {
+		for (Map<String, Nodo> t: ts) {
+			if (t.containsKey(id.toString())) return true;
 		}
 		
-		public void put(StringLocalizado str, Genero gen) {
-			_tabla_sim_act.put(str.toString(), new DecInfo(gen, str));
-		}
-		
-		public boolean contieneAny(String str) {
-			for (Map<String, DecInfo> ts: _tablas_sim) {
-				if (ts.containsKey(str)) return true;
-			}
-			
-			return false;
-		}
-		
-		public boolean contieneAny(StringLocalizado str) {
-			return contieneAny(str.toString());
-		}
-		
-		public boolean contieneAct(String str) {
-			return _tabla_sim_act.containsKey(str);
-		}
-		
-		public boolean contieneAct(StringLocalizado str) {
-			return contieneAct(str.toString());
-		}
-		
-		public DecInfo get(String str) {
-			for (Map<String, DecInfo> ts : _tablas_sim) {
-				if (ts.containsKey(str)) return ts.get(str);
-			}
-			
-			return null;
-		}
-		
-		public DecInfo get(StringLocalizado str) {
-			return get(str.toString());
+		return false;
+	}
+	
+	public boolean idDuplicadoAct(StringLocalizado id) {
+		if (ts.peek().containsKey(id.toString())) return true;
+		return false;
+	}
+	
+	public void aniade(StringLocalizado id, Declaracion d) {
+		ts.peek().put(id.toString(), new Nodo(d, id));
+	}
+
+	
+	public void recolectaTodos(StringLocalizado id, Declaracion d) {
+		if (idDuplicadoTodos(id)) {
+			errorDec(id);
+		} else {
+			aniade(id, d);
 		}
 	}
 	
-	private static class DecInfo {
+	public void recolectaAct(StringLocalizado id, Declaracion d) {
+		if (idDuplicadoAct(id)) {
+			errorDec(id);
+		} else {
+			aniade(id, d);
+		}
+	}
+	
+	public void anida() {
+		ts.push(new HashMap<String,Nodo>());
+	}
+	
+	private void desanida() {
+		ts.pop();
+	}
+	
+	private static class Nodo {
 		public int fila;
 		public int col;
-		public Genero gen;
+		public Declaracion d;
 		
-		public DecInfo(Genero gen, StringLocalizado s) {
-			this.gen = gen;
+		public Nodo(Declaracion d, StringLocalizado s) {
+			this.d = d;
 			this.fila = s.fila();
 			this.col = s.col();
 		}
 
 		public String toString() {
-			return Integer.toString(fila) + ":" + Integer.toString(col);
+			return Integer.toString(fila) + "-" + Integer.toString(col);
 		}
 	}
 	
@@ -192,10 +184,10 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 		}
 		
 		public void procesa(Tipo_Id id) {
-			if (!t_sim.contieneAny(id.tipo())) {
+			if (!idDuplicadoTodos(id.tipo())) {
 				errorNoDec(id.tipo());
 			} else {
-				id.setVinculo((Tipo) t_sim.get(id.tipo()).gen);
+				id.setVinculo((DecTipo) getDec(id.tipo()));
 			}
 		}
 		
@@ -222,13 +214,12 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 	}
 	
 	private void errorCommon(StringLocalizado id) {
-		dirty = true;
 		System.out.println("Error de vinculación en " + Integer.toString(id.fila()) + ":" + Integer.toString(id.col()));
 	}
 	
 	private void errorDec(StringLocalizado id) {
 		errorCommon(id);
-		System.out.println("  El identificador " + id + " ya ha sido declarado previamente en:" + t_sim.get(id.toString()));
+		System.out.println("  El identificador " + id + " ya ha sido declarado previamente en:" + ts.peek().get(id.toString()));
 	}
 	
 	private void errorNoDec(StringLocalizado id) {
@@ -261,15 +252,11 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 	public void procesa(DecProc dec) {
 		StringLocalizado id = dec.id();
 		
-		if (t_sim.contieneAct(id)) {
-			errorDec(id);
-		} else {
-			t_sim.put(id, dec);
-			t_sim.anida();
-			dec.pforms().procesa(this);    
-			dec.bloque().procesa(this);
-			t_sim.desanida();
-		}
+		recolectaAct(id, dec);
+		anida();
+		dec.pforms().procesa(this);    
+		dec.bloque().procesa(this);
+		desanida();
 	}
 
 	@Override
@@ -277,11 +264,7 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 		StringLocalizado id = dec.id();
 		dec.val().procesa(this);
 		
-		if (t_sim.contieneAct(id)) {
-			errorDec(id);
-		} else {
-			t_sim.put(id, dec.val());
-		}
+		recolectaAct(id, dec);
 		dec.val().procesa(this);
 		dec.size = dec.val().size;
 	}
@@ -291,11 +274,7 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 		dec.val().procesa(this);
 		
 		StringLocalizado id = dec.id();
-		if (t_sim.contieneAct(id)) {
-			errorDec(id);
-		} else {
-			t_sim.put(id, dec);
-		}
+		recolectaAct(id, dec);
 	}
 
 	// Instrucciones
@@ -303,19 +282,19 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 
 	@Override
 	public void procesa(Bloque_inst bloque_inst) {
-		t_sim.anida();
+		anida();
 		bloque_inst.bloque().procesa(this);
-		t_sim.desanida();
+		desanida();
 	}
 	
 	@Override
 	public void procesa(Call call) {
 		StringLocalizado id = call.string();
 		
-		if (!t_sim.contieneAny(id)) {
+		if (!idDuplicadoTodos(id)) {
 			errorNoDec(id);
 		} else {
-			call.setVinculo((DecProc) t_sim.get(id).gen);
+			call.setVinculo((DecProc) getDec(id));
 			call.exps().procesa(this);
 		}
 	}
@@ -400,24 +379,14 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(ParamForm paramForm) {
 		StringLocalizado id = paramForm.id();
-		
-		if (t_sim.contieneAct(id)) {
-			errorDec(id);
-		} else {
-			t_sim.put(id, paramForm);
-		}
+		recolectaAct(id, paramForm);
 	}
 	
 
 	@Override
 	public void procesa(Pformal_ref paramForm) {
 		StringLocalizado id = paramForm.id();
-		
-		if (t_sim.contieneAct(id)) {
-			errorDec(id);
-		} else {
-			t_sim.put(id, paramForm);
-		}
+		recolectaAct(id, paramForm);
 	}
 
 	@Override
@@ -458,9 +427,9 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 	
 	@Override
 	public void procesa(Bloque_prog bloque_prog) {
-		t_sim.anida();
+		//anida();
 		bloque_prog.programa().procesa(this);
-		t_sim.desanida();
+		//desanida();
 	}
 
 	@Override
@@ -594,59 +563,25 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 	}
 
 	// Nivel 7
-	public void procesa(True exp) {
-	}
-
-	public void procesa(False exp) {
-	}
-
-	public void procesa(LitReal exp) {
-	}
 
 	public void procesa(Id exp) {
 		StringLocalizado id = exp.id();
-		if (!t_sim.contieneAny(id)) {
+		if (!idDuplicadoTodos(id)) {
 			errorNoDec(id);
 		} else {
-			exp.setVinculo((DecVar) t_sim.get(id).gen);
+			exp.setVinculo((DecVar) getDec(id));
 		}
-	}
-
-	public void procesa(LitEnt exp) {
-	}
-
-	@Override
-	public void procesa(LitNull exp) {
-	}
-
-	@Override
-	public void procesa(LitCad exp) {
 	}
 
 	// Tipo
 
 	@Override
-	public void procesa(Bool bool) {
-	}
-
-	@Override
-	public void procesa(Int int1) {
-	}
-
-	@Override
-	public void procesa(Real real) {
-	}
-
-	@Override
-	public void procesa(String_cons string_cons) {
-	}
-
-	@Override
 	public void procesa(Tipo_Id tipo_Id) {
-		if (!t_sim.contieneAny(tipo_Id.tipo())) {
-			errorNoDec(tipo_Id.tipo());
+		StringLocalizado id = tipo_Id.tipo();
+		if (!idDuplicadoTodos(id)) {
+			errorNoDec(id);
 		} else {
-			tipo_Id.setVinculo((Tipo) t_sim.get(tipo_Id.tipo()).gen);
+			tipo_Id.setVinculo((DecTipo) getDec(id));
 		}
 	}
 
