@@ -24,7 +24,7 @@ import asint.TinyASint.Exp_muchas;
 import asint.TinyASint.Exp_una;
 import asint.TinyASint.False;
 import asint.TinyASint.Flecha;
-import asint.TinyASint.Genero;
+import asint.TinyASint.Nodo;
 import asint.TinyASint.Id;
 import asint.TinyASint.If_else;
 import asint.TinyASint.If_inst;
@@ -72,7 +72,7 @@ import asint.TinyASint.True;
 import asint.TinyASint.While_inst;
 import asint.TinyASint.Write;
 import maquinaP.MaquinaP;
-import procesamientos.ComprobacionTipos.Tipo_Nodo;
+import procesamientos.ComprobacionTipos.tNodo;
 
 public class GeneraCodigo extends ProcesamientoPorDefecto{
 
@@ -82,14 +82,14 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		this.p = p;
 	}
 	
-	private void checkNinstsi(Genero g) {
+	private void checkNinstsi(Nodo g) {
 		if (p.tamcodigo() != g.etqi) {
 			System.err.println("Warning: El numero de instrucciones no coincide con la etqi en " + g);
 			System.err.printf("  numero de instrucciones:" + p.tamcodigo() + "etqi: " + g.etqi);
 		}
 	}
 	
-	private void checkNinsts(Genero g) {
+	private void checkNinsts(Nodo g) {
 		if (p.tamcodigo() != g.etqs) {
 			System.err.println("Warning: El numero de instrucciones no coincide con la etqs en " + g);
 			System.err.printf("  numero de instrucciones:" + p.tamcodigo() + "etqs: " + g.etqs);
@@ -162,13 +162,13 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		if (write.exp().esDesignador()) {
 			p.ponInstruccion(p.apilaInd());
 		}
-		if (write.exp().getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (write.exp().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.writeInt());
-		} else if (write.exp().getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (write.exp().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.writeReal());
-		} else if (write.exp().getTipo() == Tipo_Nodo.BOOL) {
+		} else if (write.exp().getTipo() == tNodo.BOOL) {
 			p.ponInstruccion(p.writeBool());
-		} else if (write.exp().getTipo() == Tipo_Nodo.STRING) {
+		} else if (write.exp().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.writeString());
 		} else {
 			throw new IllegalStateException("Esto no debería pasar");
@@ -178,11 +178,11 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(Read read) {
 		read.exp().procesa(this);
-		if (read.exp().getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (read.exp().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.readInt());
-		} else if (read.exp().getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (read.exp().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.readReal());
-		} else if (read.exp().getTipo() == Tipo_Nodo.STRING) {
+		} else if (read.exp().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.readString());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no capturado");
@@ -333,9 +333,9 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
-		if (exp.getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (exp.getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.suma());
-		} else if (exp.getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (exp.getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.sumaR());
 		}
 	}
@@ -346,9 +346,9 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
-		if (exp.getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (exp.getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.restaR());
-		} else if (exp.getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (exp.getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.restaR());
 		}
 	}
@@ -376,17 +376,17 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
-		if (exp.arg0().getTipo() == Tipo_Nodo.BOOL) p.ponInstruccion(p.not());
+		if (exp.arg0().getTipo() == tNodo.BOOL) p.ponInstruccion(p.not());
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.menor());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.menorR());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.STRING) {
+		} else if (exp.arg0().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.menorString());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.BOOL){
+		} else if (exp.arg0().getTipo() == tNodo.BOOL){
 			p.ponInstruccion(p.and());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
@@ -398,17 +398,17 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 	public void procesa(Mayor exp) {
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
-		if (exp.arg0().getTipo() == Tipo_Nodo.BOOL) p.ponInstruccion(p.not());
+		if (exp.arg0().getTipo() == tNodo.BOOL) p.ponInstruccion(p.not());
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.mayor());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.mayorR());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.STRING) {
+		} else if (exp.arg0().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.mayorString());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.BOOL){
+		} else if (exp.arg0().getTipo() == tNodo.BOOL){
 			p.ponInstruccion(p.and());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
@@ -418,17 +418,17 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 	public void procesa(MenorIgual exp) {
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
-		if (exp.arg0().getTipo() == Tipo_Nodo.BOOL) p.ponInstruccion(p.not());
+		if (exp.arg0().getTipo() == tNodo.BOOL) p.ponInstruccion(p.not());
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.menorIg());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.menorIgR());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.STRING) {
+		} else if (exp.arg0().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.menorIgString());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.BOOL){
+		} else if (exp.arg0().getTipo() == tNodo.BOOL){
 			p.ponInstruccion(p.or());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
@@ -438,17 +438,17 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 	public void procesa(MayorIgual exp) {
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
-		if (exp.arg0().getTipo() == Tipo_Nodo.BOOL) p.ponInstruccion(p.not());
+		if (exp.arg0().getTipo() == tNodo.BOOL) p.ponInstruccion(p.not());
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.mayorIg());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.mayorIgR());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.STRING) {
+		} else if (exp.arg0().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.mayorIgString());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.BOOL){
+		} else if (exp.arg0().getTipo() == tNodo.BOOL){
 			p.ponInstruccion(p.or());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
@@ -458,17 +458,17 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 	public void procesa(Igual exp) {
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
-		if (exp.arg0().getTipo() == Tipo_Nodo.BOOL) p.ponInstruccion(p.not());
+		if (exp.arg0().getTipo() == tNodo.BOOL) p.ponInstruccion(p.not());
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.Ig());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.IgR());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.STRING) {
+		} else if (exp.arg0().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.IgString());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.BOOL){
+		} else if (exp.arg0().getTipo() == tNodo.BOOL){
 			p.ponInstruccion(p.and());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
@@ -481,13 +481,13 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.Ig());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.IgR());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.STRING) {
+		} else if (exp.arg0().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.IgString());
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.BOOL) {
+		} else if (exp.arg0().getTipo() == tNodo.BOOL) {
 			p.ponInstruccion(p.and());
 		}
 	
@@ -501,9 +501,9 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
-		if (exp.getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (exp.getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.mul());
-		} else if (exp.getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (exp.getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.mulR());
 		}
 	}
@@ -514,9 +514,9 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
-		if (exp.getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (exp.getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.div());
-		} else if (exp.getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (exp.getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.divR());
 		}
 	}
@@ -533,12 +533,12 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 
 	// Nivel 4
 	public void procesa(MenosUnario exp) {
-		if (exp.getTipo() == Tipo_Nodo.LIT_ENT) {
+		if (exp.getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.apilaInt(0));
 			exp.arg0().procesa(this);
 			if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 			p.ponInstruccion(p.restaR());
-		} else if (exp.getTipo() == Tipo_Nodo.LIT_REAL) {
+		} else if (exp.getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.apilaReal(0));
 			exp.arg0().procesa(this);
 			if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());

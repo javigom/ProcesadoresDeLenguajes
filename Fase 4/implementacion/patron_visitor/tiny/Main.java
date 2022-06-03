@@ -33,7 +33,7 @@ public class Main {
 
 		ejecuta_impresion(prog);
 		ejecuta_vinculacion(prog);
-		//ejecuta_comprobacion_tipos(prog);
+		ejecuta_comprobacion_tipos(prog);
 		AsignaEspacio asignaEspacio = ejecuta_asignacion_espacio(prog);
 		ejecuta_etiquetado(prog);
 		MaquinaP maquina = new MaquinaP(prog.size, 30, 20, asignaEspacio.getMaxNivel());
@@ -106,7 +106,7 @@ public class Main {
 		Vinculacion vinculacion = new Vinculacion();
 		ComprobacionTipos comprobacionTipos = new ComprobacionTipos();
 		prog.procesa(comprobacionTipos);
-		if (!comprobacionTipos.isCorrect()) {
+		if (comprobacionTipos.errorComprobacionTipos()) {
 			System.exit(1);
 		}
 		System.out.println();

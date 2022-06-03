@@ -28,7 +28,7 @@ import asint.TinyASint.Exp_muchas;
 import asint.TinyASint.Exp_una;
 import asint.TinyASint.False;
 import asint.TinyASint.Flecha;
-import asint.TinyASint.Genero;
+import asint.TinyASint.Nodo;
 import asint.TinyASint.Id;
 import asint.TinyASint.If_else;
 import asint.TinyASint.If_inst;
@@ -81,48 +81,44 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	
 	private boolean error = false;
 	
-	public enum Tipo_Nodo{
+	public enum tNodo{
 		BOOL, OK, LIT_ENT, LIT_REAL, STRING, ERROR, ARRAY, RECORD, NULL, POINTER;
 	}
 	
-	public boolean isCorrect() {
-		return !error;
+	public void printError(Nodo g) {
+		System.out.println("Error de tipos en " + g);
+		error = true;
+		g.setTipo(tNodo.ERROR);
 	}
 	
-	public boolean isDirty() {
+	public boolean errorComprobacionTipos() {
 		return error;
 	}
 	
-	private void error(Genero g) {
-		System.out.println("Error de tipos en " + g);
-		error = true;
-		g.setTipo(Tipo_Nodo.ERROR);
-	}
-
-	private boolean compatibleNumero(Tipo_Nodo t0, Tipo_Nodo t1) {
-		if (t0 == Tipo_Nodo.LIT_ENT && t1 == Tipo_Nodo.LIT_ENT) {
+	private boolean compatibleNumero(tNodo t0, tNodo t1) {
+		if (t0 == tNodo.LIT_ENT && t1 == tNodo.LIT_ENT) {
 			return true;
-		} else if (t0 == Tipo_Nodo.LIT_REAL && t1 == Tipo_Nodo.LIT_REAL) {
+		} else if (t0 == tNodo.LIT_REAL && t1 == tNodo.LIT_REAL) {
 			return true;
 		}
 		
 		return false;
 	}
 	
-	private boolean compatiblePointer(Genero t0, Genero t1) {
-		if (!(t0.getTipo() == Tipo_Nodo.POINTER)) return false;
+	private boolean compatiblePointer(Nodo t0, Nodo t1) {
+		if (!(t0.getTipo() == tNodo.POINTER)) return false;
 		
-		return t1.getTipo() == Tipo_Nodo.NULL 
-			|| (t1.getTipo() == Tipo_Nodo.POINTER && compatible(t0.getTipoNodo(), t1.getTipoNodo()));
+		return t1.getTipo() == tNodo.NULL 
+			|| (t1.getTipo() == tNodo.POINTER && compatible(t0.getTipoNodo(), t1.getTipoNodo()));
 	}
 	
-	private boolean compatibleArray(Genero t0, Genero t1) {
-		return t0.getTipo() == Tipo_Nodo.ARRAY && t1.getTipo() == Tipo_Nodo.ARRAY 
+	private boolean compatibleArray(Nodo t0, Nodo t1) {
+		return t0.getTipo() == tNodo.ARRAY && t1.getTipo() == tNodo.ARRAY 
 			&& compatible(t0.tipo_nodo_array(), t1.tipo_nodo_array());
 	}
 	
-	private boolean compatibleRecord(Genero t0, Genero t1) {
-		if (t0.getTipo() ==  Tipo_Nodo.RECORD && t1.getTipo() ==  Tipo_Nodo.RECORD) {
+	private boolean compatibleRecord(Nodo t0, Nodo t1) {
+		if (t0.getTipo() ==  tNodo.RECORD && t1.getTipo() ==  tNodo.RECORD) {
 			
 			if (((Record) t0).campos().getCampos().size() != ((Record) t1).campos().getCampos().size()) return false;
 			
@@ -142,24 +138,24 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		return false;
 	}
 	
-	private boolean compatibleCmp(Tipo_Nodo t0, Tipo_Nodo t1) {
-		return (t0 == Tipo_Nodo.BOOL && t1 == Tipo_Nodo.BOOL)
-			|| (t0 == Tipo_Nodo.STRING && t1 == Tipo_Nodo.STRING)
-			|| (t0 == Tipo_Nodo.LIT_ENT && t1 == Tipo_Nodo.LIT_ENT)
-			|| (t0 == Tipo_Nodo.LIT_REAL && t1 == Tipo_Nodo.LIT_REAL);
+	private boolean compatibleCmp(tNodo t0, tNodo t1) {
+		return (t0 == tNodo.BOOL && t1 == tNodo.BOOL)
+			|| (t0 == tNodo.STRING && t1 == tNodo.STRING)
+			|| (t0 == tNodo.LIT_ENT && t1 == tNodo.LIT_ENT)
+			|| (t0 == tNodo.LIT_REAL && t1 == tNodo.LIT_REAL);
 	}
 	
-	private boolean compatibleMismoBasico(Tipo_Nodo t0, Tipo_Nodo t1)  {
-		return ((t0 == Tipo_Nodo.BOOL && t1 == Tipo_Nodo.BOOL)
-			|| (t0 == Tipo_Nodo.STRING && t1 == Tipo_Nodo.STRING));
+	private boolean compatibleMismoBasico(tNodo t0, tNodo t1)  {
+		return ((t0 == tNodo.BOOL && t1 == tNodo.BOOL)
+			|| (t0 == tNodo.STRING && t1 == tNodo.STRING));
 	}
 	
-	private boolean compatible(Tipo_Nodo t0, Tipo_Nodo t1) {
+	private boolean compatible(tNodo t0, tNodo t1) {
 		return (compatibleMismoBasico(t0,t1))
 				|| compatibleNumero(t0,t1);
 	}
 	
-	private boolean compatible(Genero t0, Genero t1) {
+	private boolean compatible(Nodo t0, Nodo t1) {
 		return (compatibleMismoBasico(t0.getTipo(),t1.getTipo()))
 				|| compatibleNumero(t0.getTipo(),t1.getTipo())
 				|| compatiblePointer(t0,t1)
@@ -225,10 +221,10 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	public void procesa(Delete delete) {
 		delete.exp().procesa(this);
 		
-		if (delete.exp().getTipo() == Tipo_Nodo.POINTER) {
-			delete.setTipo(Tipo_Nodo.OK);
+		if (delete.exp().getTipo() == tNodo.POINTER) {
+			delete.setTipo(tNodo.OK);
 		} else {
-			error(delete);
+			printError(delete);
 		}
 	}
 
@@ -236,16 +232,16 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	public void procesa(New_cons new_cons) {
 		new_cons.exp().procesa(this);
 		
-		if (new_cons.exp().getTipo() == Tipo_Nodo.POINTER) {
-			new_cons.setTipo(Tipo_Nodo.OK);
+		if (new_cons.exp().getTipo() == tNodo.POINTER) {
+			new_cons.setTipo(tNodo.OK);
 		} else {
-			error(new_cons);
+			printError(new_cons);
 		}
 	}
 
 	@Override
 	public void procesa(Nl nl) {
-		nl.setTipo(Tipo_Nodo.OK);
+		nl.setTipo(tNodo.OK);
 	}
 
 	@Override
@@ -253,10 +249,10 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		write.exp().procesa(this);
 		Exp e = write.exp();
 		
-		if (e.getTipo() == Tipo_Nodo.LIT_ENT || e.getTipo() == Tipo_Nodo.LIT_REAL || e.getTipo() == Tipo_Nodo.STRING || e.getTipo() == Tipo_Nodo.BOOL) {
-			write.setTipo(Tipo_Nodo.OK);
+		if (e.getTipo() == tNodo.LIT_ENT || e.getTipo() == tNodo.LIT_REAL || e.getTipo() == tNodo.STRING || e.getTipo() == tNodo.BOOL) {
+			write.setTipo(tNodo.OK);
 		} else {
-			error(write);
+			printError(write);
 		}
 	}
 
@@ -265,10 +261,10 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		read.exp().procesa(this);
 		Exp e = read.exp();
 		
-		if (e.esDesignador() && (e.getTipo() == Tipo_Nodo.LIT_ENT || e.getTipo() == Tipo_Nodo.LIT_REAL || e.getTipo() == Tipo_Nodo.STRING)) {
-			read.setTipo(Tipo_Nodo.OK);
+		if (e.esDesignador() && (e.getTipo() == tNodo.LIT_ENT || e.getTipo() == tNodo.LIT_REAL || e.getTipo() == tNodo.STRING)) {
+			read.setTipo(tNodo.OK);
 		} else {
-			error(read);
+			printError(read);
 		}
 	}
 
@@ -277,10 +273,10 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		while_inst.exp().procesa(this);
 		while_inst.instrucciones().procesa(this);
 		
-		if (while_inst.exp().getTipo() == Tipo_Nodo.BOOL && while_inst.instrucciones().getTipo() == Tipo_Nodo.OK) {
-			while_inst.setTipo(Tipo_Nodo.OK);
+		if (while_inst.exp().getTipo() == tNodo.BOOL && while_inst.instrucciones().getTipo() == tNodo.OK) {
+			while_inst.setTipo(tNodo.OK);
 		} else {
-			error(while_inst);
+			printError(while_inst);
 		}
 	}
 
@@ -290,10 +286,10 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		if_else.instrucciones().procesa(this);
 		if_else.instrucciones_else().procesa(this);
 		
-		if (if_else.exp().getTipo() == Tipo_Nodo.BOOL && if_else.instrucciones().getTipo() == Tipo_Nodo.OK && if_else.instrucciones_else().getTipo() == Tipo_Nodo.OK) {
-			if_else.setTipo(Tipo_Nodo.OK);
+		if (if_else.exp().getTipo() == tNodo.BOOL && if_else.instrucciones().getTipo() == tNodo.OK && if_else.instrucciones_else().getTipo() == tNodo.OK) {
+			if_else.setTipo(tNodo.OK);
 		} else {
-			error(if_else);
+			printError(if_else);
 		}
 	}
 
@@ -302,10 +298,10 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		if_inst.exp().procesa(this);
 		if_inst.instrucciones().procesa(this);
 		
-		if (if_inst.exp().getTipo() == Tipo_Nodo.BOOL && if_inst.instrucciones().getTipo() == Tipo_Nodo.OK) {
-			if_inst.setTipo(Tipo_Nodo.OK);
+		if (if_inst.exp().getTipo() == tNodo.BOOL && if_inst.instrucciones().getTipo() == tNodo.OK) {
+			if_inst.setTipo(tNodo.OK);
 		} else {
-			error(if_inst);
+			printError(if_inst);
 		}
 	}
 
@@ -316,12 +312,12 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		
 		if (asig.exp0().esDesignador()) {
 			if (compatible(asig.exp0(), asig.exp1())) {
-				asig.setTipo(Tipo_Nodo.OK);
+				asig.setTipo(tNodo.OK);
 			} else {
-				error(asig);
+				printError(asig);
 			}	
 		} else {
-			error(asig);
+			printError(asig);
 			System.out.println("La parte izquierda no es un designador");
 		}
 	}
@@ -329,12 +325,12 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	public void procesa(Insts_muchas insts) {
 		insts.instrucciones().procesa(this);
 		insts.instruccion().procesa(this);
-		if (insts.instrucciones().getTipo() == Tipo_Nodo.OK
-			&& insts.instruccion().getTipo() == Tipo_Nodo.OK) {
-			insts.setTipo(Tipo_Nodo.OK);
+		if (insts.instrucciones().getTipo() == tNodo.OK
+			&& insts.instruccion().getTipo() == tNodo.OK) {
+			insts.setTipo(tNodo.OK);
 			
 		} else {
-			error(insts);
+			printError(insts);
 		}
 	}
 
@@ -345,7 +341,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	
 	@Override
 	public void procesa(Lista_inst_empty lista_inst_empty) {
-		lista_inst_empty.setTipo(Tipo_Nodo.OK);
+		lista_inst_empty.setTipo(tNodo.OK);
 	}
 
 	@Override
@@ -358,12 +354,12 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	public void procesa(Lista_inst_muchas lista_inst_muchas) {
 		lista_inst_muchas.instrucciones().procesa(this);
 		lista_inst_muchas.instruccion().procesa(this);
-		if (lista_inst_muchas.instrucciones().getTipo() == Tipo_Nodo.OK
-			&& lista_inst_muchas.instruccion().getTipo() == Tipo_Nodo.OK) {
-			lista_inst_muchas.setTipo(Tipo_Nodo.OK);
+		if (lista_inst_muchas.instrucciones().getTipo() == tNodo.OK
+			&& lista_inst_muchas.instruccion().getTipo() == tNodo.OK) {
+			lista_inst_muchas.setTipo(tNodo.OK);
 			
 		} else {
-			error(lista_inst_muchas);
+			printError(lista_inst_muchas);
 		}
 	}
 	
@@ -386,10 +382,10 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	public void procesa(ParamForms_muchos paramForms_muchos) {
 		paramForms_muchos.params().procesa(this);
 		paramForms_muchos.param().procesa(this);
-		if (paramForms_muchos.params().getTipo() == Tipo_Nodo.OK) {
+		if (paramForms_muchos.params().getTipo() == tNodo.OK) {
 			paramForms_muchos.setTipo(paramForms_muchos.param().getTipo());
 		} else {
-			error(paramForms_muchos);
+			printError(paramForms_muchos);
 		}
 	}
 
@@ -401,7 +397,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 
 	@Override
 	public void procesa(ParamForms_empty paramForms_empty) {
-		paramForms_empty.setTipo(Tipo_Nodo.OK);
+		paramForms_empty.setTipo(tNodo.OK);
 	}
 	
 	// Campos
@@ -436,7 +432,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 
 	@Override
 	public void procesa(No_bloque no_bloque) {
-		no_bloque.setTipo(Tipo_Nodo.OK);
+		no_bloque.setTipo(tNodo.OK);
 	}
 
 	
@@ -444,17 +440,17 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	
 	@Override
 	public void procesa(Lista_exp_empty lista_exp_empty) {
-		lista_exp_empty.setTipo(Tipo_Nodo.OK);
+		lista_exp_empty.setTipo(tNodo.OK);
 	}
 
 	@Override
 	public void procesa(Exp_muchas exp_muchas) {
 		exp_muchas.expresiones().procesa(this);
 		exp_muchas.expresion().procesa(this);
-		if (exp_muchas.expresiones().getTipo() == Tipo_Nodo.OK) {
+		if (exp_muchas.expresiones().getTipo() == tNodo.OK) {
 			exp_muchas.setTipo(exp_muchas.expresion().getTipo());
 		} else {
-			error(exp_muchas);
+			printError(exp_muchas);
 		}
 	}
 
@@ -471,12 +467,12 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.LIT_ENT && exp.arg1().getTipo() == Tipo_Nodo.LIT_ENT) {
-			exp.setTipo(Tipo_Nodo.LIT_ENT);
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.LIT_REAL && exp.arg1().getTipo() == Tipo_Nodo.LIT_REAL) {
-			exp.setTipo(Tipo_Nodo.LIT_REAL);
+		if (exp.arg0().getTipo() == tNodo.LIT_ENT && exp.arg1().getTipo() == tNodo.LIT_ENT) {
+			exp.setTipo(tNodo.LIT_ENT);
+		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL && exp.arg1().getTipo() == tNodo.LIT_REAL) {
+			exp.setTipo(tNodo.LIT_REAL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -484,12 +480,12 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.LIT_ENT && exp.arg1().getTipo() == Tipo_Nodo.LIT_ENT) {
-			exp.setTipo(Tipo_Nodo.LIT_ENT);
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.LIT_REAL && exp.arg1().getTipo() == Tipo_Nodo.LIT_REAL) {
-			exp.setTipo(Tipo_Nodo.LIT_REAL);
+		if (exp.arg0().getTipo() == tNodo.LIT_ENT && exp.arg1().getTipo() == tNodo.LIT_ENT) {
+			exp.setTipo(tNodo.LIT_ENT);
+		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL && exp.arg1().getTipo() == tNodo.LIT_REAL) {
+			exp.setTipo(tNodo.LIT_REAL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -498,10 +494,10 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.BOOL && exp.arg1().getTipo() == Tipo_Nodo.BOOL) {
-			exp.setTipo(Tipo_Nodo.BOOL);
+		if (exp.arg0().getTipo() == tNodo.BOOL && exp.arg1().getTipo() == tNodo.BOOL) {
+			exp.setTipo(tNodo.BOOL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -509,10 +505,10 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.BOOL && exp.arg1().getTipo() == Tipo_Nodo.BOOL) {
-			exp.setTipo(Tipo_Nodo.BOOL);
+		if (exp.arg0().getTipo() == tNodo.BOOL && exp.arg1().getTipo() == tNodo.BOOL) {
+			exp.setTipo(tNodo.BOOL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -522,9 +518,9 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		
 		if (compatible(exp.arg0(), exp.arg1())) {
-			exp.setTipo(Tipo_Nodo.BOOL);
+			exp.setTipo(tNodo.BOOL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -533,9 +529,9 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		
 		if (compatible(exp.arg0(), exp.arg1())) {
-			exp.setTipo(Tipo_Nodo.BOOL);
+			exp.setTipo(tNodo.BOOL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -544,9 +540,9 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		
 		if (compatible(exp.arg0(), exp.arg1())) {
-			exp.setTipo(Tipo_Nodo.BOOL);
+			exp.setTipo(tNodo.BOOL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -555,9 +551,9 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		
 		if (compatible(exp.arg0(), exp.arg1())) {
-			exp.setTipo(Tipo_Nodo.BOOL);
+			exp.setTipo(tNodo.BOOL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -566,9 +562,9 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		
 		if (compatible(exp.arg0(), exp.arg1())) {
-			exp.setTipo(Tipo_Nodo.BOOL);
+			exp.setTipo(tNodo.BOOL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -577,9 +573,9 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		
 		if (compatible(exp.arg0(), exp.arg1())) {
-			exp.setTipo(Tipo_Nodo.BOOL);
+			exp.setTipo(tNodo.BOOL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -588,12 +584,12 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.LIT_ENT && exp.arg1().getTipo() == Tipo_Nodo.LIT_ENT) {
-			exp.setTipo(Tipo_Nodo.LIT_ENT);
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.LIT_REAL && exp.arg1().getTipo() == Tipo_Nodo.LIT_REAL) {
-			exp.setTipo(Tipo_Nodo.LIT_REAL);
+		if (exp.arg0().getTipo() == tNodo.LIT_ENT && exp.arg1().getTipo() == tNodo.LIT_ENT) {
+			exp.setTipo(tNodo.LIT_ENT);
+		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL && exp.arg1().getTipo() == tNodo.LIT_REAL) {
+			exp.setTipo(tNodo.LIT_REAL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -601,12 +597,12 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.LIT_ENT && exp.arg1().getTipo() == Tipo_Nodo.LIT_ENT) {
-			exp.setTipo(Tipo_Nodo.LIT_ENT);
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.LIT_REAL && exp.arg1().getTipo() == Tipo_Nodo.LIT_REAL) {
-			exp.setTipo(Tipo_Nodo.LIT_REAL);
+		if (exp.arg0().getTipo() == tNodo.LIT_ENT && exp.arg1().getTipo() == tNodo.LIT_ENT) {
+			exp.setTipo(tNodo.LIT_ENT);
+		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL && exp.arg1().getTipo() == tNodo.LIT_REAL) {
+			exp.setTipo(tNodo.LIT_REAL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -615,12 +611,12 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		exp.arg1().procesa(this);
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.LIT_ENT && exp.arg1().getTipo() == Tipo_Nodo.LIT_ENT) {
-			exp.setTipo(Tipo_Nodo.LIT_ENT);
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.LIT_REAL && exp.arg1().getTipo() == Tipo_Nodo.LIT_REAL) {
-			exp.setTipo(Tipo_Nodo.LIT_REAL);
+		if (exp.arg0().getTipo() == tNodo.LIT_ENT && exp.arg1().getTipo() == tNodo.LIT_ENT) {
+			exp.setTipo(tNodo.LIT_ENT);
+		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL && exp.arg1().getTipo() == tNodo.LIT_REAL) {
+			exp.setTipo(tNodo.LIT_REAL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
@@ -628,22 +624,22 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	public void procesa(MenosUnario exp) {
 		exp.arg0().procesa(this);
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.LIT_ENT) {
-			exp.setTipo(Tipo_Nodo.LIT_ENT);
-		} else if (exp.arg0().getTipo() == Tipo_Nodo.LIT_REAL) {
-			exp.setTipo(Tipo_Nodo.LIT_REAL);
+		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
+			exp.setTipo(tNodo.LIT_ENT);
+		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
+			exp.setTipo(tNodo.LIT_REAL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 
 	public void procesa(Not exp) {
 		exp.arg0().procesa(this);
 		
-		if (exp.arg0().getTipo() == Tipo_Nodo.BOOL) {
-			exp.setTipo(Tipo_Nodo.BOOL);
+		if (exp.arg0().getTipo() == tNodo.BOOL) {
+			exp.setTipo(tNodo.BOOL);
 		} else {
-			error(exp);
+			printError(exp);
 		}
 	}
 	
@@ -654,54 +650,54 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		corchete.arg0().procesa(this);
 		corchete.arg1().procesa(this);
 		
-		if (corchete.arg1().getTipo() == Tipo_Nodo.LIT_ENT && corchete.arg0().getTipo() == Tipo_Nodo.ARRAY) {
+		if (corchete.arg1().getTipo() == tNodo.LIT_ENT && corchete.arg0().getTipo() == tNodo.ARRAY) {
 			DecVar var = (DecVar) ((Id) ((Punto) corchete.arg0()).exp()).getVinculo();
 			String nombre = ((Punto) corchete.arg0()).id().toString();
 			Record r = (Record) var.val().getVinculo().val();
 			corchete.setTipo(r.campos().getCampos().get(nombre).tipo().tipo_nodo_array());
 		} else {
-			error(corchete);
+			printError(corchete);
 		}
 	}
 
 	@Override
 	public void procesa(Punto punto) {
 		punto.exp().procesa(this);
-		if (punto.exp().getTipo() == Tipo_Nodo.RECORD) {
+		if (punto.exp().getTipo() == tNodo.RECORD) {
 			Camps c = ((Record) ((Tipo_Id) ((Id) punto.exp()).getVinculo().val()).getVinculo().val()).campos();
 			if (c.getCampos().containsKey(punto.id().toString())) {
 				punto.setTipo(c.getCampos().get(punto.id().toString()).getTipo());
 			} else {
-				error(punto);
+				printError(punto);
 				System.out.println("  > Nombre de campo "+punto.id()+" desconocido");
 			}
 		} else {
-			error(punto);
+			printError(punto);
 		}
 	}
 
 	@Override
 	public void procesa(Flecha flecha) {
 		flecha.exp().procesa(this);
-		if (flecha.exp().getTipo() == Tipo_Nodo.POINTER) {
+		if (flecha.exp().getTipo() == tNodo.POINTER) {
 			Exp t = flecha.exp();
 			while (!(t instanceof Id)) {
 				t = ((Flecha) t).exp();
 			}
 			Tipo subtipo = ((Pointer) ((Id) t).getVinculo().val().getVinculo().val()).tipo().getVinculo().val(); ////////////////////////////////////////////////////////////////////////////////////////////////////
-			if (subtipo.getTipo() == Tipo_Nodo.RECORD) {
+			if (subtipo.getTipo() == tNodo.RECORD) {
 				Camps c = ((Record) subtipo).campos();
 				if (c.getCampos().containsKey(flecha.id().toString())) {
 					flecha.setTipo(c.getCampos().get(flecha.id().toString()).getTipo());
 				} else {
-					error(flecha);
+					printError(flecha);
 					System.out.println("  > Nombre de campo "+flecha.id()+" desconocido");
 				}
 			} else {
-				error(flecha);
+				printError(flecha);
 			}
 		} else {
-			error(flecha);
+			printError(flecha);
 		}
 	}
 
@@ -711,24 +707,24 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	public void procesa(Star star) {
 		star.arg0().procesa(this);
 		
-		if (star.arg0().getTipo() == Tipo_Nodo.POINTER) {
+		if (star.arg0().getTipo() == tNodo.POINTER) {
 			star.setTipo(star.arg0().getTipo());
 		} else {
-			error(star);
+			printError(star);
 		}
 	}
 
 	// Nivel 7
 	public void procesa(True exp) {
-		exp.setTipo(Tipo_Nodo.BOOL);
+		exp.setTipo(tNodo.BOOL);
 	}
 
 	public void procesa(False exp) {
-		exp.setTipo(Tipo_Nodo.BOOL);
+		exp.setTipo(tNodo.BOOL);
 	}
 
 	public void procesa(LitReal exp) {
-		exp.setTipo(Tipo_Nodo.LIT_REAL);
+		exp.setTipo(tNodo.LIT_REAL);
 	}
 
 	public void procesa(Id exp) {
@@ -743,39 +739,39 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	}
 
 	public void procesa(LitEnt exp) {
-		exp.setTipo(Tipo_Nodo.LIT_ENT);
+		exp.setTipo(tNodo.LIT_ENT);
 	}
 
 	@Override
 	public void procesa(LitNull exp) {
-		exp.setTipo(Tipo_Nodo.NULL);
+		exp.setTipo(tNodo.NULL);
 	}
 
 	@Override
 	public void procesa(LitCad exp) {
-		exp.setTipo(Tipo_Nodo.STRING);
+		exp.setTipo(tNodo.STRING);
 	}
 
 	// Tipo
 
 	@Override
 	public void procesa(Bool bool) {
-		bool.setTipo(Tipo_Nodo.BOOL);
+		bool.setTipo(tNodo.BOOL);
 	}
 
 	@Override
 	public void procesa(Int int1) {
-		int1.setTipo(Tipo_Nodo.LIT_ENT);
+		int1.setTipo(tNodo.LIT_ENT);
 	}
 
 	@Override
 	public void procesa(Real real) {
-		real.setTipo(Tipo_Nodo.LIT_REAL);
+		real.setTipo(tNodo.LIT_REAL);
 	}
 
 	@Override
 	public void procesa(String_cons string_cons) {
-		string_cons.setTipo(Tipo_Nodo.STRING);
+		string_cons.setTipo(tNodo.STRING);
 	}
 
 	@Override

@@ -72,12 +72,12 @@ import asint.TinyASint.Write;
 
 public class Vinculacion extends ProcesamientoPorDefecto {
 
+	private Stack<Map<String, Nodo>> ts;
+	private boolean error = false;
+	
 	private enum tError {
 		IdNoDeclarado, IdYaDeclarado
 	};
-
-	private Stack<Map<String, Nodo>> ts;
-	private boolean error = false;
 
 	public Vinculacion() {
 		ts = new Stack<Map<String, Nodo>>();

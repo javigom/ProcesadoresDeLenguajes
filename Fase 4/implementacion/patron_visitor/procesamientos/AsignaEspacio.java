@@ -70,7 +70,7 @@ import asint.TinyASint.Tipo_Id;
 import asint.TinyASint.True;
 import asint.TinyASint.While_inst;
 import asint.TinyASint.Write;
-import procesamientos.ComprobacionTipos.Tipo_Nodo;
+import procesamientos.ComprobacionTipos.tNodo;
 
 public class AsignaEspacio extends ProcesamientoPorDefecto{
 	private int dir = 0;
@@ -435,15 +435,15 @@ public class AsignaEspacio extends ProcesamientoPorDefecto{
 
 	// Nivel 7
 	public void procesa(True exp) {
-		exp.setTipo(Tipo_Nodo.BOOL);
+		exp.setTipo(tNodo.BOOL);
 	}
 
 	public void procesa(False exp) {
-		exp.setTipo(Tipo_Nodo.BOOL);
+		exp.setTipo(tNodo.BOOL);
 	}
 
 	public void procesa(LitReal exp) {
-		exp.setTipo(Tipo_Nodo.LIT_REAL);
+		exp.setTipo(tNodo.LIT_REAL);
 	}
 
 	public void procesa(Id exp) {
@@ -451,17 +451,17 @@ public class AsignaEspacio extends ProcesamientoPorDefecto{
 	}
 
 	public void procesa(LitEnt exp) {
-		exp.setTipo(Tipo_Nodo.LIT_ENT);
+		exp.setTipo(tNodo.LIT_ENT);
 	}
 
 	@Override
 	public void procesa(LitNull exp) {
-		exp.setTipo(Tipo_Nodo.NULL);
+		exp.setTipo(tNodo.NULL);
 	}
 
 	@Override
 	public void procesa(LitCad exp) {
-		exp.setTipo(Tipo_Nodo.STRING);
+		exp.setTipo(tNodo.STRING);
 	}
 
 	// Tipo

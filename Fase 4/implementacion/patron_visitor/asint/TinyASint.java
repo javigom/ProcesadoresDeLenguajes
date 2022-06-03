@@ -3,12 +3,12 @@ package asint;
 import java.util.HashMap;
 import java.util.Map;
 
-import procesamientos.ComprobacionTipos.Tipo_Nodo;
+import procesamientos.ComprobacionTipos.tNodo;
 
 public class TinyASint {
 
 
-	public static abstract class Genero {
+	public static abstract class Nodo {
 		public int line = -1;
 		public int col = -1;
 		
@@ -24,28 +24,28 @@ public class TinyASint {
 			return getClass().getSimpleName()+"@"+line+":"+col;
 		}
 		
-		private Tipo_Nodo tipo;
-		public Tipo_Nodo getTipo() { return tipo; }
-		public void setTipo(Tipo_Nodo t) { tipo = t ; }
-		public Tipo_Nodo tipo_nodo_array() {return null;}
-		public Tipo_Nodo getTipoNodo() {return null;}
+		private tNodo tipo;
+		public tNodo getTipo() { return tipo; }
+		public void setTipo(tNodo t) { tipo = t ; }
+		public tNodo tipo_nodo_array() {return null;}
+		public tNodo getTipoNodo() {return null;}
 		public Map<String, Camp> getCampos() {return null;}
 		public Declaracion getVinculo() {return null;}
 	}
 
 
-	public static abstract class Prog extends Genero {
+	public static abstract class Prog extends Nodo {
 		public abstract void procesa(Procesamiento p);
 	}
 		
-	public static abstract class Exp extends Genero {
+	public static abstract class Exp extends Nodo {
 		public abstract int prioridad();
 		public boolean esDesignador() { return false; }
 		public abstract void procesa(Procesamiento procesamiento);
 		public Exp exp() { return null; }
 	}
 	
-	public static abstract class Exps extends Genero {
+	public static abstract class Exps extends Nodo {
 		public Exps() {
 		}
 
@@ -631,7 +631,7 @@ public class TinyASint {
 
 	// Tipo
 	
-	public static abstract class Tipo extends Genero{
+	public static abstract class Tipo extends Nodo{
 
 		public Tipo() {
 		}
@@ -716,7 +716,7 @@ public class TinyASint {
 	
 	public static class Array extends Tipo {
 		private Tipo tipo;
-		private Tipo_Nodo tipo_Nodo;
+		private tNodo tipo_Nodo;
 		private StringLocalizado tam;
 		
 		public Array(StringLocalizado tam, Tipo tipo) {
@@ -737,12 +737,12 @@ public class TinyASint {
 			p.procesa(this);
 		}
 
-		public void setArray(Tipo_Nodo tipo_array) {
-			setTipo(Tipo_Nodo.ARRAY);
+		public void setArray(tNodo tipo_array) {
+			setTipo(tNodo.ARRAY);
 			this.tipo_Nodo = tipo_array;
 		}
 		
-		public Tipo_Nodo tipo_nodo_array() {
+		public tNodo tipo_nodo_array() {
 			return tipo_Nodo;
 		}
 	}
@@ -767,7 +767,7 @@ public class TinyASint {
 
 	public static class Pointer extends Tipo {
 		private Tipo tipo;
-		private Tipo_Nodo tipo_nodo;
+		private tNodo tipo_nodo;
 		
 		public Pointer(Tipo t) {
 			super();
@@ -782,12 +782,12 @@ public class TinyASint {
 			p.procesa(this);
 		}
 
-		public void setPointer(Tipo_Nodo tipo) {
-			setTipo(Tipo_Nodo.POINTER);
+		public void setPointer(tNodo tipo) {
+			setTipo(tNodo.POINTER);
 			this.tipo_nodo = tipo;
 		}
 		
-		public Tipo_Nodo getTipoNodo() {
+		public tNodo getTipoNodo() {
 			return tipo_nodo;
 		}
 	}
@@ -795,7 +795,7 @@ public class TinyASint {
 	
 	// Declaraciones
 
-	public static abstract class Declaracion extends Genero {
+	public static abstract class Declaracion extends Nodo {
 		public Declaracion() {
 		}
 
@@ -804,7 +804,7 @@ public class TinyASint {
 		public Tipo val() {return null;}
 	}
 
-	public static abstract class Declaraciones extends Genero{
+	public static abstract class Declaraciones extends Nodo{
 		public Declaraciones() {
 		}
 
@@ -928,12 +928,12 @@ public class TinyASint {
 		}
 		
 
-		public Tipo_Nodo getTipo() { return Tipo_Nodo.OK; }
+		public tNodo getTipo() { return tNodo.OK; }
 	}
 	
 	// Instrucciones
 	
-	public static abstract class Instruccion extends Genero {
+	public static abstract class Instruccion extends Nodo {
 
 		public Instruccion() {
 		}
@@ -1171,7 +1171,7 @@ public class TinyASint {
 	
 	
 	
-	public static abstract class Instrucciones extends Genero{
+	public static abstract class Instrucciones extends Nodo{
 		public Instrucciones() {
 		}
 
@@ -1272,7 +1272,7 @@ public class TinyASint {
 	
 	// Bloque
 	
-		public static abstract class Bloque extends Genero {
+		public static abstract class Bloque extends Nodo {
 
 			public Bloque() {
 			
@@ -1408,7 +1408,7 @@ public class TinyASint {
 	// Camps
 		
 		
-		public static class Camp extends Genero {
+		public static class Camp extends Nodo {
 			private Tipo t;
 			private StringLocalizado id;
 			public int despl = -1;
@@ -1432,24 +1432,24 @@ public class TinyASint {
 		}
 		
 		
-		public static abstract class Camps extends Genero{
+		public static abstract class Camps extends Nodo{
 			
 			Map<String, Camp> campo_Nodo;
 
-			private Tipo_Nodo tipo_campos;
+			private tNodo tipo_campos;
 			
 			public Camps() {
 			}
 			
 			public void setRecord(Camps campos, Camp campo) {
-				setTipo(Tipo_Nodo.RECORD);
+				setTipo(tNodo.RECORD);
 				tipo_campos = campos.getRecord();
 				campo_Nodo = campos.getCampos();
 				campo_Nodo.put(campo.id().toString(), campo);
 			}
 
 			public void setRecord(Camp campo) {
-				setTipo(Tipo_Nodo.RECORD);
+				setTipo(tNodo.RECORD);
 				campo_Nodo = new HashMap<String, Camp>();
 				campo_Nodo.put(campo.id().toString(), campo);
 			}
@@ -1458,7 +1458,7 @@ public class TinyASint {
 				return campo_Nodo;
 			}
 			
-			public Tipo_Nodo getRecord() {
+			public tNodo getRecord() {
 				return tipo_campos;
 			}
 
@@ -1507,7 +1507,7 @@ public class TinyASint {
 	
 	// Programa
 
-	public static class Programa extends Genero {
+	public static class Programa extends Nodo {
 		private Declaraciones declaraciones;
 		private Instrucciones instrucciones;
 
