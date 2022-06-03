@@ -31,6 +31,7 @@ public class TinyASint {
 		public tNodo getTipoNodo() {return null;}
 		public Map<String, Camp> getCampos() {return null;}
 		public Declaracion getVinculo() {return null;}
+		public Tipo tipo() {return null;}
 	}
 
 
@@ -42,7 +43,7 @@ public class TinyASint {
 		public abstract int prioridad();
 		public boolean esDesignador() { return false; }
 		public abstract void procesa(Procesamiento procesamiento);
-		public Exp exp() { return null; }
+		public Exp exp() { return null;}
 	}
 	
 	public static abstract class Exps extends Nodo {
@@ -697,7 +698,7 @@ public class TinyASint {
 			this.tipo = tipo;
 		}
 		
-		public StringLocalizado tipo() {
+		public StringLocalizado tipoString() {
 			return tipo;
 		}
 		

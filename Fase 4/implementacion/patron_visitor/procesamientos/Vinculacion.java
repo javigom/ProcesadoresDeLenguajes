@@ -205,10 +205,10 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 		}
 
 		public void procesa(Tipo_Id id) {
-			if (!idDuplicadoTodos(id.tipo())) {
-				printError(id.tipo(), tError.IdNoDeclarado);
+			if (!idDuplicadoTodos(id.tipoString())) {
+				printError(id.tipoString(), tError.IdNoDeclarado);
 			} else {
-				id.setVinculo((DecTipo) getDec(id.tipo()));
+				id.setVinculo((DecTipo) getDec(id.tipoString()));
 			}
 		}
 
@@ -551,7 +551,7 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 
 	@Override
 	public void procesa(Tipo_Id tipo_Id) {
-		StringLocalizado id = tipo_Id.tipo();
+		StringLocalizado id = tipo_Id.tipoString();
 		if (!idDuplicadoTodos(id)) {
 			printError(id, tError.IdNoDeclarado);
 		} else {

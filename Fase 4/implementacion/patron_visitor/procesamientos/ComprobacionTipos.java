@@ -105,11 +105,19 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		return false;
 	}
 	
-	private boolean compatiblePointer(Nodo t0, Nodo t1) {
+	private boolean compatiblePointer(Nodo t0, Nodo t1) {  // Es infinito con tNodo a tArbol y sigue !!!!!!!!!!!!!!!!    CUIDADO     !!!!!!!!!!!!!!!!!!
 		if (!(t0.getTipo() == tNodo.POINTER)) return false;
+		if (t1.getTipo() == tNodo.NULL) return true;
 		
-		return t1.getTipo() == tNodo.NULL 
-			|| (t1.getTipo() == tNodo.POINTER && compatible(t0.getTipoNodo(), t1.getTipoNodo()));
+		if(t0.getVinculo() != null && t1.getVinculo() != null) {
+			return compatible(t0.getVinculo().val(), t1.getVinculo().val());
+		} else if (t0.tipo() != null && t1.tipo() != null) {
+			return compatible(t0.tipo().getVinculo().val(), t1.tipo().getVinculo().val());
+		} else if (t1.getTipo() == tNodo.POINTER) {
+			return compatible(t0.getTipoNodo(), t1.getTipoNodo());
+		}
+		
+		return false;
 	}
 	
 	private boolean compatibleArray(Nodo t0, Nodo t1) {
@@ -122,8 +130,8 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 			
 			if (((Record) t0).campos().getCampos().size() != ((Record) t1).campos().getCampos().size()) return false;
 			
-			Iterator<Camp> it0 = t0.getCampos().values().iterator();
-			Iterator<Camp> it1 = t1.getCampos().values().iterator();
+			Iterator<Camp> it0 = ((Record) t0).campos().getCampos().values().iterator();
+			Iterator<Camp> it1 = ((Record) t1).campos().getCampos().values().iterator();
 			
 			while (it0.hasNext() && it1.hasNext()) {
 				if (!compatible(it0.next(),it1.next())) {
