@@ -386,6 +386,7 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(Pformal_ref paramForm) {
 		StringLocalizado id = paramForm.id();
+		paramForm.tipo().procesa(this);
 		recolectaAct(id, paramForm);
 	}
 
@@ -584,6 +585,7 @@ public class Vinculacion extends ProcesamientoPorDefecto{
 			tipo_Id.setVinculo((DecTipo) getDec(id));
 		}
 	}
+	
 
 	@Override
 	public void procesa(Array array) {

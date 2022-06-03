@@ -411,7 +411,7 @@ public class AsignaEspacio extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(Punto punto) {
 		punto.exp().procesa(this);
-		Camp c = punto.exp().getCampos().get(punto.id().toString());
+		Camp c = ((Record) punto.exp().getVinculo().val().getVinculo().val()).campos().getCampos().get(punto.id().toString());
 		punto.size = c.size;
 		punto.basesize = c.basesize;
 	}

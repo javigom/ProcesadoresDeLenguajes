@@ -33,7 +33,7 @@ public class Main {
 
 		ejecuta_impresion(prog);
 		ejecuta_vinculacion(prog);
-		ejecuta_comprobacion_tipos(prog); /////////////////////////// Fallo es en flecha porq al coger el vin
+		//ejecuta_comprobacion_tipos(prog);
 		AsignaEspacio asignaEspacio = ejecuta_asignacion_espacio(prog);
 		ejecuta_etiquetado(prog);
 		MaquinaP maquina = new MaquinaP(prog.size, 30, 20, asignaEspacio.getMaxNivel());

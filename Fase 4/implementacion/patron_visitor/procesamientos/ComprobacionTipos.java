@@ -1,8 +1,6 @@
 package procesamientos;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import asint.ProcesamientoPorDefecto;
 import asint.TinyASint.And;
@@ -15,6 +13,7 @@ import asint.TinyASint.Call;
 import asint.TinyASint.Camp;
 import asint.TinyASint.Campo_uno;
 import asint.TinyASint.Campos_muchos;
+import asint.TinyASint.Camps;
 import asint.TinyASint.Corchete;
 import asint.TinyASint.DecProc;
 import asint.TinyASint.DecTipo;
@@ -72,6 +71,7 @@ import asint.TinyASint.Resta;
 import asint.TinyASint.Star;
 import asint.TinyASint.String_cons;
 import asint.TinyASint.Suma;
+import asint.TinyASint.Tipo;
 import asint.TinyASint.Tipo_Id;
 import asint.TinyASint.True;
 import asint.TinyASint.While_inst;
@@ -82,7 +82,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	private boolean error = false;
 	
 	public enum Tipo_Nodo{
-		BOOL, OK, LIT_ENT, LIT_REAL, STRING, ERROR, ARRAY, RECORD, REF, NULL, POINTER;
+		BOOL, OK, LIT_ENT, LIT_REAL, STRING, ERROR, ARRAY, RECORD, NULL, POINTER;
 	}
 	
 	public boolean isCorrect() {
@@ -99,18 +99,18 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		g.setTipo(Tipo_Nodo.ERROR);
 	}
 
-	private Tipo_Nodo compatibleNumero(Tipo_Nodo t0, Tipo_Nodo t1) {
+	private boolean compatibleNumero(Tipo_Nodo t0, Tipo_Nodo t1) {
 		if (t0 == Tipo_Nodo.LIT_ENT && t1 == Tipo_Nodo.LIT_ENT) {
-			return Tipo_Nodo.LIT_ENT;
+			return true;
 		} else if (t0 == Tipo_Nodo.LIT_REAL && t1 == Tipo_Nodo.LIT_REAL) {
-			return Tipo_Nodo.LIT_REAL;
+			return true;
 		}
 		
-		return Tipo_Nodo.ERROR;
+		return false;
 	}
 	
 	private boolean compatiblePointer(Genero t0, Genero t1) {
-		if (!(t0.getTipo() == Tipo_Nodo.REF)) return false;
+		if (!(t0.getTipo() == Tipo_Nodo.POINTER)) return false;
 		
 		return t1.getTipo() == Tipo_Nodo.NULL 
 			|| (t1.getTipo() == Tipo_Nodo.POINTER && compatible(t0.getTipoNodo(), t1.getTipoNodo()));
@@ -124,7 +124,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	private boolean compatibleRecord(Genero t0, Genero t1) {
 		if (t0.getTipo() ==  Tipo_Nodo.RECORD && t1.getTipo() ==  Tipo_Nodo.RECORD) {
 			
-			if (t0.getCampos().size() != t1.getCampos().size()) return false;
+			if (((Record) t0).campos().getCampos().size() != ((Record) t1).campos().getCampos().size()) return false;
 			
 			Iterator<Camp> it0 = t0.getCampos().values().iterator();
 			Iterator<Camp> it1 = t1.getCampos().values().iterator();
@@ -145,6 +145,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	private boolean compatibleCmp(Tipo_Nodo t0, Tipo_Nodo t1) {
 		return (t0 == Tipo_Nodo.BOOL && t1 == Tipo_Nodo.BOOL)
 			|| (t0 == Tipo_Nodo.STRING && t1 == Tipo_Nodo.STRING)
+			|| (t0 == Tipo_Nodo.LIT_ENT && t1 == Tipo_Nodo.LIT_ENT)
 			|| (t0 == Tipo_Nodo.LIT_REAL && t1 == Tipo_Nodo.LIT_REAL);
 	}
 	
@@ -153,9 +154,14 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 			|| (t0 == Tipo_Nodo.STRING && t1 == Tipo_Nodo.STRING));
 	}
 	
+	private boolean compatible(Tipo_Nodo t0, Tipo_Nodo t1) {
+		return (compatibleMismoBasico(t0,t1))
+				|| compatibleNumero(t0,t1);
+	}
+	
 	private boolean compatible(Genero t0, Genero t1) {
 		return (compatibleMismoBasico(t0.getTipo(),t1.getTipo()))
-				|| compatibleNumero(t0.getTipo(),t1.getTipo()) == Tipo_Nodo.LIT_REAL
+				|| compatibleNumero(t0.getTipo(),t1.getTipo())
 				|| compatiblePointer(t0,t1)
 				|| compatibleArray(t0,t1)
 				|| compatibleRecord(t0,t1);
@@ -404,7 +410,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	public void procesa(Campos_muchos campos_muchos) {
 		campos_muchos.campos().procesa(this);
 		campos_muchos.campo().procesa(this);
-		campos_muchos.setRecord(campos_muchos.campos().getRecord(), campos_muchos.campo());
+		campos_muchos.setRecord(campos_muchos.campos(), campos_muchos.campo());
 	}
 
 	@Override
@@ -649,7 +655,10 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		corchete.arg1().procesa(this);
 		
 		if (corchete.arg1().getTipo() == Tipo_Nodo.LIT_ENT && corchete.arg0().getTipo() == Tipo_Nodo.ARRAY) {
-			corchete.setTipo(corchete.arg0().getTipo());
+			DecVar var = (DecVar) ((Id) ((Punto) corchete.arg0()).exp()).getVinculo();
+			String nombre = ((Punto) corchete.arg0()).id().toString();
+			Record r = (Record) var.val().getVinculo().val();
+			corchete.setTipo(r.campos().getCampos().get(nombre).tipo().tipo_nodo_array());
 		} else {
 			error(corchete);
 		}
@@ -659,9 +668,9 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	public void procesa(Punto punto) {
 		punto.exp().procesa(this);
 		if (punto.exp().getTipo() == Tipo_Nodo.RECORD) {
-			
-			if (punto.exp().getCampos().containsKey(punto.id().toString())) {
-				punto.setTipo(punto.exp().getCampos().get(punto.id().toString()).getTipo());
+			Camps c = ((Record) ((Tipo_Id) ((Id) punto.exp()).getVinculo().val()).getVinculo().val()).campos();
+			if (c.getCampos().containsKey(punto.id().toString())) {
+				punto.setTipo(c.getCampos().get(punto.id().toString()).getTipo());
 			} else {
 				error(punto);
 				System.out.println("  > Nombre de campo "+punto.id()+" desconocido");
@@ -675,11 +684,15 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	public void procesa(Flecha flecha) {
 		flecha.exp().procesa(this);
 		if (flecha.exp().getTipo() == Tipo_Nodo.POINTER) {
-			
-			if (flecha.exp().getTipo() == Tipo_Nodo.RECORD) {
-				
-				if (flecha.exp().getCampos().containsKey(flecha.id().toString())) {
-					flecha.setTipo(flecha.exp().getCampos().get(flecha.id().toString()).getTipo());
+			Exp t = flecha.exp();
+			while (!(t instanceof Id)) {
+				t = ((Flecha) t).exp();
+			}
+			Tipo subtipo = ((Pointer) ((Id) t).getVinculo().val().getVinculo().val()).tipo().getVinculo().val(); ////////////////////////////////////////////////////////////////////////////////////////////////////
+			if (subtipo.getTipo() == Tipo_Nodo.RECORD) {
+				Camps c = ((Record) subtipo).campos();
+				if (c.getCampos().containsKey(flecha.id().toString())) {
+					flecha.setTipo(c.getCampos().get(flecha.id().toString()).getTipo());
 				} else {
 					error(flecha);
 					System.out.println("  > Nombre de campo "+flecha.id()+" desconocido");
@@ -719,7 +732,14 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	}
 
 	public void procesa(Id exp) {
-		exp.setTipo(exp.getVinculo().val().getTipo());
+		Tipo expresion = exp.getVinculo().val();
+		if (expresion.getTipo() == null) {
+			Tipo expresion2 = (Tipo) expresion.getVinculo().val();
+			exp.setTipo(expresion2.getTipo());
+		}
+		else {
+			exp.setTipo(expresion.getTipo());
+		}
 	}
 
 	public void procesa(LitEnt exp) {
@@ -760,7 +780,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 
 	@Override
 	public void procesa(Tipo_Id tipo_Id) {
-		tipo_Id.setTipo(tipo_Id.getVinculo().getTipo());
+		tipo_Id.setTipo(tipo_Id.getVinculo().val().getTipo());
 	}
 
 	@Override

@@ -30,6 +30,7 @@ public class TinyASint {
 		public Tipo_Nodo tipo_nodo_array() {return null;}
 		public Tipo_Nodo getTipoNodo() {return null;}
 		public Map<String, Camp> getCampos() {return null;}
+		public Declaracion getVinculo() {return null;}
 	}
 
 
@@ -41,6 +42,7 @@ public class TinyASint {
 		public abstract int prioridad();
 		public boolean esDesignador() { return false; }
 		public abstract void procesa(Procesamiento procesamiento);
+		public Exp exp() { return null; }
 	}
 	
 	public static abstract class Exps extends Genero {
@@ -635,6 +637,10 @@ public class TinyASint {
 		}
 
 		public abstract void procesa(Procesamiento p);
+
+		public DecTipo getVinculo() {
+			return null;
+		}
 	}
 	
 	
@@ -794,6 +800,8 @@ public class TinyASint {
 		}
 
 		public abstract void procesa(Procesamiento p);
+
+		public Tipo val() {return null;}
 	}
 
 	public static abstract class Declaraciones extends Genero{
@@ -1433,15 +1441,16 @@ public class TinyASint {
 			public Camps() {
 			}
 			
-			public void setRecord(Tipo_Nodo record, Camp campo) {
+			public void setRecord(Camps campos, Camp campo) {
 				setTipo(Tipo_Nodo.RECORD);
-				tipo_campos = record;
-				campo_Nodo = new HashMap<String, Camp>();
+				tipo_campos = campos.getRecord();
+				campo_Nodo = campos.getCampos();
 				campo_Nodo.put(campo.id().toString(), campo);
 			}
 
 			public void setRecord(Camp campo) {
 				setTipo(Tipo_Nodo.RECORD);
+				campo_Nodo = new HashMap<String, Camp>();
 				campo_Nodo.put(campo.id().toString(), campo);
 			}
 			
