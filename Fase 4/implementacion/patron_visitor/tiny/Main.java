@@ -87,9 +87,9 @@ public class Main {
 		System.out.println();
 		Vinculacion vinculacion = new Vinculacion();
 		prog.procesa(vinculacion);
-		/*if (!vinculacion.isCorrect()) {
+		if (vinculacion.errorVinculacion()) {
 			System.exit(1);
-		}*/
+		}
 		System.out.println();
 		System.out.println("|============================|");
 		System.out.println("| Fin proceso de vinculación |");
