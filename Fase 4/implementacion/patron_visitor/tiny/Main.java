@@ -71,7 +71,7 @@ public class Main {
 		System.out.println("| Iniciando proceso de impresion |");
 		System.out.println("|================================|");
 		System.out.println();
-		prog.procesa(new Impresion());
+ 		prog.procesa(new Impresion());
 		System.out.println();
 		System.out.println("|==========================|");
 		System.out.println("| Fin proceso de impresion |");

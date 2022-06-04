@@ -105,12 +105,19 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		return false;
 	}
 	
-	private boolean compatiblePointer(Nodo t0, Nodo t1) {  // Es infinito con tNodo a tArbol y sigue !!!!!!!!!!!!!!!!    CUIDADO     !!!!!!!!!!!!!!!!!!
+	private boolean compatiblePointer(Nodo t0, Nodo t1) {
 		if (!(t0.getTipo() == tNodo.POINTER)) return false;
 		if (t1.getTipo() == tNodo.NULL) return true;
 		
+		if(t0 instanceof Flecha) {
+			t0 = ((Flecha) t0).exp();
+		}
+		if(t1 instanceof Flecha) {
+			t1 = ((Flecha) t1).exp();
+		}
+		
 		if(t0.getVinculo() != null && t1.getVinculo() != null) {
-			return compatible(t0.getVinculo().val(), t1.getVinculo().val());
+			return ((Tipo_Id) t0.getVinculo().val()).tipoString().toString().equals(((Tipo_Id) t0.getVinculo().val()).tipoString().toString()) || compatible(t0.getVinculo().val(), t1.getVinculo().val());
 		} else if (t0.tipo() != null && t1.tipo() != null) {
 			return compatible(t0.tipo().getVinculo().val(), t1.tipo().getVinculo().val());
 		} else if (t1.getTipo() == tNodo.POINTER) {
@@ -196,7 +203,6 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	public void procesa(DecProc dec) {
 		dec.pforms().procesa(this);
 		dec.bloque().procesa(this);
-		dec.setTipo(dec.bloque().getTipo());
 	}
 
 	@Override
@@ -222,7 +228,12 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(Call call) {
 		call.exps().procesa(this);
-		call.setTipo(call.exps().getTipo());
+		
+		if (call.getVinculo().getTipo() == tNodo.OK) {
+			call.setTipo(tNodo.OK);
+		} else {
+			printError(call);
+		}
 	}
 
 	@Override
@@ -336,7 +347,6 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 		if (insts.instrucciones().getTipo() == tNodo.OK
 			&& insts.instruccion().getTipo() == tNodo.OK) {
 			insts.setTipo(tNodo.OK);
-			
 		} else {
 			printError(insts);
 		}
