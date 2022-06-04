@@ -377,7 +377,7 @@ public class Etiquetado extends ProcesamientoPorDefecto{
 		if (exp.arg0().getTipo() == tNodo.BOOL) etq++;
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) etq++;
-		etq += 2;
+		etq ++;
 		exp.etqs = etq;
 	}
 	
@@ -387,7 +387,7 @@ public class Etiquetado extends ProcesamientoPorDefecto{
 		if (exp.arg0().esDesignador()) etq++;
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) etq++;
-		etq += 2;
+		etq ++;
 		exp.etqs = etq;
 	}
 	
@@ -397,7 +397,7 @@ public class Etiquetado extends ProcesamientoPorDefecto{
 		if (exp.arg0().esDesignador()) etq++;
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) etq++;
-		etq += 2;
+		etq ++;
 		exp.etqs = etq;
 	}
 	
@@ -407,7 +407,7 @@ public class Etiquetado extends ProcesamientoPorDefecto{
 		if (exp.arg0().esDesignador()) etq++;
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) etq++;
-		etq += 2;
+		etq ++;
 		exp.etqs = etq;
 	}
 	
@@ -417,7 +417,7 @@ public class Etiquetado extends ProcesamientoPorDefecto{
 		if (exp.arg0().esDesignador()) etq++;
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) etq++;
-		etq += 2;
+		etq ++;
 		exp.etqs = etq;
 	}
 	

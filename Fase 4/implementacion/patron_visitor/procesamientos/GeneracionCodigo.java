@@ -20,6 +20,7 @@ import asint.TinyASint.Decs_una;
 import asint.TinyASint.Delete;
 import asint.TinyASint.Distinto;
 import asint.TinyASint.Div;
+import asint.TinyASint.Exp;
 import asint.TinyASint.Exp_muchas;
 import asint.TinyASint.Exp_una;
 import asint.TinyASint.Exps;
@@ -233,11 +234,12 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		while_inst.instrucciones().procesa(this);
 		p.ponInstruccion(p.irA(while_inst.etqi));
 		System.out.println(p.irA(while_inst.etqi));
-		checkNinstsi(while_inst);
+		checkNinsts(while_inst);
 	}
 
 	@Override
 	public void procesa(If_else if_else) {
+		checkNinstsi(if_else);
 		if_else.exp().procesa(this);
 		p.ponInstruccion(p.irF(if_else.instrucciones_else().etqi));
 		System.out.println(p.irF(if_else.instrucciones_else().etqi));
@@ -245,14 +247,17 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		p.ponInstruccion(p.irA(if_else.etqs));
 		System.out.println(p.irA(if_else.etqs));
 		if_else.instrucciones_else().procesa(this);
+		checkNinsts(if_else);
 	}
 
 	@Override
 	public void procesa(If_inst if_inst) {
+		checkNinstsi(if_inst);
 		if_inst.exp().procesa(this);
 		p.ponInstruccion(p.irF(if_inst.etqs));
 		System.out.println(p.irF(if_inst.etqs));
 		if_inst.instrucciones().procesa(this);
+		checkNinsts(if_inst);
 	}
 
 	@Override
@@ -368,6 +373,7 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 
 	// Nivel 0
 	public void procesa(Suma exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		exp.arg1().procesa(this);
@@ -380,9 +386,11 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 			p.ponInstruccion(p.sumaR());
 			System.out.println(p.sumaR());
 		}
+		checkNinsts(exp);
 	}
 
 	public void procesa(Resta exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		exp.arg1().procesa(this);
@@ -395,25 +403,30 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 			p.ponInstruccion(p.restaR());
 			System.out.println(p.restaR());
 		}
+		checkNinsts(exp);
 	}
 
 	// Nivel 1
 	public void procesa(And exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		p.ponInstruccion(p.and());
 		System.out.println(p.and());
+		checkNinsts(exp);
 	}
 
 	public void procesa(Or exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		p.ponInstruccion(p.or());
 		System.out.println(p.or());
+		checkNinsts(exp);
 	}
 
 	// Nivel 2
@@ -446,6 +459,7 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 	}
 
 	public void procesa(Mayor exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		if (exp.arg0().getTipo() == tNodo.BOOL) p.ponInstruccion(p.not());
@@ -467,9 +481,11 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
 		}
+		checkNinsts(exp);
 	}
 
 	public void procesa(MenorIgual exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		if (exp.arg0().getTipo() == tNodo.BOOL) p.ponInstruccion(p.not());
@@ -491,9 +507,11 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
 		}
+		checkNinsts(exp);
 	}
 
 	public void procesa(MayorIgual exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		if (exp.arg0().getTipo() == tNodo.BOOL) p.ponInstruccion(p.not());
@@ -515,9 +533,11 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
 		}
+		checkNinsts(exp);
 	}
 
 	public void procesa(Igual exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		if (exp.arg0().getTipo() == tNodo.BOOL) p.ponInstruccion(p.not());
@@ -536,12 +556,17 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		} else if (exp.arg0().getTipo() == tNodo.BOOL){
 			p.ponInstruccion(p.and());
 			System.out.println(p.and());
+		} else if (exp.arg0().getTipo() == tNodo.POINTER){
+			p.ponInstruccion(p.Ig());
+			System.out.println(p.Ig());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
 		}
+		checkNinsts(exp);
 	}
 
 	public void procesa(Distinto exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		exp.arg1().procesa(this);
@@ -559,14 +584,22 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		} else if (exp.arg0().getTipo() == tNodo.BOOL) {
 			p.ponInstruccion(p.and());
 			System.out.println(p.and());
+		} else if (exp.arg0().getTipo() == tNodo.POINTER){
+			p.ponInstruccion(p.Ig());
+			System.out.println(p.Ig());
+		} 
+		else {
+			throw new IllegalStateException("Hubo un error de tipos no detectado");
 		}
 	
 		p.ponInstruccion(p.not());
 		System.out.println(p.not());
+		checkNinsts(exp);
 	}
 
 	// Nivel 3
 	public void procesa(Mul exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		exp.arg1().procesa(this);
@@ -579,9 +612,11 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 			p.ponInstruccion(p.mulR());
 			System.out.println(p.mulR());
 		}
+		checkNinsts(exp);
 	}
 
 	public void procesa(Div exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		exp.arg1().procesa(this);
@@ -594,10 +629,12 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 			p.ponInstruccion(p.divR());
 			System.out.println(p.divR());
 		}
+		checkNinsts(exp);
 	}
 
 	@Override
 	public void procesa(Percent exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		exp.arg1().procesa(this);
@@ -605,10 +642,12 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		
 		p.ponInstruccion(p.percent());
 		System.out.println(p.percent());
+		checkNinsts(exp);
 	}
 
 	// Nivel 4
 	public void procesa(MenosUnario exp) {
+		checkNinstsi(exp);
 		if (exp.getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.apilaInt(0));
 			System.out.println(p.apilaInt(0));
@@ -626,19 +665,23 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
 		}
+		checkNinsts(exp);
 	}
 
 	public void procesa(Not exp) {
+		checkNinstsi(exp);
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		p.ponInstruccion(p.not());
 		System.out.println(p.not());
+		checkNinsts(exp);
 	}
 	
 	//Nivel 5
 	
 	@Override
 	public void procesa(Corchete corchete) {
+		checkNinstsi(corchete);
 		corchete.arg0().procesa(this);
 		corchete.arg1().procesa(this);
 		if (corchete.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
@@ -648,10 +691,12 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		System.out.println(p.mul());
 		p.ponInstruccion(p.suma());
 		System.out.println(p.suma());
+		checkNinsts(corchete);
 	}
 
 	@Override
 	public void procesa(Punto punto) {
+		checkNinstsi(punto);
 		punto.exp().procesa(this);
 		// Apilar desplazamiento del campo
 		int despl = ((Record) punto.exp().getVinculo().val().getVinculo().val()).campos().getCampos().get(punto.id().toString()).despl;
@@ -659,46 +704,61 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		System.out.println(p.apilaInt(despl));
 		p.ponInstruccion(p.suma());
 		System.out.println(p.suma());
+		checkNinsts(punto);
 	}
 
 	@Override
 	public void procesa(Flecha flecha) {
+		checkNinstsi(flecha);
 		flecha.exp().procesa(this);
 		p.ponInstruccion(p.apilaInd());
 		System.out.println(p.apilaInd());
-		int despl = ((Record) flecha.exp().getVinculo().val().getVinculo().val().tipo().getVinculo().val()).campos().getCampos().get(flecha.id().toString()).despl;
+		Exp t = flecha.exp();
+		while (!(t instanceof Id)) {
+			t = ((Flecha) t).exp();
+		}
+		int despl = ((Record) t.getVinculo().val().getVinculo().val().tipo().getVinculo().val()).campos().getCampos().get(flecha.id().toString()).despl;
 		p.ponInstruccion(p.apilaInt(despl));
 		System.out.println(p.apilaInt(despl));
 		p.ponInstruccion(p.suma());
 		System.out.println(p.suma());
+		checkNinsts(flecha);
 	}
 
 	//Nivel 6
 	
 	@Override
 	public void procesa(Star star) {
+		checkNinstsi(star);
 		star.arg0().procesa(this);
 		p.ponInstruccion(p.apilaInd());
 		System.out.println(p.apilaInd());
+		checkNinsts(star);
 	}
 
 	// Nivel 7
 	public void procesa(True exp) {
+		checkNinstsi(exp);
 		p.ponInstruccion(p.apilaBool(true));
 		System.out.println(p.apilaBool(true));
+		checkNinsts(exp);
 	}
 
 	public void procesa(False exp) {
 		p.ponInstruccion(p.apilaBool(false));
 		System.out.println(p.apilaBool(false));
+		checkNinsts(exp);
 	}
 
 	public void procesa(LitReal exp) {
+		checkNinstsi(exp);
 		p.ponInstruccion(p.apilaInt(Integer.parseInt(exp.num().toString())));
 		System.out.println(p.apilaInt(Integer.parseInt(exp.num().toString())));
+		checkNinsts(exp);
 	}
 
 	public void procesa(Id exp) {
+		checkNinstsi(exp);
 		if (exp.nivel == 0) {
 			p.ponInstruccion(p.apilaInt(exp.dir));
 			System.out.println(p.apilaInt(exp.dir));
@@ -710,23 +770,30 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 			p.ponInstruccion(p.suma());
 			System.out.println(p.suma());
 		}
+		checkNinsts(exp);
 	}
 
 	public void procesa(LitEnt exp) {
+		checkNinstsi(exp);
 		p.ponInstruccion(p.apilaInt(Integer.parseInt(exp.num().toString())));
 		System.out.println(p.apilaInt(Integer.parseInt(exp.num().toString())));
+		checkNinsts(exp);
 	}
 
 	@Override
 	public void procesa(LitNull exp) {
+		checkNinstsi(exp);
 		p.ponInstruccion(p.apilaInt(-1));
 		System.out.println(p.apilaInt(-1));
+		checkNinsts(exp);
 	}
 
 	@Override
 	public void procesa(LitCad exp) {
+		checkNinstsi(exp);
 		p.ponInstruccion(p.apilaString(exp.cad().toString()));
 		System.out.println(p.apilaString(exp.cad().toString()));
+		checkNinsts(exp);
 	}
 
 	// Tipo
