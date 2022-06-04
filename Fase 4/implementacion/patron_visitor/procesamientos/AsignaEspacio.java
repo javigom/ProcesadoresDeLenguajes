@@ -20,6 +20,7 @@ import asint.TinyASint.Decs_una;
 import asint.TinyASint.Delete;
 import asint.TinyASint.Distinto;
 import asint.TinyASint.Div;
+import asint.TinyASint.Exp;
 import asint.TinyASint.Exp_muchas;
 import asint.TinyASint.Exp_una;
 import asint.TinyASint.False;
@@ -419,7 +420,12 @@ public class AsignaEspacio extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(Flecha flecha) {
 		flecha.exp().procesa(this);
-		Camp c = flecha.exp().getCampos().get(flecha.id().toString());
+		Exp t = flecha.exp();
+		while (!(t instanceof Id)) {
+			t = ((Flecha) t).exp();
+		}
+		Record r = (Record) t.getVinculo().val().getVinculo().val().tipo().getVinculo().val();
+		Camp c = r.campos().getCampos().get(flecha.id().toString());
 		flecha.size = c.size;
 		flecha.basesize = c.basesize;
 	}

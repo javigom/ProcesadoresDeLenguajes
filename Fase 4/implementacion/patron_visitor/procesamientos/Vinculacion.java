@@ -376,6 +376,7 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 	@Override
 	public void procesa(ParamForm paramForm) {
 		StringLocalizado id = paramForm.id();
+		paramForm.tipo().procesa(this);
 		recolectaAct(id, paramForm);
 	}
 
