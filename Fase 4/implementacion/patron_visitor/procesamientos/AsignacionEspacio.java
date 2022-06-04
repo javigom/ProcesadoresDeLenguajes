@@ -73,7 +73,7 @@ import asint.TinyASint.While_inst;
 import asint.TinyASint.Write;
 import procesamientos.ComprobacionTipos.tNodo;
 
-public class AsignaEspacio extends ProcesamientoPorDefecto{
+public class AsignacionEspacio extends ProcesamientoPorDefecto{
 	private int dir = 0;
 	private int nivel = 0;
 	private int nivelMaximo = 0;

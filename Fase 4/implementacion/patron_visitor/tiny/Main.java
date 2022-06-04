@@ -11,10 +11,10 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import procesamientos.AsignaEspacio;
+import procesamientos.AsignacionEspacio;
 import procesamientos.ComprobacionTipos;
 import procesamientos.Etiquetado;
-import procesamientos.GeneraCodigo;
+import procesamientos.GeneracionCodigo;
 import procesamientos.Impresion;
 import procesamientos.Vinculacion;
 
@@ -34,10 +34,10 @@ public class Main {
 		ejecuta_impresion(prog);
 		ejecuta_vinculacion(prog);
 		ejecuta_comprobacion_tipos(prog);
-		AsignaEspacio asignaEspacio = ejecuta_asignacion_espacio(prog);
+		AsignacionEspacio asignacionEspacio = ejecuta_asignacion_espacio(prog);
 		ejecuta_etiquetado(prog);
-		MaquinaP maquina = new MaquinaP(prog.size, 30, 20, asignaEspacio.getMaxNivel());
-		prog.procesa(new GeneraCodigo(maquina));
+		MaquinaP maquina = new MaquinaP(prog.size, 30, 20, asignacionEspacio.getMaxNivel());
+		prog.procesa(new GeneracionCodigo(maquina));
 
 	}
 	
@@ -103,7 +103,6 @@ public class Main {
 		System.out.println("| Iniciando proceso de comprobación de tipos |");
 		System.out.println("|============================================|");
 		System.out.println();
-		Vinculacion vinculacion = new Vinculacion();
 		ComprobacionTipos comprobacionTipos = new ComprobacionTipos();
 		prog.procesa(comprobacionTipos);
 		if (comprobacionTipos.errorComprobacionTipos()) {
@@ -116,13 +115,13 @@ public class Main {
 		System.out.println();
 	}
 
-	private static AsignaEspacio ejecuta_asignacion_espacio(Programa prog) {
+	private static AsignacionEspacio ejecuta_asignacion_espacio(Programa prog) {
 		System.out.println();
 		System.out.println("|============================================|");
 		System.out.println("| Iniciando proceso de asignación de espacio |");
 		System.out.println("|============================================|");
 		System.out.println();
-		AsignaEspacio asignaEspacio = new AsignaEspacio();
+		AsignacionEspacio asignaEspacio = new AsignacionEspacio();
 		prog.procesa(asignaEspacio);
 		System.out.println();
 		System.out.println("|======================================|");

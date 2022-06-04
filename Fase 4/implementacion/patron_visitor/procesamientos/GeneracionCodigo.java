@@ -75,11 +75,11 @@ import asint.TinyASint.Write;
 import maquinaP.MaquinaP;
 import procesamientos.ComprobacionTipos.tNodo;
 
-public class GeneraCodigo extends ProcesamientoPorDefecto{
+public class GeneracionCodigo extends ProcesamientoPorDefecto{
 
 	private MaquinaP p;
 	
-	public GeneraCodigo(MaquinaP p) {
+	public GeneracionCodigo(MaquinaP p) {
 		this.p = p;
 	}
 	
