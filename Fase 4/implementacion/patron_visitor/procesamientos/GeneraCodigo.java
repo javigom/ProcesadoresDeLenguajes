@@ -22,6 +22,7 @@ import asint.TinyASint.Distinto;
 import asint.TinyASint.Div;
 import asint.TinyASint.Exp_muchas;
 import asint.TinyASint.Exp_una;
+import asint.TinyASint.Exps;
 import asint.TinyASint.False;
 import asint.TinyASint.Flecha;
 import asint.TinyASint.Nodo;
@@ -119,6 +120,7 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 	
 	@Override
 	public void procesa(DecProc dec) {
+		dec.bloque().procesa(this);
 	}
 
 	@Override
@@ -136,24 +138,48 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 	public void procesa(Bloque_inst bloque_inst) {
 		bloque_inst.bloque().procesa(this);
 	}
+	
+	@Override
+	public void procesa(Call call) {
+		p.ponInstruccion(p.activa(call.getVinculo().nivel, call.getVinculo().size, call.etqs));
+		//call.exps();
+		int i = 0;
+		Exps exps = call.exps();
+		if(exps instanceof Exp_una){
+			p.ponInstruccion(p.dup());
+			p.ponInstruccion(p.apilaInt(i));
+			p.ponInstruccion(p.suma());
+			((Exp_una) exps).expresion().procesa(this);
+			p.ponInstruccion(p.desapilaInd());
+			i++;
+		}
+		
+		p.ponInstruccion(p.desapilad(call.getVinculo().nivel));
+		p.ponInstruccion(p.irA(call.getVinculo().etqi));
+	}
 
 	@Override
 	public void procesa(Delete delete) {
 		delete.exp().procesa(this);
 		p.ponInstruccion(p.dealloc(delete.exp().basesize));
+		System.out.println(p.dealloc(delete.exp().basesize));
 	}
 
 	@Override
 	public void procesa(New_cons new_cons) {
 		new_cons.exp().procesa(this);
 		p.ponInstruccion(p.alloc(new_cons.exp().basesize));
+		System.out.println(p.alloc(new_cons.exp().basesize));
 		p.ponInstruccion(p.desapilaInd());
+		System.out.println(p.desapilaInd());
 	}
 
 	@Override
 	public void procesa(Nl nl) {
 		p.ponInstruccion(p.apilaString("\n"));
+		System.out.println(p.apilaString("\n"));
 		p.ponInstruccion(p.writeString());
+		System.out.println(p.writeString());
 	}
 
 	@Override
@@ -164,12 +190,16 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		}
 		if (write.exp().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.writeInt());
+			System.out.println(p.writeInt());
 		} else if (write.exp().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.writeReal());
+			System.out.println(p.writeReal());
 		} else if (write.exp().getTipo() == tNodo.BOOL) {
 			p.ponInstruccion(p.writeBool());
+			System.out.println(p.writeBool());
 		} else if (write.exp().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.writeString());
+			System.out.println(p.writeString());
 		} else {
 			throw new IllegalStateException("Esto no debería pasar");
 		}
@@ -180,10 +210,13 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		read.exp().procesa(this);
 		if (read.exp().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.readInt());
+			System.out.println(p.readInt());
 		} else if (read.exp().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.readReal());
+			System.out.println(p.readReal());
 		} else if (read.exp().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.readString());
+			System.out.println(p.readString());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no capturado");
 		}
@@ -196,8 +229,10 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		checkNinstsi(while_inst);
 		while_inst.exp().procesa(this);
 		p.ponInstruccion(p.irF(while_inst.etqs));
+		System.out.println(p.irF(while_inst.etqs));
 		while_inst.instrucciones().procesa(this);
 		p.ponInstruccion(p.irA(while_inst.etqi));
+		System.out.println(p.irA(while_inst.etqi));
 		checkNinstsi(while_inst);
 	}
 
@@ -205,8 +240,10 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 	public void procesa(If_else if_else) {
 		if_else.exp().procesa(this);
 		p.ponInstruccion(p.irF(if_else.instrucciones_else().etqi));
+		System.out.println(p.irF(if_else.instrucciones_else().etqi));
 		if_else.instrucciones().procesa(this);
 		p.ponInstruccion(p.irA(if_else.etqs));
+		System.out.println(p.irA(if_else.etqs));
 		if_else.instrucciones_else().procesa(this);
 	}
 
@@ -214,6 +251,7 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 	public void procesa(If_inst if_inst) {
 		if_inst.exp().procesa(this);
 		p.ponInstruccion(p.irF(if_inst.etqs));
+		System.out.println(p.irF(if_inst.etqs));
 		if_inst.instrucciones().procesa(this);
 	}
 
@@ -225,8 +263,10 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		
 		if (asig.exp1().esDesignador()) {
 			p.ponInstruccion(p.mueve(asig.exp1().size));
+			System.out.println(p.mueve(asig.exp1().size));
 		} else {
 			p.ponInstruccion(p.desapilaInd());
+			System.out.println(p.desapilaInd());
 		}
 		checkNinsts(asig);
 	}
@@ -335,8 +375,10 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		
 		if (exp.getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.suma());
+			System.out.println(p.suma());
 		} else if (exp.getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.sumaR());
+			System.out.println(p.sumaR());
 		}
 	}
 
@@ -347,9 +389,11 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
 		if (exp.getTipo() == tNodo.LIT_ENT) {
-			p.ponInstruccion(p.restaR());
+			p.ponInstruccion(p.resta());
+			System.out.println(p.resta());
 		} else if (exp.getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.restaR());
+			System.out.println(p.restaR());
 		}
 	}
 
@@ -360,6 +404,7 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		p.ponInstruccion(p.and());
+		System.out.println(p.and());
 	}
 
 	public void procesa(Or exp) {
@@ -368,6 +413,7 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		p.ponInstruccion(p.or());
+		System.out.println(p.or());
 	}
 
 	// Nivel 2
@@ -382,12 +428,16 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		
 		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.menor());
+			System.out.println(p.menor());
 		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.menorR());
+			System.out.println(p.menorR());
 		} else if (exp.arg0().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.menorString());
+			System.out.println(p.menorString());
 		} else if (exp.arg0().getTipo() == tNodo.BOOL){
 			p.ponInstruccion(p.and());
+			System.out.println(p.and());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
 		}
@@ -404,12 +454,16 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		
 		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.mayor());
+			System.out.println(p.mayor());
 		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.mayorR());
+			System.out.println(p.mayorR());
 		} else if (exp.arg0().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.mayorString());
+			System.out.println(p.mayorString());
 		} else if (exp.arg0().getTipo() == tNodo.BOOL){
 			p.ponInstruccion(p.and());
+			System.out.println(p.and());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
 		}
@@ -424,12 +478,16 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		
 		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.menorIg());
+			System.out.println(p.menorIg());
 		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.menorIgR());
+			System.out.println(p.menorIgR());
 		} else if (exp.arg0().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.menorIgString());
+			System.out.println(p.menorIgString());
 		} else if (exp.arg0().getTipo() == tNodo.BOOL){
 			p.ponInstruccion(p.or());
+			System.out.println(p.or());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
 		}
@@ -444,12 +502,16 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		
 		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.mayorIg());
+			System.out.println(p.mayorIg());
 		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.mayorIgR());
+			System.out.println(p.mayorIgR());
 		} else if (exp.arg0().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.mayorIgString());
+			System.out.println(p.mayorIgString());
 		} else if (exp.arg0().getTipo() == tNodo.BOOL){
 			p.ponInstruccion(p.or());
+			System.out.println(p.or());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
 		}
@@ -464,12 +526,16 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		
 		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.Ig());
+			System.out.println(p.Ig());
 		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.IgR());
+			System.out.println(p.IgR());
 		} else if (exp.arg0().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.IgString());
+			System.out.println(p.IgString());
 		} else if (exp.arg0().getTipo() == tNodo.BOOL){
 			p.ponInstruccion(p.and());
+			System.out.println(p.and());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
 		}
@@ -479,19 +545,24 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		exp.arg1().procesa(this);
-		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd()); 
 		
 		if (exp.arg0().getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.Ig());
+			System.out.println(p.Ig());
 		} else if (exp.arg0().getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.IgR());
+			System.out.println(p.IgR());
 		} else if (exp.arg0().getTipo() == tNodo.STRING) {
 			p.ponInstruccion(p.IgString());
+			System.out.println(p.IgString());
 		} else if (exp.arg0().getTipo() == tNodo.BOOL) {
 			p.ponInstruccion(p.and());
+			System.out.println(p.and());
 		}
 	
 		p.ponInstruccion(p.not());
+		System.out.println(p.not());
 	}
 
 	// Nivel 3
@@ -503,8 +574,10 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		
 		if (exp.getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.mul());
+			System.out.println(p.mul());
 		} else if (exp.getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.mulR());
+			System.out.println(p.mulR());
 		}
 	}
 
@@ -512,12 +585,14 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		exp.arg1().procesa(this);
-		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
+		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd()); 
 		
 		if (exp.getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.div());
+			System.out.println(p.div());
 		} else if (exp.getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.divR());
+			System.out.println(p.divR());
 		}
 	}
 
@@ -529,20 +604,25 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		if (exp.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		
 		p.ponInstruccion(p.percent());
+		System.out.println(p.percent());
 	}
 
 	// Nivel 4
 	public void procesa(MenosUnario exp) {
 		if (exp.getTipo() == tNodo.LIT_ENT) {
 			p.ponInstruccion(p.apilaInt(0));
+			System.out.println(p.apilaInt(0));
 			exp.arg0().procesa(this);
 			if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
-			p.ponInstruccion(p.restaR());
+			p.ponInstruccion(p.resta());
+			System.out.println(p.resta());
 		} else if (exp.getTipo() == tNodo.LIT_REAL) {
 			p.ponInstruccion(p.apilaReal(0));
+			System.out.println(p.apilaReal(0));
 			exp.arg0().procesa(this);
 			if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 			p.ponInstruccion(p.restaR());
+			System.out.println(p.restaR());
 		} else {
 			throw new IllegalStateException("Hubo un error de tipos no detectado");
 		}
@@ -552,6 +632,7 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) p.ponInstruccion(p.apilaInd());
 		p.ponInstruccion(p.not());
+		System.out.println(p.not());
 	}
 	
 	//Nivel 5
@@ -562,26 +643,34 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 		corchete.arg1().procesa(this);
 		if (corchete.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
 		p.ponInstruccion(p.apilaInt(corchete.arg0().basesize));
+		System.out.println(p.apilaInt(corchete.arg0().basesize));
 		p.ponInstruccion(p.mul());
+		System.out.println(p.mul());
 		p.ponInstruccion(p.suma());
+		System.out.println(p.suma());
 	}
 
 	@Override
 	public void procesa(Punto punto) {
 		punto.exp().procesa(this);
 		// Apilar desplazamiento del campo
-		int despl = punto.exp().getCampos().get(punto.id().toString()).despl;
+		int despl = ((Record) punto.exp().getVinculo().val().getVinculo().val()).campos().getCampos().get(punto.id().toString()).despl;
 		p.ponInstruccion(p.apilaInt(despl));
+		System.out.println(p.apilaInt(despl));
 		p.ponInstruccion(p.suma());
+		System.out.println(p.suma());
 	}
 
 	@Override
 	public void procesa(Flecha flecha) {
 		flecha.exp().procesa(this);
 		p.ponInstruccion(p.apilaInd());
-		int despl = flecha.exp().getCampos().get(flecha.id().toString()).despl;
+		System.out.println(p.apilaInd());
+		int despl = ((Record) flecha.exp().getVinculo().val().getVinculo().val().tipo().getVinculo().val()).campos().getCampos().get(flecha.id().toString()).despl;
 		p.ponInstruccion(p.apilaInt(despl));
+		System.out.println(p.apilaInt(despl));
 		p.ponInstruccion(p.suma());
+		System.out.println(p.suma());
 	}
 
 	//Nivel 6
@@ -590,43 +679,54 @@ public class GeneraCodigo extends ProcesamientoPorDefecto{
 	public void procesa(Star star) {
 		star.arg0().procesa(this);
 		p.ponInstruccion(p.apilaInd());
+		System.out.println(p.apilaInd());
 	}
 
 	// Nivel 7
 	public void procesa(True exp) {
 		p.ponInstruccion(p.apilaBool(true));
+		System.out.println(p.apilaBool(true));
 	}
 
 	public void procesa(False exp) {
 		p.ponInstruccion(p.apilaBool(false));
+		System.out.println(p.apilaBool(false));
 	}
 
 	public void procesa(LitReal exp) {
 		p.ponInstruccion(p.apilaInt(Integer.parseInt(exp.num().toString())));
+		System.out.println(p.apilaInt(Integer.parseInt(exp.num().toString())));
 	}
 
 	public void procesa(Id exp) {
 		if (exp.nivel == 0) {
 			p.ponInstruccion(p.apilaInt(exp.dir));
+			System.out.println(p.apilaInt(exp.dir));
 		} else {
 			p.ponInstruccion(p.apilad(exp.nivel));
+			System.out.println(p.apilad(exp.nivel));
 			p.ponInstruccion(p.apilaInt(exp.dir));
+			System.out.println(p.apilaInt(exp.dir));
 			p.ponInstruccion(p.suma());
+			System.out.println(p.suma());
 		}
 	}
 
 	public void procesa(LitEnt exp) {
 		p.ponInstruccion(p.apilaInt(Integer.parseInt(exp.num().toString())));
+		System.out.println(p.apilaInt(Integer.parseInt(exp.num().toString())));
 	}
 
 	@Override
 	public void procesa(LitNull exp) {
 		p.ponInstruccion(p.apilaInt(-1));
+		System.out.println(p.apilaInt(-1));
 	}
 
 	@Override
 	public void procesa(LitCad exp) {
 		p.ponInstruccion(p.apilaString(exp.cad().toString()));
+		System.out.println(p.apilaString(exp.cad().toString()));
 	}
 
 	// Tipo

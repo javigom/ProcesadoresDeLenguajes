@@ -7,6 +7,7 @@ import asint.TinyASint.Asig;
 import asint.TinyASint.Bloque_inst;
 import asint.TinyASint.Bloque_prog;
 import asint.TinyASint.Bool;
+import asint.TinyASint.Call;
 import asint.TinyASint.Camp;
 import asint.TinyASint.Campo_uno;
 import asint.TinyASint.Campos_muchos;
@@ -21,6 +22,7 @@ import asint.TinyASint.Distinto;
 import asint.TinyASint.Div;
 import asint.TinyASint.Exp_muchas;
 import asint.TinyASint.Exp_una;
+import asint.TinyASint.Exps;
 import asint.TinyASint.False;
 import asint.TinyASint.Flecha;
 import asint.TinyASint.Id;
@@ -69,6 +71,7 @@ import asint.TinyASint.Tipo_Id;
 import asint.TinyASint.True;
 import asint.TinyASint.While_inst;
 import asint.TinyASint.Write;
+import procesamientos.ComprobacionTipos.tNodo;
 
 public class Etiquetado extends ProcesamientoPorDefecto{
 	private int etq = 0;
@@ -98,6 +101,9 @@ public class Etiquetado extends ProcesamientoPorDefecto{
 	
 	@Override
 	public void procesa(DecProc dec) {
+		dec.etqi = etq;
+		dec.bloque().procesa(this);
+		dec.etqs = etq;
 	}
 	
 	@Override
@@ -114,6 +120,23 @@ public class Etiquetado extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(Bloque_inst bloque_inst) {
 		bloque_inst.bloque().procesa(this);
+	}
+	
+	@Override
+	public void procesa(Call call) {	
+		call.etqi = etq;
+		etq ++;
+		//call.exps();
+		int i = 0;
+		Exps exps = call.exps();
+		if(exps instanceof Exp_una){
+			etq += 3;
+			((Exp_una) exps).expresion().procesa(this);
+			etq ++;
+			i++;
+		}
+		etq += 2; 
+		call.etqs = etq;
 	}
 	
 	@Override
@@ -351,6 +374,7 @@ public class Etiquetado extends ProcesamientoPorDefecto{
 		exp.etqi = etq;
 		exp.arg0().procesa(this);
 		if (exp.arg0().esDesignador()) etq++;
+		if (exp.arg0().getTipo() == tNodo.BOOL) etq++;
 		exp.arg1().procesa(this);
 		if (exp.arg1().esDesignador()) etq++;
 		etq += 2;

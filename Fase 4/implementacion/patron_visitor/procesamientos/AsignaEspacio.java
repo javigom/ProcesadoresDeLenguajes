@@ -310,7 +310,6 @@ public class AsignaEspacio extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(Exp_muchas exp_muchas) {
 		exp_muchas.expresiones().procesa(this);
-		System.out.print(",");
 		exp_muchas.expresion().procesa(this);
 	}
 
@@ -441,33 +440,26 @@ public class AsignaEspacio extends ProcesamientoPorDefecto{
 
 	// Nivel 7
 	public void procesa(True exp) {
-		exp.setTipo(tNodo.BOOL);
 	}
 
 	public void procesa(False exp) {
-		exp.setTipo(tNodo.BOOL);
 	}
 
 	public void procesa(LitReal exp) {
-		exp.setTipo(tNodo.LIT_REAL);
 	}
 
 	public void procesa(Id exp) {
-		exp.setTipo(exp.getVinculo().val().getTipo());
 	}
 
 	public void procesa(LitEnt exp) {
-		exp.setTipo(tNodo.LIT_ENT);
 	}
 
 	@Override
 	public void procesa(LitNull exp) {
-		exp.setTipo(tNodo.NULL);
 	}
 
 	@Override
 	public void procesa(LitCad exp) {
-		exp.setTipo(tNodo.STRING);
 	}
 
 	// Tipo
@@ -503,17 +495,21 @@ public class AsignaEspacio extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(Array array) {
 		array.tipo_array().procesa(this);
+		array.basesize = array.tipo_array().size;
+		array.size = array.basesize * Integer.parseInt(array.tam().toString());
 	}
 
 	@Override
 	public void procesa(Record record) {
 		record.campos().procesa(this);
-		record.setTipo(record.campos().getTipo());
+		record.size = record.campos().size;
 	}
 
 	@Override
 	public void procesa(Pointer pointer) {
 		pointer.tipo().procesa(this);
+		pointer.size = 1;
+		pointer.basesize = pointer.tipo().size;
 	}
 	
 }
