@@ -449,6 +449,8 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 	}
 
 	public void procesa(Id exp) {
+		exp.dir = exp.getVinculo().dir;
+		exp.nivel = exp.getVinculo().nivel;
 	}
 
 	public void procesa(LitEnt exp) {

@@ -319,7 +319,7 @@ public class MaquinaP {
 		}
 
 		public String toString() {
-			return "menor";
+			return "menorReal";
 		};
 	}
 
@@ -364,7 +364,7 @@ public class MaquinaP {
 		}
 
 		public String toString() {
-			return "mayor";
+			return "mayorReal";
 		};
 	}
 
@@ -409,7 +409,7 @@ public class MaquinaP {
 		}
 
 		public String toString() {
-			return "menorIgual";
+			return "menorIgualReal";
 		};
 	}
 
@@ -454,7 +454,7 @@ public class MaquinaP {
 		}
 
 		public String toString() {
-			return "mayorIgual";
+			return "mayorIgualReal";
 		};
 	}
 
@@ -499,7 +499,7 @@ public class MaquinaP {
 		}
 
 		public String toString() {
-			return "igual";
+			return "igualReal";
 		};
 	}
 
@@ -674,7 +674,7 @@ public class MaquinaP {
 		}
 
 		public String toString() {
-			return "apilaInt(" + valor + ")";
+			return "apilaReal(" + valor + ")";
 		};
 	}
 
@@ -691,7 +691,7 @@ public class MaquinaP {
 		}
 
 		public String toString() {
-			return "apilaInt(" + valor + ")";
+			return "apilaString(" + valor + ")";
 		};
 	}
 
@@ -705,7 +705,7 @@ public class MaquinaP {
 		}
 
 		public String toString() {
-			return "and";
+			return "ConvReal";
 		};
 	}
 
@@ -1217,6 +1217,13 @@ public class MaquinaP {
 		IIG = new IIg();
 		IIGR = new IIgR();
 		IIGS = new IIgS();
+		IWRITES = new IWriteString();
+		IWRITEI = new IWriteInt();
+		IWRITER = new IWriteReal();
+		IWRITEB = new IWriteBool();
+		IREADI = new IReadInt();
+		IREADR = new IReadReal();
+		IREADS = new IReadString();
 		IPERCENT = new IPercent();
 		IPERCENTR = new IPercentR();
 		ICONVREAL = new IConvReal();
