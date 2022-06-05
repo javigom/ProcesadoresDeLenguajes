@@ -34,9 +34,9 @@ public class Main {
 		ejecuta_impresion(prog);
 		ejecuta_vinculacion(prog);
 		ejecuta_comprobacion_tipos(prog);
-		AsignacionEspacio asignacionEspacio = ejecuta_asignacion_espacio(prog);
+		ejecuta_asignacion_espacio(prog);
 		ejecuta_etiquetado(prog);
-		MaquinaP maquina = new MaquinaP(prog.size, 30, 20, asignacionEspacio.getMaxNivel());
+		MaquinaP maquina = new MaquinaP(prog.size, 30, 20, 5);
 		prog.procesa(new GeneracionCodigo(maquina));
 
 	}
@@ -115,20 +115,18 @@ public class Main {
 		System.out.println();
 	}
 
-	private static AsignacionEspacio ejecuta_asignacion_espacio(Programa prog) {
+	private static void ejecuta_asignacion_espacio(Programa prog) {
 		System.out.println();
 		System.out.println("|============================================|");
 		System.out.println("| Iniciando proceso de asignación de espacio |");
 		System.out.println("|============================================|");
 		System.out.println();
-		AsignacionEspacio asignacionEspacio = new AsignacionEspacio();
-		prog.procesa(asignacionEspacio);
+		prog.procesa(new AsignacionEspacio());
 		System.out.println();
 		System.out.println("|======================================|");
 		System.out.println("| Fin proceso de asignación de espacio |");
 		System.out.println("|======================================|");
 		System.out.println();
-		return asignacionEspacio;
 	}
 
 	private static void ejecuta_etiquetado(Programa prog) {

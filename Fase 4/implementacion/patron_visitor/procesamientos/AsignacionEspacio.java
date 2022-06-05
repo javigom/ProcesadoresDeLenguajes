@@ -72,19 +72,14 @@ import asint.TinyASint.True;
 import asint.TinyASint.While_inst;
 import asint.TinyASint.Write;
 
-public class AsignacionEspacio extends ProcesamientoPorDefecto{
+public class AsignacionEspacio extends ProcesamientoPorDefecto {
 	private int dir = 0;
 	private int nivel = 0;
-	private int nivelMaximo = 0;
-	
-	public int getMaxNivel() {
-		return nivelMaximo;
-	}
-	
+
 	// Programa
 
 	public void procesa(Programa prog) {
-		if(prog.declaraciones() != null) {
+		if (prog.declaraciones() != null) {
 			prog.declaraciones().procesa(this);
 		}
 		prog.instrucciones().procesa(this);
@@ -101,20 +96,19 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 	public void procesa(Decs_una decs) {
 		decs.declaracion().procesa(this);
 	}
-	
+
 	@Override
 	public void procesa(DecProc dec) {
 		int dir_ant = dir;
 		nivel++;
-		nivelMaximo = Math.max(nivel, nivelMaximo);
 		dir = 0;
-		
+
 		dec.pforms().procesa(this);
 		dec.bloque().procesa(this);
-		
+
 		dec.nivel = nivel;
 		dec.size = dir;
-	
+
 		nivel--;
 		dir = dir_ant;
 	}
@@ -129,22 +123,19 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 	public void procesa(DecVar dec) {
 		dec.dir = dir;
 		dec.nivel = nivel;
-		
 		dec.val().procesa(this);
-		
 		dec.size = dec.val().size;
 		dec.basesize = dec.val().basesize;
 		dir += dec.size;
 	}
 
 	// Instrucciones
-	
 
 	@Override
 	public void procesa(Bloque_inst bloque_inst) {
 		bloque_inst.bloque().procesa(this);
 	}
-	
+
 	@Override
 	public void procesa(Call call) {
 		call.exps().procesa(this);
@@ -200,14 +191,15 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 	}
 
 	public void procesa(Insts_muchas insts) {
-		insts.instrucciones().procesa(this);;
+		insts.instrucciones().procesa(this);
+		;
 		insts.instruccion().procesa(this);
 	}
 
 	public void procesa(Insts_una insts) {
 		insts.instruccion().procesa(this);
 	}
-	
+
 	@Override
 	public void procesa(Lista_inst_empty lista_inst_empty) {
 	}
@@ -222,10 +214,8 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 		lista_inst_muchas.instrucciones().procesa(this);
 		lista_inst_muchas.instruccion().procesa(this);
 	}
-	
-	
-	// Param Formales
 
+	// Param Formales
 
 	@Override
 	public void procesa(ParamForm paramForm) {
@@ -235,7 +225,6 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 		paramForm.size = paramForm.tipo().size;
 		dir += paramForm.size;
 	}
-	
 
 	@Override
 	public void procesa(Pformal_ref paramForm) {
@@ -260,15 +249,15 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(ParamForms_empty paramForms_empty) {
 	}
-	
+
 	// Campos
-	
+
 	@Override
 	public void procesa(Campos_muchos campos_muchos) {
 
 		campos_muchos.campos().procesa(this);
 		campos_muchos.campo().procesa(this);
-		campos_muchos.campo().despl = campos_muchos.campos().size; 
+		campos_muchos.campo().despl = campos_muchos.campos().size;
 		campos_muchos.size = campos_muchos.campos().size + campos_muchos.campo().size;
 	}
 
@@ -285,10 +274,9 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 		camp.size = camp.tipo().size;
 		camp.basesize = camp.tipo().basesize;
 	}
-	
-	
-	// Bloque 
-	
+
+	// Bloque
+
 	@Override
 	public void procesa(Bloque_prog bloque_prog) {
 		bloque_prog.programa().procesa(this);
@@ -298,9 +286,8 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 	public void procesa(No_bloque no_bloque) {
 	}
 
-	
 	// Expresiones
-	
+
 	@Override
 	public void procesa(Lista_exp_empty lista_exp_empty) {
 		System.out.println();
@@ -397,9 +384,9 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 	public void procesa(Not exp) {
 		exp.arg0().procesa(this);
 	}
-	
-	//Nivel 5
-	
+
+	// Nivel 5
+
 	@Override
 	public void procesa(Corchete corchete) {
 		corchete.arg0().procesa(this);
@@ -410,7 +397,8 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(Punto punto) {
 		punto.exp().procesa(this);
-		Camp c = ((Record) punto.exp().getVinculo().val().getVinculo().val()).campos().getCampos().get(punto.id().toString());
+		Camp c = ((Record) punto.exp().getVinculo().val().getVinculo().val()).campos().getCampos()
+				.get(punto.id().toString());
 		punto.size = c.size;
 		punto.basesize = c.basesize;
 	}
@@ -428,8 +416,8 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 		flecha.basesize = c.basesize;
 	}
 
-	//Nivel 6
-	
+	// Nivel 6
+
 	@Override
 	public void procesa(Star star) {
 		star.arg0().procesa(this);
@@ -512,5 +500,5 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto{
 		pointer.size = 1;
 		pointer.basesize = pointer.tipo().size;
 	}
-	
+
 }
