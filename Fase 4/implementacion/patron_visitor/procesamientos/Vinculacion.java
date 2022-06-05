@@ -268,8 +268,6 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 		dec.val().procesa(this);
 
 		recolectaAct(id, dec);
-		dec.val().procesa(this);
-		dec.size = dec.val().size;
 	}
 
 	@Override
@@ -431,13 +429,11 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 
 	@Override
 	public void procesa(Lista_exp_empty lista_exp_empty) {
-		System.out.println();
 	}
 
 	@Override
 	public void procesa(Exp_muchas exp_muchas) {
 		exp_muchas.expresiones().procesa(this);
-		System.out.print(",");
 		exp_muchas.expresion().procesa(this);
 	}
 
