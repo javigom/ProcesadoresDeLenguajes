@@ -129,7 +129,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 	
 	private boolean compatibleArray(Nodo t0, Nodo t1) {
 		return t0.getTipo() == tNodo.ARRAY && t1.getTipo() == tNodo.ARRAY 
-			&& compatible(t0.tipo_nodo_array(), t1.tipo_nodo_array());
+			&& compatible(t0.getTipoNodoArray(), t1.getTipoNodoArray());
 	}
 	
 	private boolean compatibleRecord(Nodo t0, Nodo t1) {
@@ -672,7 +672,7 @@ public class ComprobacionTipos extends ProcesamientoPorDefecto{
 			DecVar var = (DecVar) ((Id) ((Punto) corchete.arg0()).exp()).getVinculo();
 			String nombre = ((Punto) corchete.arg0()).id().toString();
 			Record r = (Record) var.val().getVinculo().val();
-			corchete.setTipo(r.campos().getCampos().get(nombre).tipo().tipo_nodo_array());
+			corchete.setTipo(r.campos().getCampos().get(nombre).tipo().getTipoNodoArray());
 		} else {
 			printError(corchete);
 		}

@@ -5,6 +5,8 @@ import c_ast_ascendente.AnalizadorLexicoTiny;
 import c_ast_ascendente.ClaseLexica;
 import c_ast_ascendente.UnidadLexica;
 import errors.GestionErroresTiny;
+import maquinaP.MaquinaP;
+
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -34,7 +36,10 @@ public class Main {
 		ejecuta_comprobacion_tipos(prog);
 		ejecuta_asignacion_espacio(prog);
 		ejecuta_etiquetado(prog);
-		ejecuta_generacion(prog);
+		MaquinaP p = ejecuta_generacion(prog);
+		p.muestraCodigo();
+		p.ejecuta();
+		p.muestraEstado();
 	}
 
 	private static void ejecuta_lexico(String in) throws Exception {
@@ -139,18 +144,20 @@ public class Main {
 		System.out.println();
 	}
 
-	private static void ejecuta_generacion(Programa prog) {
+	private static MaquinaP ejecuta_generacion(Programa prog) {
 		System.out.println();
 		System.out.println("|=================================|");
 		System.out.println("| Iniciando proceso de generación |");
 		System.out.println("|=================================|");
 		System.out.println();
-		prog.procesa(new GeneracionCodigo());
+		MaquinaP p = new MaquinaP(50, 50, 50, 5);
+		prog.procesa(new GeneracionCodigo(p));
 		System.out.println();
 		System.out.println("|===========================|");
 		System.out.println("| Fin proceso de generación |");
 		System.out.println("|===========================|");
 		System.out.println();
+		return p;
 	}
 
 }

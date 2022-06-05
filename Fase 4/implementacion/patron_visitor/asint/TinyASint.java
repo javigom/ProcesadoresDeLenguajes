@@ -17,10 +17,6 @@ public class TinyASint {
 		public int etqi = -1;
 		public int etqs = -1;
 
-		public String toString() {
-			return getClass().getSimpleName() + "@" + fila + ":" + col;
-		}
-
 		private tNodo tipo;
 
 		public tNodo getTipo() {
@@ -31,7 +27,7 @@ public class TinyASint {
 			tipo = t;
 		}
 
-		public tNodo tipo_nodo_array() {
+		public tNodo getTipoNodoArray() {
 			return null;
 		}
 
@@ -755,7 +751,7 @@ public class TinyASint {
 			this.tipo_Nodo = tipo_array;
 		}
 
-		public tNodo tipo_nodo_array() {
+		public tNodo getTipoNodoArray() {
 			return tipo_Nodo;
 		}
 	}
@@ -941,6 +937,7 @@ public class TinyASint {
 		public tNodo getTipo() {
 			return tNodo.OK;
 		}
+		
 	}
 
 	// Instrucciones
