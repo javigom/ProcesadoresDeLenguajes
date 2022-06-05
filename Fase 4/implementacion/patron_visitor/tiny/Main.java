@@ -5,8 +5,6 @@ import c_ast_ascendente.AnalizadorLexicoTiny;
 import c_ast_ascendente.ClaseLexica;
 import c_ast_ascendente.UnidadLexica;
 import errors.GestionErroresTiny;
-import maquinaP.MaquinaP;
-
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -133,8 +131,7 @@ public class Main {
 		System.out.println("| Iniciando proceso de etiquetado |");
 		System.out.println("|=================================|");
 		System.out.println();
-		Etiquetado etiquetado = new Etiquetado();
-		prog.procesa(etiquetado);
+		prog.procesa(new Etiquetado());
 		System.out.println();
 		System.out.println("|===========================|");
 		System.out.println("| Fin proceso de etiquetado |");
@@ -148,8 +145,7 @@ public class Main {
 		System.out.println("| Iniciando proceso de generación |");
 		System.out.println("|=================================|");
 		System.out.println();
-		MaquinaP maquina = new MaquinaP(50, 50, 50, 5);
-		prog.procesa(new GeneracionCodigo(maquina));
+		prog.procesa(new GeneracionCodigo());
 		System.out.println();
 		System.out.println("|===========================|");
 		System.out.println("| Fin proceso de generación |");

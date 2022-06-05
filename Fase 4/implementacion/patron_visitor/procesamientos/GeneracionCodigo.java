@@ -80,8 +80,8 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 
 	private MaquinaP p;
 	
-	public GeneracionCodigo(MaquinaP p) {
-		this.p = p;
+	public GeneracionCodigo() {
+		this.p = new MaquinaP(50, 50, 50, 5);
 	}
 	
 	private void checkNinstsi(Nodo g) {
