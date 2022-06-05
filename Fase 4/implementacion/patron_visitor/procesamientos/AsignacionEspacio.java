@@ -83,7 +83,7 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto {
 			prog.declaraciones().procesa(this);
 		}
 		prog.instrucciones().procesa(this);
-		prog.size = dir;
+		prog.tam_datos = dir;
 	}
 
 	// Declaraciones
@@ -102,21 +102,18 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto {
 		int dir_ant = dir;
 		nivel++;
 		dir = 0;
-
 		dec.pforms().procesa(this);
 		dec.bloque().procesa(this);
-
 		dec.nivel = nivel;
-		dec.size = dir;
-
-		nivel--;
+		dec.tam_datos = dir;
 		dir = dir_ant;
+		nivel--;
 	}
 
 	@Override
 	public void procesa(DecTipo dec) {
 		dec.val().procesa(this);
-		dec.size = dec.val().size;
+		dec.tam_datos = dec.val().tam_datos;
 	}
 
 	@Override
@@ -124,9 +121,9 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto {
 		dec.dir = dir;
 		dec.nivel = nivel;
 		dec.val().procesa(this);
-		dec.size = dec.val().size;
-		dec.basesize = dec.val().basesize;
-		dir += dec.size;
+		dec.tam_datos = dec.val().tam_datos;
+		dec.tam_basico = dec.val().tam_basico;
+		dir += dec.tam_datos;
 	}
 
 	// Instrucciones
@@ -221,8 +218,8 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto {
 		paramForm.tipo().procesa(this);
 		paramForm.dir = dir;
 		paramForm.nivel = nivel;
-		paramForm.size = paramForm.tipo().size;
-		dir += paramForm.size;
+		paramForm.tam_datos = paramForm.tipo().tam_datos;
+		dir += paramForm.tam_datos;
 	}
 
 	@Override
@@ -230,7 +227,7 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto {
 		paramForm.tipo().procesa(this);
 		paramForm.dir = dir;
 		paramForm.nivel = nivel;
-		paramForm.size = 1;
+		paramForm.tam_datos = 1;
 		dir++;
 	}
 
@@ -256,22 +253,22 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto {
 
 		campos_muchos.campos().procesa(this);
 		campos_muchos.campo().procesa(this);
-		campos_muchos.campo().despl = campos_muchos.campos().size;
-		campos_muchos.size = campos_muchos.campos().size + campos_muchos.campo().size;
+		campos_muchos.campo().despl = campos_muchos.campos().tam_datos;
+		campos_muchos.tam_datos = campos_muchos.campos().tam_datos + campos_muchos.campo().tam_datos;
 	}
 
 	@Override
 	public void procesa(Campo_uno campo_uno) {
 		campo_uno.campo().procesa(this);
-		campo_uno.size = campo_uno.campo().size;
+		campo_uno.tam_datos = campo_uno.campo().tam_datos;
 		campo_uno.campo().despl = 0;
 	}
 
 	@Override
 	public void procesa(Camp camp) {
 		camp.tipo().procesa(this);
-		camp.size = camp.tipo().size;
-		camp.basesize = camp.tipo().basesize;
+		camp.tam_datos = camp.tipo().tam_datos;
+		camp.tam_basico = camp.tipo().tam_basico;
 	}
 
 	// Bloque
@@ -390,7 +387,7 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto {
 	public void procesa(Corchete corchete) {
 		corchete.arg0().procesa(this);
 		corchete.arg1().procesa(this);
-		corchete.size = corchete.arg0().basesize;
+		corchete.tam_datos = corchete.arg0().tam_basico;
 	}
 
 	@Override
@@ -398,8 +395,8 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto {
 		punto.exp().procesa(this);
 		Camp c = ((Record) punto.exp().getVinculo().val().getVinculo().val()).campos().getCampos()
 				.get(punto.id().toString());
-		punto.size = c.size;
-		punto.basesize = c.basesize;
+		punto.tam_datos = c.tam_datos;
+		punto.tam_basico = c.tam_basico;
 	}
 
 	@Override
@@ -411,8 +408,8 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto {
 		}
 		Record r = (Record) t.getVinculo().val().getVinculo().val().tipo().getVinculo().val();
 		Camp c = r.campos().getCampos().get(flecha.id().toString());
-		flecha.size = c.size;
-		flecha.basesize = c.basesize;
+		flecha.tam_datos = c.tam_datos;
+		flecha.tam_basico = c.tam_basico;
 	}
 
 	// Nivel 6
@@ -420,8 +417,8 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto {
 	@Override
 	public void procesa(Star star) {
 		star.arg0().procesa(this);
-		star.size = 1;
-		star.basesize = star.arg0().size;
+		star.tam_datos = 1;
+		star.tam_basico = star.arg0().tam_datos;
 	}
 
 	// Nivel 7
@@ -454,50 +451,50 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto {
 
 	@Override
 	public void procesa(Bool bool) {
-		bool.size = 1;
+		bool.tam_datos = 1;
 	}
 
 	@Override
 	public void procesa(Int int1) {
-		int1.size = 1;
+		int1.tam_datos = 1;
 	}
 
 	@Override
 	public void procesa(Real real) {
-		real.size = 1;
+		real.tam_datos = 1;
 	}
 
 	@Override
 	public void procesa(String_cons string_cons) {
-		string_cons.size = 1;
+		string_cons.tam_datos = 1;
 	}
 
 	@Override
 	public void procesa(Tipo_Id tipo_Id) {
 		tipo_Id.dir = tipo_Id.getVinculo().dir;
-		tipo_Id.size = tipo_Id.getVinculo().size;
+		tipo_Id.tam_datos = tipo_Id.getVinculo().tam_datos;
 		tipo_Id.nivel = tipo_Id.getVinculo().nivel;
-		tipo_Id.basesize = tipo_Id.getVinculo().basesize;
+		tipo_Id.tam_basico = tipo_Id.getVinculo().tam_basico;
 	}
 
 	@Override
 	public void procesa(Array array) {
 		array.tipo_array().procesa(this);
-		array.basesize = array.tipo_array().size;
-		array.size = array.basesize * Integer.parseInt(array.tam().toString());
+		array.tam_basico = array.tipo_array().tam_datos;
+		array.tam_datos = array.tam_basico * Integer.parseInt(array.tam().toString());
 	}
 
 	@Override
 	public void procesa(Record record) {
 		record.campos().procesa(this);
-		record.size = record.campos().size;
+		record.tam_datos = record.campos().tam_datos;
 	}
 
 	@Override
 	public void procesa(Pointer pointer) {
 		pointer.tipo().procesa(this);
-		pointer.size = 1;
-		pointer.basesize = pointer.tipo().size;
+		pointer.tam_datos = 1;
+		pointer.tam_basico = pointer.tipo().tam_datos;
 	}
 
 }

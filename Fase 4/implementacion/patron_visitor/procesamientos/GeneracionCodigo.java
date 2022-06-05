@@ -142,7 +142,7 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 	
 	@Override
 	public void procesa(Call call) {
-		p.ponInstruccion(p.activa(call.getVinculo().nivel, call.getVinculo().size, call.etqs));
+		p.ponInstruccion(p.activa(call.getVinculo().nivel, call.getVinculo().tam_datos, call.etqs));
 		//call.exps();
 		int i = 0;
 		Exps exps = call.exps();
@@ -162,15 +162,15 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 	@Override
 	public void procesa(Delete delete) {
 		delete.exp().procesa(this);
-		p.ponInstruccion(p.dealloc(delete.exp().basesize));
-		System.out.println(p.dealloc(delete.exp().basesize));
+		p.ponInstruccion(p.dealloc(delete.exp().tam_basico));
+		System.out.println(p.dealloc(delete.exp().tam_basico));
 	}
 
 	@Override
 	public void procesa(New_cons new_cons) {
 		new_cons.exp().procesa(this);
-		p.ponInstruccion(p.alloc(new_cons.exp().basesize));
-		System.out.println(p.alloc(new_cons.exp().basesize));
+		p.ponInstruccion(p.alloc(new_cons.exp().tam_basico));
+		System.out.println(p.alloc(new_cons.exp().tam_basico));
 		p.ponInstruccion(p.desapilaInd());
 		System.out.println(p.desapilaInd());
 	}
@@ -267,8 +267,8 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		asig.exp1().procesa(this);
 		
 		if (asig.exp1().esDesignador()) {
-			p.ponInstruccion(p.mueve(asig.exp1().size));
-			System.out.println(p.mueve(asig.exp1().size));
+			p.ponInstruccion(p.mueve(asig.exp1().tam_datos));
+			System.out.println(p.mueve(asig.exp1().tam_datos));
 		} else {
 			p.ponInstruccion(p.desapilaInd());
 			System.out.println(p.desapilaInd());
@@ -685,8 +685,8 @@ public class GeneracionCodigo extends ProcesamientoPorDefecto{
 		corchete.arg0().procesa(this);
 		corchete.arg1().procesa(this);
 		if (corchete.arg1().esDesignador()) p.ponInstruccion(p.apilaInd());
-		p.ponInstruccion(p.apilaInt(corchete.arg0().basesize));
-		System.out.println(p.apilaInt(corchete.arg0().basesize));
+		p.ponInstruccion(p.apilaInt(corchete.arg0().tam_basico));
+		System.out.println(p.apilaInt(corchete.arg0().tam_basico));
 		p.ponInstruccion(p.mul());
 		System.out.println(p.mul());
 		p.ponInstruccion(p.suma());
