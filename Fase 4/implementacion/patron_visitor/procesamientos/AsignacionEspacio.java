@@ -192,7 +192,6 @@ public class AsignacionEspacio extends ProcesamientoPorDefecto {
 
 	public void procesa(Insts_muchas insts) {
 		insts.instrucciones().procesa(this);
-		;
 		insts.instruccion().procesa(this);
 	}
 

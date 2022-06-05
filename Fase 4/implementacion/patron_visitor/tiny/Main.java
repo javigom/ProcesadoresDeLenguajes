@@ -36,11 +36,9 @@ public class Main {
 		ejecuta_comprobacion_tipos(prog);
 		ejecuta_asignacion_espacio(prog);
 		ejecuta_etiquetado(prog);
-		MaquinaP maquina = new MaquinaP(prog.size, 30, 20, 5);
-		prog.procesa(new GeneracionCodigo(maquina));
-
+		ejecuta_generacion(prog);
 	}
-	
+
 	private static void ejecuta_lexico(String in) throws Exception {
 		Reader input = new InputStreamReader(new FileInputStream(in));
 		AnalizadorLexicoTiny alex = new AnalizadorLexicoTiny(input);
@@ -51,7 +49,7 @@ public class Main {
 			t = (UnidadLexica) alex.next_token();
 		}
 	}
-	
+
 	private static Programa ejecuta_ascendente(String in) throws Exception {
 		Reader input = new InputStreamReader(new FileInputStream(in));
 		AnalizadorLexicoTiny alex = new AnalizadorLexicoTiny(input);
@@ -71,7 +69,7 @@ public class Main {
 		System.out.println("| Iniciando proceso de impresión |");
 		System.out.println("|================================|");
 		System.out.println();
- 		prog.procesa(new Impresion());
+		prog.procesa(new Impresion());
 		System.out.println();
 		System.out.println("|==========================|");
 		System.out.println("| Fin proceso de impresión |");
@@ -143,4 +141,20 @@ public class Main {
 		System.out.println("|===========================|");
 		System.out.println();
 	}
+
+	private static void ejecuta_generacion(Programa prog) {
+		System.out.println();
+		System.out.println("|=================================|");
+		System.out.println("| Iniciando proceso de generación |");
+		System.out.println("|=================================|");
+		System.out.println();
+		MaquinaP maquina = new MaquinaP(50, 50, 50, 5);
+		prog.procesa(new GeneracionCodigo(maquina));
+		System.out.println();
+		System.out.println("|===========================|");
+		System.out.println("| Fin proceso de generación |");
+		System.out.println("|===========================|");
+		System.out.println();
+	}
+
 }
