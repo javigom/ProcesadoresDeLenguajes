@@ -71,7 +71,6 @@ import asint.TinyASint.Tipo_Id;
 import asint.TinyASint.True;
 import asint.TinyASint.While_inst;
 import asint.TinyASint.Write;
-import procesamientos.ComprobacionTipos.tNodo;
 
 public class AsignacionEspacio extends ProcesamientoPorDefecto{
 	private int dir = 0;

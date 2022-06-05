@@ -131,8 +131,7 @@ public class Vinculacion extends ProcesamientoPorDefecto {
 
 	public void recolectaTodos(StringLocalizado id, Declaracion d) {
 		if (idDuplicadoTodos(id)) {
-			error = true;
-			System.out.println("Error vinculación en fila: " + id.fila() + ", columna: " + id.col());
+			printError(id, tError.IdYaDeclarado);
 		} else {
 			aniade(id, d);
 		}

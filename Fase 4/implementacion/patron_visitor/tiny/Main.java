@@ -68,13 +68,13 @@ public class Main {
 	private static void ejecuta_impresion(Programa prog) {
 		System.out.println();
 		System.out.println("|================================|");
-		System.out.println("| Iniciando proceso de impresion |");
+		System.out.println("| Iniciando proceso de impresión |");
 		System.out.println("|================================|");
 		System.out.println();
  		prog.procesa(new Impresion());
 		System.out.println();
 		System.out.println("|==========================|");
-		System.out.println("| Fin proceso de impresion |");
+		System.out.println("| Fin proceso de impresión |");
 		System.out.println("|==========================|");
 		System.out.println();
 	}
@@ -121,14 +121,14 @@ public class Main {
 		System.out.println("| Iniciando proceso de asignación de espacio |");
 		System.out.println("|============================================|");
 		System.out.println();
-		AsignacionEspacio asignaEspacio = new AsignacionEspacio();
-		prog.procesa(asignaEspacio);
+		AsignacionEspacio asignacionEspacio = new AsignacionEspacio();
+		prog.procesa(asignacionEspacio);
 		System.out.println();
 		System.out.println("|======================================|");
 		System.out.println("| Fin proceso de asignación de espacio |");
 		System.out.println("|======================================|");
 		System.out.println();
-		return asignaEspacio;
+		return asignacionEspacio;
 	}
 
 	private static void ejecuta_etiquetado(Programa prog) {
